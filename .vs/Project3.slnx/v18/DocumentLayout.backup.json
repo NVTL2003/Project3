@@ -186,7 +186,8 @@
               "RelativeToolTip": "Migrations\\AppDbContextModelSnapshot.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA2AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T19:59:38.857Z"
+              "WhenOpened": "2026-08-02T19:59:38.857Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -198,7 +199,8 @@
               "RelativeToolTip": "Services\\Implementations\\AuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:58:53.865Z"
+              "WhenOpened": "2026-08-02T18:58:53.865Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -223,7 +225,8 @@
               "RelativeToolTip": "Services\\Implementations\\CrudService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAD8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:33:45.518Z"
+              "WhenOpened": "2026-08-02T16:33:45.518Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -235,7 +238,8 @@
               "RelativeToolTip": "Services\\Interfaces\\IAuthService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:58:42.655Z"
+              "WhenOpened": "2026-08-02T18:58:42.655Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -247,7 +251,8 @@
               "RelativeToolTip": "Services\\Interfaces\\ICrudService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:33:51.74Z"
+              "WhenOpened": "2026-08-02T16:33:51.74Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -259,7 +264,8 @@
               "RelativeToolTip": "Repositories\\Implementations\\CrudRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T19:07:54.46Z"
+              "WhenOpened": "2026-08-02T19:07:54.46Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -271,7 +277,8 @@
               "RelativeToolTip": "Repositories\\Interfaces\\ICrudRepository.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:26:20.555Z"
+              "WhenOpened": "2026-08-02T18:26:20.555Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -283,7 +290,8 @@
               "RelativeToolTip": "Migrations\\20260802155445_Init.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T19:59:30.825Z"
+              "WhenOpened": "2026-08-02T19:59:30.825Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -295,7 +303,8 @@
               "RelativeToolTip": "Migrations\\20260802155445_Init.Designer.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAswB0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T20:00:04.018Z"
+              "WhenOpened": "2026-08-02T20:00:04.018Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -307,7 +316,8 @@
               "RelativeToolTip": "PasswordGenerator\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T19:20:49.35Z"
+              "WhenOpened": "2026-08-02T19:20:49.35Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -319,7 +329,8 @@
               "RelativeToolTip": "Project3.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-08-02T19:37:56.772Z"
+              "WhenOpened": "2026-08-02T19:37:56.772Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -331,7 +342,8 @@
               "RelativeToolTip": "Data\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:38:02.847Z"
+              "WhenOpened": "2026-08-02T16:38:02.847Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -343,7 +355,8 @@
               "RelativeToolTip": "DTOs\\UserDto.cs",
               "ViewState": "AgIAAGcAAAAAAAAAAAAswIEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:11:32.94Z"
+              "WhenOpened": "2026-08-02T18:11:32.94Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -355,7 +368,8 @@
               "RelativeToolTip": "Controllers\\AuthController.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAswCMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:59:09.953Z"
+              "WhenOpened": "2026-08-02T18:59:09.953Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -367,7 +381,8 @@
               "RelativeToolTip": "Authentication\\JwtService.cs",
               "ViewState": "AgIAAC4AAAAAAAAAAAAswEgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:58:00.122Z"
+              "WhenOpened": "2026-08-02T18:58:00.122Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -379,7 +394,8 @@
               "RelativeToolTip": "Authentication\\IJwtService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:57:48.945Z"
+              "WhenOpened": "2026-08-02T18:57:48.945Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -391,7 +407,8 @@
               "RelativeToolTip": "DTOs\\Auth\\LoginResponseDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:57:21.116Z"
+              "WhenOpened": "2026-08-02T18:57:21.116Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -403,7 +420,8 @@
               "RelativeToolTip": "DTOs\\Auth\\LoginRequestDto.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:57:11.773Z"
+              "WhenOpened": "2026-08-02T18:57:11.773Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -415,7 +433,8 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-08-02T18:56:12.583Z"
+              "WhenOpened": "2026-08-02T18:56:12.583Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -427,7 +446,8 @@
               "RelativeToolTip": "frontend\\src\\App.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACcBAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T18:46:42.031Z"
+              "WhenOpened": "2026-08-02T18:46:42.031Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -439,7 +459,8 @@
               "RelativeToolTip": "frontend\\src\\api\\authService.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T18:45:56.362Z"
+              "WhenOpened": "2026-08-02T18:45:56.362Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -451,7 +472,8 @@
               "RelativeToolTip": "frontend\\src\\pages\\LoginPage.jsx",
               "ViewState": "AgIAAF0AAAAAAAAAAAAkwKUAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2026-08-02T18:45:36.761Z"
+              "WhenOpened": "2026-08-02T18:45:36.761Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -463,7 +485,8 @@
               "RelativeToolTip": "frontend\\src\\api\\client.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T18:41:08.6Z"
+              "WhenOpened": "2026-08-02T18:41:08.6Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -475,7 +498,8 @@
               "RelativeToolTip": "Controllers\\BaseCrudController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:39:04.361Z"
+              "WhenOpened": "2026-08-02T18:39:04.361Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -487,7 +511,8 @@
               "RelativeToolTip": "Models\\DeliveryAttempt.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:38:28.887Z"
+              "WhenOpened": "2026-08-02T18:38:28.887Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -499,7 +524,8 @@
               "RelativeToolTip": "Mapping\\AutoMapperProfile.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:35:16.645Z"
+              "WhenOpened": "2026-08-02T16:35:16.645Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -511,7 +537,8 @@
               "RelativeToolTip": "Models\\InsurancePlan.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:21:53.113Z"
+              "WhenOpened": "2026-08-02T18:21:53.113Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -523,7 +550,8 @@
               "RelativeToolTip": "Models\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T18:12:29.002Z"
+              "WhenOpened": "2026-08-02T18:12:29.002Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -535,7 +563,8 @@
               "RelativeToolTip": "frontend\\src\\components\\CrudForm.js",
               "ViewState": "AgIAAE4AAAAAAAAAAAAswFkAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T17:45:37.201Z"
+              "WhenOpened": "2026-08-02T17:45:37.201Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -547,7 +576,8 @@
               "RelativeToolTip": "frontend\\src\\hooks\\useCrud.js",
               "ViewState": "AgIAAGYAAAAAAAAAAAAswIAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T17:45:46.942Z"
+              "WhenOpened": "2026-08-02T17:45:46.942Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -559,7 +589,8 @@
               "RelativeToolTip": "Middleware\\GlobalExceptionMiddleware.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T17:31:20Z"
+              "WhenOpened": "2026-08-02T17:31:20Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -571,7 +602,8 @@
               "RelativeToolTip": "frontend\\src\\App.test.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T16:16:34.43Z"
+              "WhenOpened": "2026-08-02T16:16:34.43Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -583,7 +615,8 @@
               "RelativeToolTip": "Models\\Pj3Context.cs",
               "ViewState": "AgIAADoJAAAAAAAAAAAwwEUJAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:27:39.888Z"
+              "WhenOpened": "2026-08-02T16:27:39.888Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -595,7 +628,8 @@
               "RelativeToolTip": "Models\\Efmigrationshistory.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-02T16:27:21.844Z"
+              "WhenOpened": "2026-08-02T16:27:21.844Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -607,7 +641,8 @@
               "RelativeToolTip": "frontend\\src\\index.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-08-02T16:16:31.412Z"
+              "WhenOpened": "2026-08-02T16:16:31.412Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -619,7 +654,8 @@
               "RelativeToolTip": "frontend\\src\\index.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T16:16:28.956Z"
+              "WhenOpened": "2026-08-02T16:16:28.956Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -631,7 +667,8 @@
               "RelativeToolTip": "frontend\\src\\logo.svg",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKTSURBVDhPjVNLSFRRGP7unTsz9w75uOaMZlMNpo1aFFJRodRGN7UwatMiKgga3JgVRBSNSA8RooUFLRycCCpc9ITIFi0EW\u002BhCW/gONYUcxplsQL13nKv3dM6ZGV\u002BE9N37c\u002B455/\u002B\u002B/7s/5whYA7/fP5L63BSCIDxvbGxsAiEktZQEE6Brm6K1tXWS5TU0NNQyjsiZKQgCBgBChQ2Q\u002BfswpytgDLmg9zihD9XBNJfhcrlstPoeqlVPRS6uCBDy1broLnN29PkxPeaFFmpC79gOdEu9sB8KQRt\u002Bz/NUVbUGAoGpJIfc5j2gZIuv3fam/sCNGrdjGLGwE23hR\u002BiMeBCKAbXlOTgfr0VW9QfqD4iEZ5BIJNAWDI5yB75X0tXqwrc1JZk90MKVUEq/4UplFc4W5UKwiHjaO4tx90NWiYfT5cQuj4dRITLrZfn9104XtOD3\u002BE4z7/BrqIoKZ4YM37E8XNifA4vdiuCIApPzWY9Wmy9h6UfOpd13t89FstEceyF2PJlAfNHkm6y6xSbxcTASpyuMyFT4NoeI6PV6mzEvvIy0oO\u002BXPVGULaMs186jVLVil0zzF\u002BI4ki\u002BnqjP\u002BGgemrp0Z\u002BHn8T0d0nyrOTky\u002B8x0tNoxE0iZrcSqXz5lAcroCcXkeBcGpyzcnowRTDk9xoDuEmbkE5vRlfB6cRcWzIXibv\u002BNTf5ST0y7SEBa6MGIaOFje2VUnZSgPTFECMZM9YCeLde6cdwvuVLlXrVMFWXGAHqRRaUlDezyEic6tlbFBbW/oS8nHbf0RDZIooDDLipPeTJwozIJJH4EIoG/y1/6Fe/5bj6lFousa0WjoWjoWiLYhGNidWHcXDNhOsVGWFSg0ZCUdDigbIo11Zv73Oq8C\u002BAsr5V2IWWNA0gAAAABJRU5ErkJggg==",
-              "WhenOpened": "2026-08-02T16:16:27.069Z"
+              "WhenOpened": "2026-08-02T16:16:27.069Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -643,7 +680,8 @@
               "RelativeToolTip": "frontend\\src\\reportWebVitals.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T16:16:25.14Z"
+              "WhenOpened": "2026-08-02T16:16:25.14Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -655,7 +693,8 @@
               "RelativeToolTip": "frontend\\src\\setupTests.js",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-08-02T16:16:11.973Z"
+              "WhenOpened": "2026-08-02T16:16:11.973Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -667,7 +706,8 @@
               "RelativeToolTip": "frontend\\src\\App.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-08-02T16:13:23.75Z"
+              "WhenOpened": "2026-08-02T16:13:23.75Z",
+              "EditorCaption": ""
             }
           ]
         }

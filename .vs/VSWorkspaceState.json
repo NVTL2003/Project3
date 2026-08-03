@@ -1,9 +1,6 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\frontend\\src",
-    "\\frontend\\src\\api",
-    "\\frontend\\src\\pages"
+    ""
   ],
   "SelectedNode": "\\Program.cs",
   "PreviewInSolutionExplorer": false
