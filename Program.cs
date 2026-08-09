@@ -1,67 +1,4 @@
-﻿//using Microsoft.EntityFrameworkCore;
-//using Data;
-//using Models;
-//using DTOs;
-
-//var builder = WebApplication.CreateBuilder(args);
-
-//// DB
-//builder.Services.AddDbContext<Pj3Context>(options =>
-//    options.UseMySql(
-//        builder.Configuration.GetConnectionString("DefaultConnection"),
-//        ServerVersion.AutoDetect(
-//            builder.Configuration.GetConnectionString("DefaultConnection")
-//        )
-//    ));
-
-
-//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-//builder.Services.AddScoped(
-//    typeof(ICrudService<,,>),
-//    typeof(CrudService<,,>));
-
-
-//// Controllers
-//builder.Services.AddControllers();
-
-////builder.Services.AddScoped<
-////    ICrudService<Nurse, NurseDto, CreateNurseDto>,
-////    NurseService>();
-
-////builder.Services.AddScoped<
-////    ICrudService<Ward, WardDto, CreateWardDto>,
-////    WardService>();
-
-//// CORS
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowReact",
-//        policy =>
-//        {
-//            policy.WithOrigins("http://localhost:3000")
-//                  .AllowAnyHeader()
-//                  .AllowAnyMethod();
-//        });
-//});
-
-//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-//var app = builder.Build();
-
-//app.UseHttpsRedirection();
-//app.UseCors("AllowReact");
-//app.UseAuthorization();
-//app.MapControllers();
-
-////using (var scope = app.Services.CreateScope())
-////{
-////    var context = scope.ServiceProvider.GetRequiredService<Pj3Context>();
-////    await DbInitializer.SeedAsync(context);
-////}
-
-//app.Run();
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -187,6 +124,7 @@ var app = builder.Build();
 // Middleware
 // ============================================
 
+app.UseMiddleware<RequestCounterMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseCors("AllowReact");

@@ -1,5 +1,5 @@
 ﻿using BCryptHasher = BCrypt.Net.BCrypt;
 
 Console.WriteLine(
-    BCryptHasher.HashPassword("admin123")
+    BCryptHasher.HashPassword("employee123")
 );
