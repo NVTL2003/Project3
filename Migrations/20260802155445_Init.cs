@@ -1,23 +1,23 @@
-﻿//using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-//#nullable disable
+#nullable disable
 
-//namespace Project3.Migrations
-//{
-//    /// <inheritdoc />
-//    public partial class Init : Migration
-//    {
-//        /// <inheritdoc />
-//        protected override void Up(MigrationBuilder migrationBuilder)
-//        {
-//            migrationBuilder.AlterDatabase()
-//                .Annotation("MySql:CharSet", "utf8mb4");
-//        }
+namespace Project3.Migrations
+{
+    /// <inheritdoc />
+    public partial class Init : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+        }
 
-//        /// <inheritdoc />
-//        protected override void Down(MigrationBuilder migrationBuilder)
-//        {
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
 
-//        }
-//    }
-//}
+        }
+    }
+}

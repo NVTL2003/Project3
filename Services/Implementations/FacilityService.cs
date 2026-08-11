@@ -118,31 +118,52 @@ namespace Project3.Services.Implementations
                     {
                         case "facilitytype":
                         case "type":
-                            var typeFilter = f => f.FacilityType != null &&
-                                                 f.FacilityType.ToLower() == value;
-                            filter = filter == null ? typeFilter : CombineExpressions(filter, typeFilter);
+                            Expression<Func<Facility, bool>> typeFilter = f =>
+                                f.FacilityType != null &&
+                                f.FacilityType.ToLower() == value;
+
+                            filter = filter == null
+                                ? typeFilter
+                                : CombineExpressions(filter, typeFilter);
+
                             Console.WriteLine($"✅ Added type filter: {value}");
                             break;
 
                         case "isactive":
                         case "active":
                             var isActive = value == "true" || value == "1";
-                            var activeFilter = f => f.IsActive == isActive;
-                            filter = filter == null ? activeFilter : CombineExpressions(filter, activeFilter);
+
+                            Expression<Func<Facility, bool>> activeFilter = f =>
+                                f.IsActive == isActive;
+
+                            filter = filter == null
+                                ? activeFilter
+                                : CombineExpressions(filter, activeFilter);
+
                             Console.WriteLine($"✅ Added active filter: {isActive}");
                             break;
 
                         case "city":
-                            var cityFilter = f => f.City != null &&
-                                                 f.City.ToLower().Contains(value);
-                            filter = filter == null ? cityFilter : CombineExpressions(filter, cityFilter);
+                            Expression<Func<Facility, bool>> cityFilter = f =>
+                                f.City != null &&
+                                f.City.ToLower().Contains(value);
+
+                            filter = filter == null
+                                ? cityFilter
+                                : CombineExpressions(filter, cityFilter);
+
                             Console.WriteLine($"✅ Added city filter: {value}");
                             break;
 
                         case "state":
-                            var stateFilter = f => f.State != null &&
-                                                 f.State.ToLower().Contains(value);
-                            filter = filter == null ? stateFilter : CombineExpressions(filter, stateFilter);
+                            Expression<Func<Facility, bool>> stateFilter = f =>
+                                f.State != null &&
+                                f.State.ToLower().Contains(value);
+
+                            filter = filter == null
+                                ? stateFilter
+                                : CombineExpressions(filter, stateFilter);
+
                             Console.WriteLine($"✅ Added state filter: {value}");
                             break;
 
