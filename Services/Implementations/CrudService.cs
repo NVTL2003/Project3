@@ -1,229 +1,852 @@
-﻿//Services\Implementations\CrudService.cs
-
-//using AutoMapper;
-//using AutoMapper.QueryableExtensions;
-//using Microsoft.EntityFrameworkCore;
-//using Project3.Repositories.Interfaces;
-
-//public class CrudService<TEntity, TDto, TCreateDto>
-//    : ICrudService<TEntity, TDto, TCreateDto>
-//    where TEntity : class
-//{
-//    protected readonly ICrudRepository<TEntity> _repository;
-//    protected readonly IMapper _mapper;
-
-//    public CrudService(
-//        ICrudRepository<TEntity> repository,
-//        IMapper mapper)
-//    {
-//        _repository = repository;
-//        _mapper = mapper;
-//    }
-
-//    public virtual async Task<IEnumerable<TDto>> GetAllAsync()
-//    {
-//        var entities = await _repository.GetAllAsync();
-
-//        return _mapper.Map<IEnumerable<TDto>>(entities);
-//    }
-
-//    public virtual async Task<TDto?> GetByIdAsync(Guid id)
-//    {
-//        var entity = await _repository.GetByIdAsync(id);
-
-//        if (entity == null)
-//            return default;
-
-//        return _mapper.Map<TDto>(entity);
-//    }
-
-//    public virtual async Task<TDto> CreateAsync(TCreateDto dto)
-//    {
-//        var entity = _mapper.Map<TEntity>(dto);
-
-//        await _repository.AddAsync(entity);
-//        await _repository.SaveChangesAsync();
-
-//        return _mapper.Map<TDto>(entity);
-//    }
-
-//    ////
-
-//    //public virtual async Task<TDto> CreateAsync(TCreateDto dto)
-//    //{
-//    //    try
-//    //    {
-//    //        Console.WriteLine($"Creating entity with DTO: {System.Text.Json.JsonSerializer.Serialize(dto)}");
-
-//    //        var entity = _mapper.Map<TEntity>(dto);
-
-//    //        Console.WriteLine($"Mapped entity: {System.Text.Json.JsonSerializer.Serialize(entity)}");
-
-//    //        await _repository.AddAsync(entity);
-//    //        await _repository.SaveChangesAsync();
-
-//    //        return _mapper.Map<TDto>(entity);
-//    //    }
-//    //    catch (Exception ex)
-//    //    {
-//    //        Console.WriteLine($"Error in CreateAsync: {ex.Message}");
-//    //        Console.WriteLine($"Stack trace: {ex.StackTrace}");
-//    //        throw;
-//    //    }
-//    //}
-
-//    ////
-
-
-//    public virtual async Task<bool> UpdateAsync(
-//        Guid id,
-//        TCreateDto dto)
-//    {
-//        var entity = await _repository.GetByIdAsync(id);
-
-//        if (entity == null)
-//            return false;
-
-//        _mapper.Map(dto, entity);
-
-//        _repository.Update(entity);
-
-//        return await _repository.SaveChangesAsync();
-//    }
-
-//    public virtual async Task<bool> DeleteAsync(Guid id)
-//    {
-//        var entity = await _repository.GetByIdAsync(id);
-
-//        if (entity == null)
-//            return false;
-
-//        _repository.Delete(entity);
-
-//        return await _repository.SaveChangesAsync();
-//    }
-//}
-
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
-using Project3.Repositories.Interfaces;
+﻿using AutoMapper;
 using Project3.DTOs;
+using Project3.Repositories.Interfaces;
+using System.Globalization;
 using System.Linq.Expressions;
 
-public class CrudService<TEntity, TDto, TCreateDto> : ICrudService<TEntity, TDto, TCreateDto>
+namespace Project3.Services.Implementations;
+
+public class CrudService<TEntity, TDto, TCreateDto>
+    : ICrudService<TEntity, TDto, TCreateDto>
     where TEntity : class
 {
     protected readonly ICrudRepository<TEntity> _repository;
     protected readonly IMapper _mapper;
 
-    public CrudService(ICrudRepository<TEntity> repository, IMapper mapper)
+    public CrudService(
+        ICrudRepository<TEntity> repository,
+        IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
     }
 
+    // ============================================================
+    // GET ALL
+    // ============================================================
+
     public virtual async Task<IEnumerable<TDto>> GetAllAsync()
     {
-        var entities = await _repository.GetAllAsync();
-        return _mapper.Map<IEnumerable<TDto>>(entities);
+        var entities =
+            await _repository.GetAllAsync();
+
+        return _mapper.Map<IEnumerable<TDto>>(
+            entities
+        );
     }
+
+    // ============================================================
+    // GET BY ID
+    // ============================================================
 
     public virtual async Task<TDto?> GetByIdAsync(Guid id)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null) return default;
+        var entity =
+            await _repository.GetByIdAsync(id);
+
+        if (entity == null)
+            return default;
+
         return _mapper.Map<TDto>(entity);
     }
 
-    public virtual async Task<TDto> CreateAsync(TCreateDto dto)
+    // ============================================================
+    // CREATE
+    // ============================================================
+
+    public virtual async Task<TDto> CreateAsync(
+        TCreateDto dto)
     {
-        var entity = _mapper.Map<TEntity>(dto);
+        var entity =
+            _mapper.Map<TEntity>(dto);
+
         await _repository.AddAsync(entity);
+
         await _repository.SaveChangesAsync();
+
         return _mapper.Map<TDto>(entity);
     }
 
-    public virtual async Task<bool> UpdateAsync(Guid id, TCreateDto dto)
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
+    public virtual async Task<bool> UpdateAsync(
+        Guid id,
+        TCreateDto dto)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null) return false;
+        var entity =
+            await _repository.GetByIdAsync(id);
+
+        if (entity == null)
+            return false;
+
         _mapper.Map(dto, entity);
+
         _repository.Update(entity);
+
         return await _repository.SaveChangesAsync();
     }
 
-    public virtual async Task<bool> DeleteAsync(Guid id)
+    // ============================================================
+    // DELETE
+    // ============================================================
+
+    public virtual async Task<bool> DeleteAsync(
+        Guid id)
     {
-        var entity = await _repository.GetByIdAsync(id);
-        if (entity == null) return false;
+        var entity =
+            await _repository.GetByIdAsync(id);
+
+        if (entity == null)
+            return false;
+
         _repository.Delete(entity);
+
         return await _repository.SaveChangesAsync();
     }
 
-    // ONLY ONE GetPagedAsync method
-    public virtual async Task<PagedResult<TDto>> GetPagedAsync(QueryParamsDto queryParams)
-    {
-        var filter = BuildFilter(queryParams);
-        var orderBy = BuildSort(queryParams);
+    // ============================================================
+    // PAGED QUERY
+    // ============================================================
 
-        var (items, totalCount) = await _repository.GetPagedAsync(
-            filter,
-            orderBy,
-            queryParams.Page,
-            queryParams.PageSize
+    public virtual async Task<PagedResult<TDto>>
+        GetPagedAsync(
+            QueryParamsDto queryParams)
+    {
+        Console.WriteLine(
+            "========================================"
         );
+
+        Console.WriteLine(
+            "📊 CrudService.GetPagedAsync"
+        );
+
+        // --------------------------------------------------------
+        // Normalize pagination
+        // --------------------------------------------------------
+
+        var page =
+            queryParams.Page < 1
+                ? 1
+                : queryParams.Page;
+
+        var pageSize =
+            queryParams.PageSize < 1
+                ? 10
+                : Math.Min(
+                    queryParams.PageSize,
+                    100
+                );
+
+        // --------------------------------------------------------
+        // Normalize sort
+        // --------------------------------------------------------
+
+        var sortOrder =
+            string.Equals(
+                queryParams.SortOrder,
+                "desc",
+                StringComparison.OrdinalIgnoreCase
+            )
+                ? "desc"
+                : "asc";
+
+        Console.WriteLine(
+            $"Search: [{queryParams.Search}]"
+        );
+
+        Console.WriteLine(
+            $"SortBy: [{queryParams.SortBy}]"
+        );
+
+        Console.WriteLine(
+            $"SortOrder: [{sortOrder}]"
+        );
+
+        Console.WriteLine(
+            $"Page: {page}"
+        );
+
+        Console.WriteLine(
+            $"PageSize: {pageSize}"
+        );
+
+        // --------------------------------------------------------
+        // BUILD FILTER
+        // --------------------------------------------------------
+
+        var filter =
+            BuildFilter(queryParams);
+
+        // --------------------------------------------------------
+        // BUILD SORT
+        // --------------------------------------------------------
+
+        var orderBy =
+            BuildSort(queryParams);
+
+        Console.WriteLine(
+            $"Filter generated: {filter != null}"
+        );
+
+        Console.WriteLine(
+            $"Sort generated: {orderBy != null}"
+        );
+
+        // --------------------------------------------------------
+        // REPOSITORY
+        // --------------------------------------------------------
+
+        var (items, totalCount) =
+            await _repository.GetPagedAsync(
+                filter,
+                orderBy,
+                page,
+                pageSize
+            );
+
+        Console.WriteLine(
+            $"Repository returned {items.Count()} items"
+        );
+
+        Console.WriteLine(
+            $"Repository totalCount = {totalCount}"
+        );
+
+        Console.WriteLine(
+            "========================================"
+        );
+
+        // --------------------------------------------------------
+        // RESULT
+        // --------------------------------------------------------
 
         return new PagedResult<TDto>
         {
-            Items = _mapper.Map<List<TDto>>(items),
-            TotalCount = totalCount,
-            Page = queryParams.Page,
-            PageSize = queryParams.PageSize
+            Items =
+                _mapper.Map<List<TDto>>(items),
+
+            TotalCount =
+                totalCount,
+
+            Page =
+                page,
+
+            PageSize =
+                pageSize
         };
     }
 
-    protected virtual Expression<Func<TEntity, bool>>? BuildFilter(QueryParamsDto queryParams)
+    // ============================================================
+    // BUILD FILTER
+    // ============================================================
+
+    protected virtual Expression<Func<TEntity, bool>>?
+        BuildFilter(
+            QueryParamsDto queryParams)
     {
-        return null;
+        Expression<Func<TEntity, bool>>? result =
+            null;
+
+        // --------------------------------------------------------
+        // SEARCH
+        // --------------------------------------------------------
+
+        if (!string.IsNullOrWhiteSpace(
+            queryParams.Search))
+        {
+            var search =
+                queryParams.Search
+                    .Trim()
+                    .ToLowerInvariant();
+
+            var searchFilter =
+                BuildSearchFilter(search);
+
+            if (searchFilter != null)
+            {
+                result = searchFilter;
+            }
+        }
+
+        // --------------------------------------------------------
+        // FILTERS
+        // --------------------------------------------------------
+
+        if (queryParams.Filters != null)
+        {
+            foreach (var filter in queryParams.Filters)
+            {
+                if (string.IsNullOrWhiteSpace(
+                    filter.Value))
+                {
+                    continue;
+                }
+
+                var current =
+                    BuildPropertyFilter(
+                        filter.Key,
+                        filter.Value
+                    );
+
+                if (current == null)
+                    continue;
+
+                result =
+                    result == null
+                        ? current
+                        : CombineExpressions(
+                            result,
+                            current
+                        );
+            }
+        }
+
+        return result;
     }
 
-    protected virtual Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? BuildSort(QueryParamsDto queryParams)
+    // ============================================================
+    // SEARCHABLE PROPERTIES
+    // ============================================================
+    //
+    // Derived services override this.
+    //
+    // Example:
+    //
+    // protected override string[] SearchableProperties =>
+    // [
+    //     "Name",
+    //     "Code",
+    //     "City"
+    // ];
+    //
+    // ============================================================
+
+    protected virtual string[] SearchableProperties =>
+        Array.Empty<string>();
+
+    // ============================================================
+    // BUILD SEARCH FILTER
+    // ============================================================
+
+    protected virtual Expression<Func<TEntity, bool>>?
+        BuildSearchFilter(
+            string search)
     {
-        if (string.IsNullOrEmpty(queryParams.SortBy))
+        if (SearchableProperties.Length == 0)
             return null;
 
-        // Use a simpler approach for sorting
-        return query => {
-            // Get the property info
-            var propertyInfo = typeof(TEntity).GetProperty(queryParams.SortBy);
-            if (propertyInfo == null)
-            {
-                // Try to find property case-insensitively
-                propertyInfo = typeof(TEntity).GetProperties()
-                    .FirstOrDefault(p => string.Equals(p.Name, queryParams.SortBy, StringComparison.OrdinalIgnoreCase));
-
-                if (propertyInfo == null)
-                    return (IOrderedQueryable<TEntity>)query;
-            }
-
-            var parameter = Expression.Parameter(typeof(TEntity), "x");
-            var property = Expression.Property(parameter, propertyInfo);
-            var lambda = Expression.Lambda(property, parameter);
-
-            var methodName = queryParams.SortOrder?.ToLower() == "desc"
-                ? "OrderByDescending"
-                : "OrderBy";
-
-            var methodCall = Expression.Call(
-                typeof(Queryable),
-                methodName,
-                new[] { typeof(TEntity), property.Type },
-                query.Expression,
-                Expression.Quote(lambda)
+        var parameter =
+            Expression.Parameter(
+                typeof(TEntity),
+                "x"
             );
 
-            return (IOrderedQueryable<TEntity>)query.Provider.CreateQuery<TEntity>(methodCall);
+        Expression? combinedBody =
+            null;
+
+        foreach (var propertyName
+                 in SearchableProperties)
+        {
+            var property =
+                typeof(TEntity)
+                    .GetProperty(
+                        propertyName,
+                        System.Reflection.BindingFlags.Public |
+                        System.Reflection.BindingFlags.Instance |
+                        System.Reflection.BindingFlags.IgnoreCase
+                    );
+
+            if (property == null)
+                continue;
+
+            // Only search string properties.
+            if (property.PropertyType != typeof(string))
+                continue;
+
+            var propertyExpression =
+                Expression.Property(
+                    parameter,
+                    property
+                );
+
+            // x.Property != null
+            var notNull =
+                Expression.NotEqual(
+                    propertyExpression,
+                    Expression.Constant(
+                        null,
+                        typeof(string)
+                    )
+                );
+
+            // x.Property.ToLower()
+            var toLowerMethod =
+                typeof(string).GetMethod(
+                    nameof(string.ToLower),
+                    Type.EmptyTypes
+                )!;
+
+            var loweredProperty =
+                Expression.Call(
+                    propertyExpression,
+                    toLowerMethod
+                );
+
+            // x.Property.ToLower().Contains(search)
+            var containsMethod =
+                typeof(string).GetMethod(
+                    nameof(string.Contains),
+                    new[] { typeof(string) }
+                )!;
+
+            var contains =
+                Expression.Call(
+                    loweredProperty,
+                    containsMethod,
+                    Expression.Constant(search)
+                );
+
+            var propertyCondition =
+                Expression.AndAlso(
+                    notNull,
+                    contains
+                );
+
+            combinedBody =
+                combinedBody == null
+                    ? propertyCondition
+                    : Expression.OrElse(
+                        combinedBody,
+                        propertyCondition
+                    );
+        }
+
+        if (combinedBody == null)
+            return null;
+
+        return Expression.Lambda<Func<TEntity, bool>>(
+            combinedBody,
+            parameter
+        );
+    }
+
+    // ============================================================
+    // BUILD PROPERTY FILTER
+    // ============================================================
+
+    protected virtual Expression<Func<TEntity, bool>>?
+        BuildPropertyFilter(
+            string propertyName,
+            string value)
+    {
+        var property =
+            typeof(TEntity)
+                .GetProperty(
+                    propertyName,
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.IgnoreCase
+                );
+
+        if (property == null)
+        {
+            Console.WriteLine(
+                $"⚠️ Unknown filter property: {propertyName}"
+            );
+
+            return null;
+        }
+
+        var parameter =
+            Expression.Parameter(
+                typeof(TEntity),
+                "x"
+            );
+
+        var propertyExpression =
+            Expression.Property(
+                parameter,
+                property
+            );
+
+        var propertyType =
+            Nullable.GetUnderlyingType(
+                property.PropertyType
+            )
+            ?? property.PropertyType;
+
+        // ========================================================
+        // STRING
+        // ========================================================
+
+        if (propertyType == typeof(string))
+        {
+            var toLowerMethod =
+                typeof(string).GetMethod(
+                    nameof(string.ToLower),
+                    Type.EmptyTypes
+                )!;
+
+            var containsMethod =
+                typeof(string).GetMethod(
+                    nameof(string.Contains),
+                    new[] { typeof(string) }
+                )!;
+
+            var lowered =
+                Expression.Call(
+                    propertyExpression,
+                    toLowerMethod
+                );
+
+            var contains =
+                Expression.Call(
+                    lowered,
+                    containsMethod,
+                    Expression.Constant(
+                        value.Trim().ToLowerInvariant()
+                    )
+                );
+
+            var body =
+                Expression.AndAlso(
+                    Expression.NotEqual(
+                        propertyExpression,
+                        Expression.Constant(
+                            null,
+                            property.PropertyType
+                        )
+                    ),
+                    contains
+                );
+
+            return Expression.Lambda<Func<TEntity, bool>>(
+                body,
+                parameter
+            );
+        }
+
+        // ========================================================
+        // BOOLEAN
+        // ========================================================
+
+        if (propertyType == typeof(bool))
+        {
+            if (!bool.TryParse(
+                value,
+                out var boolValue))
+            {
+                if (value.Equals(
+                    "1",
+                    StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals(
+                        "active",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    boolValue = true;
+                }
+                else if (
+                    value.Equals(
+                        "0",
+                        StringComparison.OrdinalIgnoreCase) ||
+                    value.Equals(
+                        "inactive",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    boolValue = false;
+                }
+                else
+                {
+                    Console.WriteLine(
+                        $"⚠️ Invalid boolean filter: {value}"
+                    );
+
+                    return null;
+                }
+            }
+
+            var constant =
+                Expression.Constant(
+                    boolValue,
+                    propertyType
+                );
+
+            Expression body =
+                Expression.Equal(
+                    propertyExpression,
+                    constant
+                );
+
+            // Nullable<bool>
+            if (Nullable.GetUnderlyingType(
+                property.PropertyType) != null)
+            {
+                body =
+                    Expression.Equal(
+                        propertyExpression,
+                        Expression.Convert(
+                            constant,
+                            property.PropertyType
+                        )
+                    );
+            }
+
+            return Expression.Lambda<Func<TEntity, bool>>(
+                body,
+                parameter
+            );
+        }
+
+        // ========================================================
+        // ENUM
+        // ========================================================
+
+        if (propertyType.IsEnum)
+        {
+            try
+            {
+                var enumValue =
+                    Enum.Parse(
+                        propertyType,
+                        value,
+                        ignoreCase: true
+                    );
+
+                var constant =
+                    Expression.Constant(
+                        enumValue,
+                        propertyType
+                    );
+
+                var body =
+                    Expression.Equal(
+                        propertyExpression,
+                        constant
+                    );
+
+                return Expression.Lambda<Func<TEntity, bool>>(
+                    body,
+                    parameter
+                );
+            }
+            catch
+            {
+                Console.WriteLine(
+                    $"⚠️ Invalid enum value '{value}' for {property.Name}"
+                );
+
+                return null;
+            }
+        }
+
+        // ========================================================
+        // NUMERIC / GUID / DATE / ETC.
+        // ========================================================
+
+        try
+        {
+            var converted =
+                Convert.ChangeType(
+                    value,
+                    propertyType,
+                    CultureInfo.InvariantCulture
+                );
+
+            var constant =
+                Expression.Constant(
+                    converted,
+                    propertyType
+                );
+
+            var body =
+                Expression.Equal(
+                    propertyExpression,
+                    constant
+                );
+
+            return Expression.Lambda<Func<TEntity, bool>>(
+                body,
+                parameter
+            );
+        }
+        catch
+        {
+            Console.WriteLine(
+                $"⚠️ Could not convert filter value '{value}' " +
+                $"to {propertyType.Name}"
+            );
+
+            return null;
+        }
+    }
+
+    // ============================================================
+    // BUILD SORT
+    // ============================================================
+
+    protected virtual Func<
+        IQueryable<TEntity>,
+        IOrderedQueryable<TEntity>
+    >? BuildSort(
+        QueryParamsDto queryParams)
+    {
+        if (string.IsNullOrWhiteSpace(
+            queryParams.SortBy))
+        {
+            return null;
+        }
+
+        var property =
+            typeof(TEntity)
+                .GetProperty(
+                    queryParams.SortBy,
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.Instance |
+                    System.Reflection.BindingFlags.IgnoreCase
+                );
+
+        if (property == null)
+        {
+            Console.WriteLine(
+                $"⚠️ Unknown sort property: {queryParams.SortBy}"
+            );
+
+            return null;
+        }
+
+        var descending =
+            string.Equals(
+                queryParams.SortOrder,
+                "desc",
+                StringComparison.OrdinalIgnoreCase
+            );
+
+        return query =>
+        {
+            var parameter =
+                Expression.Parameter(
+                    typeof(TEntity),
+                    "x"
+                );
+
+            var propertyExpression =
+                Expression.Property(
+                    parameter,
+                    property
+                );
+
+            var lambda =
+                Expression.Lambda(
+                    propertyExpression,
+                    parameter
+                );
+
+            var methodName =
+                descending
+                    ? nameof(Queryable.OrderByDescending)
+                    : nameof(Queryable.OrderBy);
+
+            var method =
+                typeof(Queryable)
+                    .GetMethods()
+                    .First(m =>
+                        m.Name == methodName &&
+                        m.IsGenericMethodDefinition &&
+                        m.GetParameters().Length == 2
+                    );
+
+            var genericMethod =
+                method.MakeGenericMethod(
+                    typeof(TEntity),
+                    property.PropertyType
+                );
+
+            var ordered =
+                genericMethod.Invoke(
+                    null,
+                    new object[]
+                    {
+                        query,
+                        lambda
+                    }
+                );
+
+            return (IOrderedQueryable<TEntity>)
+                ordered!;
         };
+    }
+
+    // ============================================================
+    // COMBINE EXPRESSIONS
+    // ============================================================
+
+    protected virtual Expression<Func<TEntity, bool>>
+        CombineExpressions(
+            Expression<Func<TEntity, bool>> first,
+            Expression<Func<TEntity, bool>> second)
+    {
+        var parameter =
+            Expression.Parameter(
+                typeof(TEntity),
+                "x"
+            );
+
+        var firstBody =
+            new ReplaceParameterVisitor(
+                first.Parameters[0],
+                parameter
+            ).Visit(first.Body);
+
+        var secondBody =
+            new ReplaceParameterVisitor(
+                second.Parameters[0],
+                parameter
+            ).Visit(second.Body);
+
+        var body =
+            Expression.AndAlso(
+                firstBody!,
+                secondBody!
+            );
+
+        return Expression.Lambda<Func<TEntity, bool>>(
+            body,
+            parameter
+        );
+    }
+
+    // ============================================================
+    // PARAMETER REPLACEMENT
+    // ============================================================
+
+    private sealed class ReplaceParameterVisitor
+        : ExpressionVisitor
+    {
+        private readonly ParameterExpression
+            _oldParameter;
+
+        private readonly ParameterExpression
+            _newParameter;
+
+        public ReplaceParameterVisitor(
+            ParameterExpression oldParameter,
+            ParameterExpression newParameter)
+        {
+            _oldParameter =
+                oldParameter;
+
+            _newParameter =
+                newParameter;
+        }
+
+        protected override Expression VisitParameter(
+            ParameterExpression node)
+        {
+            return node == _oldParameter
+                ? _newParameter
+                : base.VisitParameter(node);
+        }
     }
 }

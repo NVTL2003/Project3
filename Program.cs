@@ -2,29 +2,41 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
 using Project3.Models;
+using Project3.DTOs;
 using Project3.Authentication;
+
 using Project3.Repositories.Interfaces;
 using Project3.Repositories.Implementations;
+
 using Project3.Services.Interfaces;
 using Project3.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ============================================
-// JWT
-// ============================================
 
-var jwtKey = builder.Configuration["Jwt:Key"]
+// ============================================================
+// JWT AUTHENTICATION
+// ============================================================
+
+var jwtKey =
+    builder.Configuration["Jwt:Key"]
     ?? throw new InvalidOperationException(
-        "JWT Key is missing.");
+        "JWT Key is missing."
+    );
 
-var jwtIssuer = builder.Configuration["Jwt:Issuer"];
-var jwtAudience = builder.Configuration["Jwt:Audience"];
+var jwtIssuer =
+    builder.Configuration["Jwt:Issuer"];
+
+var jwtAudience =
+    builder.Configuration["Jwt:Audience"];
+
 
 builder.Services
     .AddAuthentication(
-        JwtBearerDefaults.AuthenticationScheme)
+        JwtBearerDefaults.AuthenticationScheme
+    )
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters =
@@ -40,96 +52,186 @@ builder.Services
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtKey))
+                        Encoding.UTF8.GetBytes(jwtKey)
+                    )
             };
     });
 
+
 builder.Services.AddAuthorization();
 
-// ============================================
-// Database
-// ============================================
 
-builder.Services.AddDbContext<Pj3Context>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString(
-            "DefaultConnection"),
+// ============================================================
+// DATABASE
+// ============================================================
 
-        ServerVersion.AutoDetect(
-            builder.Configuration.GetConnectionString(
-                "DefaultConnection"))
-    ));
+var connectionString =
+    builder.Configuration.GetConnectionString(
+        "DefaultConnection"
+    );
 
-// ============================================
-// Authentication services
-// ============================================
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "DefaultConnection is missing."
+    );
+}
 
-builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddDbContext<Pj3Context>(
+    options =>
+        options.UseMySql(
+            connectionString,
+            ServerVersion.AutoDetect(
+                connectionString
+            )
+        )
+);
+
+
+// ============================================================
+// AUTHENTICATION SERVICES
+// ============================================================
+
+builder.Services.AddScoped<
+    IJwtService,
+    JwtService
+>();
 
 builder.Services.AddScoped<
     IAuthService,
-    AuthService>();
+    AuthService
+>();
 
-// ============================================
-// Repository
-// ============================================
+
+// ============================================================
+// GENERIC REPOSITORY
+// ============================================================
+//
+// This allows:
+//
+// ICrudRepository<Facility>
+//        ↓
+// CrudRepository<Facility>
+//
+// ICrudRepository<User>
+//        ↓
+// CrudRepository<User>
+//
+// etc.
+//
 
 builder.Services.AddScoped(
     typeof(ICrudRepository<>),
-    typeof(CrudRepository<>));
+    typeof(CrudRepository<>)
+);
 
-// ============================================
-// Generic CRUD service
-// ============================================
+
+// ============================================================
+// GENERIC CRUD SERVICE
+// ============================================================
+//
+// Generic fallback.
+//
+// This handles entities that don't have their own
+// specialized service.
+//
+// Example:
+//
+// ICrudService<Department, DepartmentDto, CreateDepartmentDto>
+//        ↓
+// CrudService<Department, ...>
+//
 
 builder.Services.AddScoped(
     typeof(ICrudService<,,>),
-    typeof(CrudService<,,>));
+    typeof(CrudService<,,>)
+);
 
-// ============================================
-// Controllers
-// ============================================
+
+// ============================================================
+// FACILITY SERVICE
+// ============================================================
+//
+// IMPORTANT:
+//
+// Facility has custom filtering/search logic.
+//
+// Therefore FacilityController must receive:
+//
+// ICrudService<Facility, FacilityDto, CreateFacilityDto>
+//        ↓
+// FacilityService
+//
+// instead of:
+//
+// ICrudService<Facility, FacilityDto, CreateFacilityDto>
+//        ↓
+// CrudService<Facility, ...>
+//
+
+builder.Services.AddScoped<
+    ICrudService<Facility, FacilityDto, CreateFacilityDto>,
+    FacilityService
+>();
+
+
+// ============================================================
+// CONTROLLERS
+// ============================================================
 
 builder.Services.AddControllers();
 
-// ============================================
+
+// ============================================================
 // CORS
-// ============================================
+// ============================================================
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReact", policy =>
-    {
-        policy
-            .WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
+    options.AddPolicy(
+        "AllowReact",
+        policy =>
+        {
+            policy
+                .WithOrigins(
+                    "http://localhost:3000"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    );
 });
 
-// ============================================
-// AutoMapper
-// ============================================
+
+// ============================================================
+// AUTOMAPPER
+// ============================================================
 
 builder.Services.AddAutoMapper(
-    AppDomain.CurrentDomain.GetAssemblies());
+    AppDomain.CurrentDomain.GetAssemblies()
+);
 
-// ============================================
-// Build
-// ============================================
+
+// ============================================================
+// BUILD APPLICATION
+// ============================================================
 
 var app = builder.Build();
 
-// ============================================
-// Middleware
-// ============================================
+
+// ============================================================
+// MIDDLEWARE
+// ============================================================
 
 app.UseMiddleware<RequestCounterMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowReact");
 
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
