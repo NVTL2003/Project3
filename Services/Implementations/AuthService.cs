@@ -21,6 +21,187 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
     }
 
+    public async Task<bool> RegisterAsync(RegisterRequestDto request)
+    {
+        // ============================================================
+        // 1. BASIC VALIDATION
+        // ============================================================
+
+        if (string.IsNullOrWhiteSpace(request.Username))
+            throw new ArgumentException("Username is required.");
+
+        if (string.IsNullOrWhiteSpace(request.Email))
+            throw new ArgumentException("Email is required.");
+
+        if (string.IsNullOrWhiteSpace(request.Password))
+            throw new ArgumentException("Password is required.");
+
+        if (string.IsNullOrWhiteSpace(request.FirstName))
+            throw new ArgumentException("First name is required.");
+
+        if (string.IsNullOrWhiteSpace(request.LastName))
+            throw new ArgumentException("Last name is required.");
+
+
+        // ============================================================
+        // 2. NORMALIZE INPUT
+        // ============================================================
+
+        var username = request.Username.Trim();
+        var email = request.Email.Trim().ToLowerInvariant();
+
+
+        // ============================================================
+        // 3. CHECK USERNAME / EMAIL DUPLICATES
+        // ============================================================
+
+        var usernameExists = await _context.Users
+            .AnyAsync(u => u.Username == username);
+
+        if (usernameExists)
+        {
+            throw new InvalidOperationException(
+                "Username is already registered.");
+        }
+
+
+        var emailExists = await _context.Users
+            .AnyAsync(u => u.Email == email);
+
+        if (emailExists)
+        {
+            throw new InvalidOperationException(
+                "Email is already registered.");
+        }
+
+
+        // ============================================================
+        // 4. FIND CUSTOMER ROLE
+        // ============================================================
+
+        var customerRole = await _context.Roles
+            .FirstOrDefaultAsync(r => r.Name == "Customer");
+
+        if (customerRole == null)
+        {
+            throw new InvalidOperationException(
+                "Customer role does not exist in the database.");
+        }
+
+
+        // ============================================================
+        // 5. START TRANSACTION
+        // ============================================================
+
+        await using var transaction =
+            await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // ========================================================
+            // 6. CREATE USER
+            // ========================================================
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+
+                Username = username,
+
+                Email = email,
+
+                Phone = string.IsNullOrWhiteSpace(request.Phone)
+                    ? null
+                    : request.Phone.Trim(),
+
+                PasswordHash =
+                    BCryptHasher.HashPassword(request.Password),
+
+                MfaEnabled = false,
+
+                IsActive = true,
+
+                CreatedAt = DateTime.UtcNow,
+
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+
+
+            // ========================================================
+            // 7. CREATE CUSTOMER
+            // ========================================================
+
+            var customer = new Customer
+            {
+                Id = Guid.NewGuid(),
+
+                UserId = user.Id,
+
+                FirstName = request.FirstName.Trim(),
+
+                LastName = request.LastName.Trim(),
+
+                CompanyName = string.IsNullOrWhiteSpace(request.CompanyName)
+                    ? null
+                    : request.CompanyName.Trim(),
+
+                TaxId = string.IsNullOrWhiteSpace(request.TaxId)
+                    ? null
+                    : request.TaxId.Trim(),
+
+                IsActive = true,
+
+                CreatedAt = DateTime.UtcNow,
+
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            _context.Customers.Add(customer);
+
+
+            // ========================================================
+            // 8. ASSIGN CUSTOMER ROLE
+            // ========================================================
+
+            var userRole = new UserRole
+            {
+                Id = Guid.NewGuid(),
+
+                UserId = user.Id,
+
+                RoleId = customerRole.Id,
+
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.UserRoles.Add(userRole);
+
+
+            // ========================================================
+            // 9. SAVE EVERYTHING
+            // ========================================================
+
+            await _context.SaveChangesAsync();
+
+
+            // ========================================================
+            // 10. COMMIT
+            // ========================================================
+
+            await transaction.CommitAsync();
+
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+
+            throw;
+        }
+    }
+
     public async Task<AuthResponseDto?> LoginAsync(
     LoginDto request)
     {

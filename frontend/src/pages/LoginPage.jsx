@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import authService from "../services/authService";
 
 function LoginPage() {
@@ -151,7 +151,13 @@ function LoginPage() {
                     >
                         {loading ? "Signing In..." : "Sign In"}
                     </button>
+                    <div style={styles.registerLink}>
+                        <span>Don't have an account?</span>
 
+                        <Link to="/register">
+                            Create a customer account
+                        </Link>
+                    </div>
                 </form>
 
             </div>
@@ -222,8 +228,16 @@ const styles = {
         padding: "10px",
         marginBottom: "15px",
         borderRadius: "5px"
+    },
+    registerLink: {
+        marginTop: "20px",
+        textAlign: "center",
+        display: "flex",
+        justifyContent: "center",
+        gap: "6px",
+        fontSize: "14px",
+        color: "#666"
     }
-
 };
 
 export default LoginPage;

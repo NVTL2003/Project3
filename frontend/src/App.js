@@ -6,6 +6,7 @@
 } from "react-router-dom";
 
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import FacilitiesPage from "./pages/FacilitiesPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -62,6 +63,11 @@ function App() {
                 <Route
                     path="/login"
                     element={<LoginPage />}
+                />
+
+                <Route
+                    path="/register"
+                    element={<RegisterPage />}
                 />
 
 

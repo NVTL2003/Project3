@@ -1,13 +1,10 @@
+//api\client.js
+
 import axios from "axios";
 
 const api = axios.create({
     baseURL: "http://localhost:5047/api"
 });
-
-
-// =========================================================
-// REQUEST INTERCEPTOR
-// =========================================================
 
 api.interceptors.request.use(
     (config) => {
@@ -28,11 +25,6 @@ api.interceptors.request.use(
     (error) =>
         Promise.reject(error)
 );
-
-
-// =========================================================
-// RESPONSE INTERCEPTOR
-// =========================================================
 
 api.interceptors.response.use(
 

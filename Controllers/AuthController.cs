@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Project3.DTOs;
 using Project3.Services.Interfaces;
 
@@ -30,5 +31,42 @@ public class AuthController : ControllerBase
         }
 
         return Ok(result);
+    }
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Register(
+        [FromBody] RegisterRequestDto request)
+    {
+        try
+        {
+            var result = await _authService.RegisterAsync(request);
+
+            if (!result)
+            {
+                return BadRequest(new
+                {
+                    message = "Registration failed."
+                });
+            }
+
+            return Ok(new
+            {
+                message = "Registration successful."
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new
+            {
+                message = ex.Message
+            });
+        }
     }
 }
