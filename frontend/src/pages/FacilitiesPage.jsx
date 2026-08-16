@@ -70,7 +70,7 @@ const FacilitiesPage = () => {
     return (
         <GenericEntityPage
             entityName="Facilities"
-            permissionPrefix="Facility"
+            permissionPrefix="facilities"
             service={facilityService}
             fieldConfig={facilityFieldConfig}
             displayColumns={facilityDisplayColumns}

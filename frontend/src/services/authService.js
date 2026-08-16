@@ -1,9 +1,9 @@
 import api from "../api/client";
 
 const authService = {
-    login: (username, password) => {
+    login: (usernameOrEmail, password) => {
         return api.post("/auth/login", {
-            username,
+            usernameOrEmail,
             password
         });
     }

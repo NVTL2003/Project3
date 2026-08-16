@@ -95,17 +95,19 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
         _authorizationService = authorizationService;
     }
 
-    private string ResourceName =>
-        typeof(TEntity).Name;
-
-    // ============================================================
-    // PERMISSION CHECK
-    // ============================================================
+    protected virtual string ResourceName =>
+    typeof(TEntity).Name.ToLowerInvariant();
 
     private async Task<bool> HasPermission(string action)
     {
         var permission =
-            $"{ResourceName}.{action}";
+            $"{ResourceName}.{action.ToLowerInvariant()}";
+
+        Console.WriteLine("========================================");
+        Console.WriteLine("🔐 PERMISSION CHECK");
+        Console.WriteLine($"Resource: {ResourceName}");
+        Console.WriteLine($"Action: {action}");
+        Console.WriteLine($"Permission requested: {permission}");
 
         var result =
             await _authorizationService.AuthorizeAsync(
@@ -113,8 +115,13 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
                 resource: null,
                 requirements: new[]
                 {
-                    new PermissionRequirement(permission)
+                new PermissionRequirement(permission)
                 });
+
+        Console.WriteLine(
+            $"Permission result: {result.Succeeded}");
+
+        Console.WriteLine("========================================");
 
         return result.Succeeded;
     }
@@ -131,6 +138,23 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
 
         var result =
             await _service.GetAllAsync();
+
+        return Ok(result);
+    }
+
+    // ============================================================
+    // GET PAGED
+    // ============================================================
+
+    [HttpGet("paged")]
+    public virtual async Task<IActionResult> GetPaged(
+        [FromQuery] QueryParamsDto queryParams)
+    {
+        if (!await HasPermission("Read"))
+            return Forbid();
+
+        var result =
+            await _service.GetPagedAsync(queryParams);
 
         return Ok(result);
     }

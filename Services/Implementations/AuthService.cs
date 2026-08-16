@@ -1,70 +1,3 @@
-//using Microsoft.EntityFrameworkCore;
-//using Project3.DTOs.Auth;
-//using Project3.Models;
-//using Project3.Authentication;
-//using Project3.Services.Interfaces;
-
-//using BCryptHasher = BCrypt.Net.BCrypt;
-
-//namespace Project3.Services.Implementations;
-
-//public class AuthService : IAuthService
-//{
-//    private readonly Pj3Context _context;
-//    private readonly IJwtService _jwtService;
-
-//    public AuthService(
-//        Pj3Context context,
-//        IJwtService jwtService)
-//    {
-//        _context = context;
-//        _jwtService = jwtService;
-//    }
-
-//    public async Task<LoginResponseDto?> LoginAsync(
-//        LoginRequestDto request)
-//    {
-//        var user = await _context.Set<User>()
-//            .Include(u => u.UserRoles)
-//                .ThenInclude(ur => ur.Role)
-//            .FirstOrDefaultAsync(
-//                u => u.Username == request.Username);
-
-//        if (user == null)
-//            return null;
-
-//        if (user.IsActive == false)
-//            return null;
-
-//        var passwordValid =
-//            BCryptHasher.Verify(
-//                request.Password,
-//                user.PasswordHash);
-
-//        if (!passwordValid)
-//            return null;
-
-//        var roles = user.UserRoles
-//            .Select(ur => ur.Role.Name)
-//            .ToList();
-
-//        var token = _jwtService.GenerateToken(
-//            user,
-//            roles);
-
-//        user.LastLogin = DateTime.UtcNow;
-
-//        await _context.SaveChangesAsync();
-
-//        return new LoginResponseDto
-//        {
-//            Token = token,
-//            UserId = user.Id,
-//            Username = user.Username,
-//            Roles = roles
-//        };
-//    }
-//}
 using Microsoft.EntityFrameworkCore;
 using Project3.DTOs;
 using Project3.Models;
@@ -89,8 +22,12 @@ public class AuthService : IAuthService
     }
 
     public async Task<AuthResponseDto?> LoginAsync(
-        LoginDto request)
+    LoginDto request)
     {
+        Console.WriteLine("========== LOGIN DEBUG ==========");
+        Console.WriteLine($"UsernameOrEmail: [{request.UsernameOrEmail}]");
+        Console.WriteLine($"Password received: {!string.IsNullOrEmpty(request.Password)}");
+
         var user = await _context.Users
             .Include(u => u.UserRoles)
                 .ThenInclude(ur => ur.Role)
@@ -101,31 +38,40 @@ public class AuthService : IAuthService
                 u.Email == request.UsernameOrEmail);
 
         if (user == null)
+        {
+            Console.WriteLine("LOGIN RESULT: USER NOT FOUND");
+            Console.WriteLine("=================================");
             return null;
+        }
+
+        Console.WriteLine($"USER FOUND: {user.Username}");
+        Console.WriteLine($"USER ACTIVE: {user.IsActive}");
 
         if (user.IsActive != true)
+        {
+            Console.WriteLine("LOGIN RESULT: USER INACTIVE");
+            Console.WriteLine("=================================");
             return null;
+        }
 
         var passwordValid =
             BCryptHasher.Verify(
                 request.Password,
                 user.PasswordHash);
 
-        if (!passwordValid)
-            return null;
+        Console.WriteLine($"PASSWORD VALID: {passwordValid}");
 
-        // ============================================
-        // ROLES
-        // ============================================
+        if (!passwordValid)
+        {
+            Console.WriteLine("LOGIN RESULT: INVALID PASSWORD");
+            Console.WriteLine("=================================");
+            return null;
+        }
 
         var roles = user.UserRoles
             .Select(ur => ur.Role.Name)
             .Distinct()
             .ToList();
-
-        // ============================================
-        // PERMISSIONS
-        // ============================================
 
         var permissions = user.UserRoles
             .SelectMany(ur => ur.Role.RolePermissions)
@@ -133,26 +79,17 @@ public class AuthService : IAuthService
             .Distinct()
             .ToList();
 
-        // ============================================
-        // JWT
-        // ============================================
+        Console.WriteLine($"ROLES: {string.Join(", ", roles)}");
+        Console.WriteLine($"PERMISSIONS: {permissions.Count}");
 
         var token = _jwtService.GenerateToken(
             user,
             roles,
             permissions);
 
-        // ============================================
-        // LOGIN TIME
-        // ============================================
-
         user.LastLogin = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
-
-        // ============================================
-        // USER DTO
-        // ============================================
 
         var userDto = new UserDto
         {
@@ -165,22 +102,17 @@ public class AuthService : IAuthService
             LastLogin = user.LastLogin,
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt,
-
             Roles = roles,
             Permissions = permissions
         };
 
-        // ============================================
-        // RESPONSE
-        // ============================================
+        Console.WriteLine("LOGIN RESULT: SUCCESS");
+        Console.WriteLine("=================================");
 
         return new AuthResponseDto
         {
             Token = token,
-
-            ExpiresAt =
-                DateTime.UtcNow.AddHours(1),
-
+            ExpiresAt = DateTime.UtcNow.AddHours(1),
             User = userDto
         };
     }

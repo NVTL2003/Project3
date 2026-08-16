@@ -18,29 +18,33 @@ function LoginPage() {
         setError("");
 
         try {
-            const response =
-                await authService.login(
-                    username,
-                    password
-                );
+            const response = await authService.login(
+                username,
+                password
+            );
+
+            console.log("========== LOGIN RESPONSE ==========");
+            console.log(response);
+            console.log("STATUS:", response.status);
+            console.log("DATA:", response.data);
+            console.log("TOKEN:", response.data?.token);
+            console.log("USER:", response.data?.user);
+            console.log("====================================");
 
             const data = response.data;
 
-            console.log("Login response:", data);
+            if (!data) {
+                throw new Error("Backend returned no response data.");
+            }
 
-            // ==========================================
-            // TOKEN
-            // ==========================================
+            if (!data.token) {
+                throw new Error("Backend returned no JWT token.");
+            }
 
-            localStorage.setItem(
-                "token",
-                data.token
-            );
+            // Store token
+            localStorage.setItem("token", data.token);
 
-            // ==========================================
-            // USER
-            // ==========================================
-
+            // Store user
             if (data.user) {
                 localStorage.setItem(
                     "user",
@@ -48,49 +52,41 @@ function LoginPage() {
                 );
             }
 
-            // ==========================================
-            // ROLES
-            // ==========================================
+            // Store roles
+            localStorage.setItem(
+                "roles",
+                JSON.stringify(data.user?.roles || [])
+            );
 
-            if (data.user?.roles) {
-                localStorage.setItem(
-                    "roles",
-                    JSON.stringify(data.user.roles)
-                );
-            } else {
-                localStorage.setItem(
-                    "roles",
-                    JSON.stringify([])
-                );
-            }
+            // Store permissions
+            localStorage.setItem(
+                "permissions",
+                JSON.stringify(data.user?.permissions || [])
+            );
 
-            // ==========================================
-            // PERMISSIONS
-            // ==========================================
+            console.log("========== LOCAL STORAGE ==========");
+            console.log("token:", localStorage.getItem("token"));
+            console.log("user:", localStorage.getItem("user"));
+            console.log("roles:", localStorage.getItem("roles"));
+            console.log(
+                "permissions:",
+                localStorage.getItem("permissions")
+            );
+            console.log("===================================");
 
-            if (data.user?.permissions) {
-                localStorage.setItem(
-                    "permissions",
-                    JSON.stringify(data.user.permissions)
-                );
-            } else {
-                localStorage.setItem(
-                    "permissions",
-                    JSON.stringify([])
-                );
-            }
-
-            navigate("/");
+            navigate("/", { replace: true });
 
         } catch (err) {
 
-            console.error(
-                "Login error:",
-                err
-            );
+            console.error("========== LOGIN ERROR ==========");
+            console.error(err);
+            console.error("Response:", err.response);
+            console.error("Response data:", err.response?.data);
+            console.error("=================================");
 
             setError(
                 err.response?.data?.message ||
+                err.message ||
                 "Login failed."
             );
 

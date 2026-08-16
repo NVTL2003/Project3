@@ -67,7 +67,7 @@ const useTableControls = ({
             sortOrder: sortOrder || "asc",
 
             page,
-
+            // line 70
             pageSize,
 
             filters:
@@ -95,7 +95,7 @@ const useTableControls = ({
 
 
         try {
-
+            //line 100
             const response = await fetchData(
                 params,
                 {
@@ -157,7 +157,7 @@ const useTableControls = ({
             setTotalCount(count);
 
             setTotalPages(pages);
-
+            //line 160
 
         } catch (error) {
 
@@ -187,7 +187,7 @@ const useTableControls = ({
             setData([]);
 
             setTotalCount(0);
-
+            //line 190
             setTotalPages(0);
 
 
