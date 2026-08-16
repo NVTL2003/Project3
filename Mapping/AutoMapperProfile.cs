@@ -26,6 +26,26 @@ namespace Project3.Mapping
                     opt => opt.Ignore());
 
             CreateMap<Facility, FacilityDto>();
+
+            // Permission mappings
+            CreateMap<CreatePermissionDto, Permission>();
+            CreateMap<Permission, PermissionDto>();
+
+            // RolePermission mappings
+            CreateMap<CreateRolePermissionDto, RolePermission>();
+            CreateMap<RolePermission, RolePermissionDto>();
+
+            // UserRole mappings
+            CreateMap<CreateUserRoleDto, UserRole>();
+            CreateMap<UserRole, UserRoleDto>();
+            // Role mappings
+            CreateMap<CreateRoleDto, Role>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.RolePermissions, opt => opt.Ignore())
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
+
+            CreateMap<Role, RoleDto>();
         }
 
         private string GenerateDefaultCode(string name)

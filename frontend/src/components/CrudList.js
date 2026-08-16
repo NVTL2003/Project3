@@ -66,23 +66,40 @@ function CrudList({ data, columns, onEdit, onDelete, layout = "vertical" }) {
                         </div>
 
                         <div>
-                            <button
-                                onClick={() => onEdit(item)}
-                                style={{ marginRight: "8px" }}
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => {
-                                    if (itemId) {
-                                        onDelete(itemId);
-                                    } else {
-                                        alert("Cannot delete: Invalid ID");
-                                    }
-                                }}
-                            >
-                                Delete
-                            </button>
+
+                            {onEdit && (
+                                <button
+                                    onClick={() => onEdit(item)}
+                                    style={{
+                                        marginRight: "8px"
+                                    }}
+                                >
+                                    Edit
+                                </button>
+                            )}
+
+                            {onDelete && (
+                                <button
+                                    onClick={() => {
+
+                                        if (itemId) {
+
+                                            onDelete(itemId);
+
+                                        } else {
+
+                                            alert(
+                                                "Cannot delete: Invalid ID"
+                                            );
+
+                                        }
+
+                                    }}
+                                >
+                                    Delete
+                                </button>
+                            )}
+
                         </div>
                     </div>
                 );

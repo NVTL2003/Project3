@@ -20,6 +20,10 @@ function Dashboard() {
 
     const logout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("roles");
+        localStorage.removeItem("permissions");
+
         window.location.href = "/login";
     };
 

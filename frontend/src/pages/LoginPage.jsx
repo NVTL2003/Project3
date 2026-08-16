@@ -18,19 +18,86 @@ function LoginPage() {
         setError("");
 
         try {
-            const response = await authService.login(username, password);
+            const response =
+                await authService.login(
+                    username,
+                    password
+                );
 
-            const token = response.data.token;
+            const data = response.data;
 
-            localStorage.setItem("token", token);
+            console.log("Login response:", data);
+
+            // ==========================================
+            // TOKEN
+            // ==========================================
+
+            localStorage.setItem(
+                "token",
+                data.token
+            );
+
+            // ==========================================
+            // USER
+            // ==========================================
+
+            if (data.user) {
+                localStorage.setItem(
+                    "user",
+                    JSON.stringify(data.user)
+                );
+            }
+
+            // ==========================================
+            // ROLES
+            // ==========================================
+
+            if (data.user?.roles) {
+                localStorage.setItem(
+                    "roles",
+                    JSON.stringify(data.user.roles)
+                );
+            } else {
+                localStorage.setItem(
+                    "roles",
+                    JSON.stringify([])
+                );
+            }
+
+            // ==========================================
+            // PERMISSIONS
+            // ==========================================
+
+            if (data.user?.permissions) {
+                localStorage.setItem(
+                    "permissions",
+                    JSON.stringify(data.user.permissions)
+                );
+            } else {
+                localStorage.setItem(
+                    "permissions",
+                    JSON.stringify([])
+                );
+            }
 
             navigate("/");
-        }
-        catch (err) {
-            setError(err.response?.data?.message || "Login failed.");
-        }
-        finally {
+
+        } catch (err) {
+
+            console.error(
+                "Login error:",
+                err
+            );
+
+            setError(
+                err.response?.data?.message ||
+                "Login failed."
+            );
+
+        } finally {
+
             setLoading(false);
+
         }
     };
 
