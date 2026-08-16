@@ -73,7 +73,7 @@ const GenericEntityPage = ({
             );
 
             try {
-
+                // line 77 is the line below this
                 const response =
                     await service.getPaged(
                         params,
@@ -128,7 +128,7 @@ const GenericEntityPage = ({
                     };
                 }
 
-
+                //line 132 is the line below this
                 console.error(
                     "❌ GenericEntityPage fetch error:",
                     error
