@@ -55,14 +55,6 @@ const filterOptions = [
             { value: "Branch", label: "Branch" },
             { value: "DistributionCenter", label: "Distribution Center" }
         ]
-    },
-    {
-        key: "isActive",
-        label: "Status",
-        options: [
-            { value: "true", label: "Active" },
-            { value: "false", label: "Inactive" }
-        ]
     }
 ];
 

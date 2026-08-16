@@ -1,0 +1,923 @@
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f6f9;
+    color: #1f2937;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   APP HEADER
+   ========================================================= */
+
+.app-header {
+    height: 72px;
+    background: #1565c0;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.app-header-left {
+    display: flex;
+    align-items: center;
+}
+
+.app-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+}
+
+.app-logo-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.app-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.app-brand-subtitle {
+    margin-top: 2px;
+    font-size: 11px;
+    opacity: 0.75;
+    letter-spacing: 0.3px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.app-navigation {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 50px;
+}
+
+.app-nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    padding: 9px 14px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+    .app-nav-link:hover {
+        color: white;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .app-nav-link.active {
+        color: white;
+        background: rgba(255, 255, 255, 0.16);
+    }
+
+
+/* =========================================================
+   RIGHT SIDE
+   ========================================================= */
+
+.app-header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+
+/* =========================================================
+   USER
+   ========================================================= */
+
+.app-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-user-avatar {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: white;
+    color: #1565c0;
+    font-weight: 700;
+}
+
+.app-user-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.app-user-role {
+    margin-top: 2px;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.app-logout {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.15s ease;
+}
+
+    .app-logout:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard-page {
+    min-height: calc(100vh - 72px);
+    padding: 32px;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .app-brand {
+        display: none;
+    }
+
+    .app-navigation {
+        margin-left: 25px;
+    }
+
+    .app-user-info {
+        display: none;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .app-header {
+        padding: 0 15px;
+    }
+
+    .app-navigation {
+        margin-left: 10px;
+    }
+
+    .app-nav-link {
+        padding: 8px 9px;
+    }
+
+    .app-logout {
+        padding: 8px 10px;
+    }
+
+    .dashboard-page {
+        padding: 20px 15px;
+    }
+}
+/* =========================================================
+   APP HEADER
+   ========================================================= */
+
+.app-header {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    box-sizing: border-box;
+}
+
+
+/* LEFT */
+
+.app-header-left {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.app-logo {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1565c0;
+    text-decoration: none;
+}
+
+.app-nav {
+    display: flex;
+    gap: 24px;
+}
+
+    .app-nav a {
+        color: #4b5563;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .app-nav a:hover {
+            color: #1565c0;
+        }
+
+
+/* RIGHT */
+
+.app-header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+/* USER */
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+    .user-menu:hover {
+        background: #f3f4f6;
+    }
+
+
+.user-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #1565c0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.user-role {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+
+.user-arrow {
+    font-size: 22px;
+    color: #9ca3af;
+}
+
+
+/* LOGOUT */
+
+.logout-button {
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #374151;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    .logout-button:hover {
+        background: #f9fafb;
+    }
+
+
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+.profile-page {
+    min-height: calc(100vh - 72px);
+    background: #f4f6f9;
+    padding: 40px;
+}
+
+
+.profile-card {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 32px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #1565c0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+
+.profile-header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #111827;
+}
+
+
+.profile-header p {
+    margin: 6px 0 0;
+    color: #6b7280;
+}
+
+
+.profile-section {
+    padding: 32px;
+}
+
+
+    .profile-section h2 {
+        margin-top: 0;
+        font-size: 18px;
+        color: #111827;
+    }
+
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+
+.profile-field {
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+
+    .profile-field span {
+        font-size: 12px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+
+    .profile-field strong {
+        color: #111827;
+        font-size: 14px;
+    }
+
+
+.profile-error {
+    padding: 30px;
+    color: #b91c1c;
+}
+/* =========================================================
+   APPLICATION
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+a {
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+
+.app-shell {
+    min-height: 100vh;
+    background: #f4f7fb;
+}
+
+.app-main {
+    min-height: calc(100vh - 72px);
+    padding: 32px;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.app-header {
+    height: 72px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.app-header-inner {
+    max-width: 1500px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 250px;
+    color: #111827;
+}
+
+.app-brand-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #1565c0;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.app-brand-title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.app-brand-subtitle {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+.app-navigation {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 30px;
+}
+
+.app-nav-link {
+    padding: 9px 14px;
+    border-radius: 7px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+    .app-nav-link:hover {
+        background: #f1f5f9;
+        color: #1565c0;
+    }
+
+    .app-nav-link.active {
+        background: #e8f1fb;
+        color: #1565c0;
+        font-weight: 600;
+    }
+
+
+/* =========================================================
+   USER AREA
+   ========================================================= */
+
+.app-header-user {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-user-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: none;
+    padding: 5px 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+}
+
+    .app-user-button:hover {
+        background: #f3f4f6;
+    }
+
+.app-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f1fb;
+    color: #1565c0;
+    font-weight: 700;
+}
+
+.app-user-info {
+    text-align: left;
+}
+
+.app-user-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.app-user-role {
+    font-size: 11px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.app-user-arrow {
+    color: #9ca3af;
+    font-size: 20px;
+    margin-left: 4px;
+}
+
+
+/* =========================================================
+   LOGOUT
+   ========================================================= */
+
+.app-logout-button {
+    padding: 8px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 7px;
+    background: white;
+    color: #374151;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+    .app-logout-button:hover {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #dc2626;
+    }
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .app-header {
+        height: auto;
+    }
+
+    .app-header-inner {
+        padding: 12px 16px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .app-brand {
+        min-width: auto;
+    }
+
+    .app-navigation {
+        order: 3;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .app-header-user {
+        margin-left: auto;
+    }
+
+    .app-user-info {
+        display: none;
+    }
+
+    .app-main {
+        padding: 20px 15px;
+    }
+}
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
+.dashboard-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 28px;
+}
+
+    .page-header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .page-header p {
+        margin: 7px 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+.dashboard-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+    .dashboard-card h2 {
+        margin-top: 0;
+        font-size: 19px;
+        color: #111827;
+    }
+
+    .dashboard-card p {
+        color: #6b7280;
+    }
+/* =========================================================
+   PROFILE
+   ========================================================= */
+
+.profile-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+}
+
+.profile-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 26px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.profile-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f1fb;
+    color: #1565c0;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.profile-card-header h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #111827;
+}
+
+.profile-status {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.profile-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 24px 0;
+}
+
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.profile-field-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    margin-bottom: 4px;
+}
+
+.profile-field-value {
+    font-size: 14px;
+    color: #1f2937;
+    word-break: break-word;
+}
+
+.profile-section-title {
+    font-size: 17px;
+    font-weight: 650;
+    color: #111827;
+}
+
+.profile-section-subtitle {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.profile-tags,
+.profile-permissions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.profile-role {
+    padding: 7px 11px;
+    border-radius: 7px;
+    background: #e8f1fb;
+    color: #1565c0;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-permission {
+    padding: 6px 9px;
+    border-radius: 6px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 11px;
+}
+
+.profile-empty {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.profile-loading,
+.profile-error {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 40px;
+    text-align: center;
+    color: #6b7280;
+}
+
+
+@media (max-width: 800px) {
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -6,7 +6,7 @@ import React, {
 
 import { useCrud } from "../hooks/useCrud";
 import useTableControls from "../hooks/useTableControls";
-
+import "../styles/crud.css";
 import CrudForm from "../components/CrudForm";
 import CrudList from "../components/CrudList";
 import TableControls from "../components/TableControls";
@@ -554,160 +554,113 @@ const GenericEntityPage = ({
     // =========================================================
     // UI
     // =========================================================
-
     return (
+        <div className="crud-page">
 
-        <div
-            style={{
-                padding: "20px",
-                maxWidth: "1200px",
-                margin: "0 auto"
-            }}
-        >
+            <div className="crud-container">
 
-            {/* ================================================= */}
-            {/* HEADER */}
-            {/* ================================================= */}
+                {/* HEADER */}
 
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "20px"
-                }}
-            >
+                <div className="crud-header">
 
-                <h2>
-                    {entityName} Management
-                </h2>
+                    <div className="crud-header-content">
 
+                        <h1 className="crud-title">
+                            {entityName} Management
+                        </h1>
 
-                {!showForm ? (
+                        <p className="crud-subtitle">
+                            Manage and maintain your {entityName.toLowerCase()}.
+                        </p>
 
-                    canCreate && (
+                    </div>
+
+                    {!showForm ? (
+
+                        canCreate && (
+                            <button
+                                className="crud-button crud-button-primary"
+                                onClick={handleAddNew}
+                            >
+                                + Add New
+                            </button>
+                        )
+
+                    ) : (
+
                         <button
-                            onClick={handleAddNew}
-                            style={{
-                                padding: "10px 20px",
-                                background: "#1565c0",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "4px",
-                                cursor: "pointer"
-                            }}
+                            className="crud-button crud-button-secondary"
+                            onClick={handleCancel}
                         >
-                            Add New
+                            Cancel
                         </button>
-                    )
 
-                ) : (
-
-                    <button
-                        onClick={handleCancel}
-                        style={{
-                            padding: "10px 20px",
-                            background: "#666",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "4px",
-                            cursor: "pointer"
-                        }}
-                    >
-                        Cancel
-                    </button>
-
-                )}
-
-            </div>
-
-
-            {/* ================================================= */}
-            {/* FORM */}
-            {/* ================================================= */}
-
-            {showForm && (
-
-                <div
-                    style={{
-                        marginBottom: "30px",
-                        background: "#f9f9f9",
-                        padding: "15px",
-                        borderRadius: "8px"
-                    }}
-                >
-
-                    <h3>
-
-                        {form?.id
-                            ? `Edit ${entityName.replace(/s$/, "")}`
-                            : `Create New ${entityName.replace(/s$/, "")}`
-                        }
-
-                    </h3>
-
-
-                    <CrudForm
-                        fields={fieldConfig}
-                        initialData={form}
-                        onSubmit={handleSubmit}
-                        submitLabel={
-                            form?.id
-                                ? "Update"
-                                : "Create"
-                        }
-                    />
+                    )}
 
                 </div>
 
-            )}
 
+                {/* FORM */}
 
-            {/* ================================================= */}
-            {/* SEARCH / SORT / FILTER */}
-            {/* ================================================= */}
+                {showForm && (
 
-            <TableControls
+                    <div className="crud-form-card">
 
-                onSearch={handleSearchChange}
+                        <div className="crud-form-header">
 
-                onSort={handleSort}
+                            <h2 className="crud-form-title">
 
-                onFilter={handleFilterChange}
+                                {form?.id
+                                    ? `Edit ${entityName.replace(/s$/, "")}`
+                                    : `Create New ${entityName.replace(/s$/, "")}`
+                                }
 
-                sortOptions={sortOptions}
+                            </h2>
 
-                filterOptions={filterOptions}
+                        </div>
 
-                initialSearch={search}
+                        <CrudForm
+                            fields={fieldConfig}
+                            initialData={form}
+                            onSubmit={handleSubmit}
+                            submitLabel={
+                                form?.id
+                                    ? "Update"
+                                    : "Create"
+                            }
+                        />
 
-                initialSort={sortBy}
-
-                initialSortOrder={sortOrder}
-
-                initialFilters={filters}
-
-            />
-
-
-            {/* ================================================= */}
-            {/* TABLE */}
-            {/* ================================================= */}
-
-            <div>
-
-                {loading ? (
-
-                    <div
-                        style={{
-                            textAlign: "center",
-                            padding: "40px"
-                        }}
-                    >
-                        Loading...
                     </div>
 
-                ) : safeData.length > 0 ? (
+                )}
+
+
+                {/* CONTROLS */}
+
+                <TableControls
+                    onSearch={handleSearchChange}
+                    onSort={handleSort}
+                    onFilter={handleFilterChange}
+                    sortOptions={sortOptions}
+                    filterOptions={filterOptions}
+                    initialSearch={search}
+                    initialSort={sortBy}
+                    initialSortOrder={sortOrder}
+                    initialFilters={filters}
+                />
+
+
+                {/* TABLE */}
+
+                <div className="crud-table-card">
+
+                    {loading ? (
+
+                        <div className="crud-loading">
+                            Loading...
+                        </div>
+
+                    ) : safeData.length > 0 ? (
 
                         <CrudList
                             data={safeData}
@@ -725,55 +678,43 @@ const GenericEntityPage = ({
                             layout="vertical"
                         />
 
-                ) : (
+                    ) : (
 
-                    <div
-                        style={{
-                            textAlign: "center",
-                            padding: "40px",
-                            color: "#666"
-                        }}
-                    >
+                        <div className="crud-empty">
 
-                        No {entityName.toLowerCase()} found.
+                            <div className="crud-empty-title">
+                                No {entityName.toLowerCase()} found
+                            </div>
 
-                    </div>
+                            <div>
+                                Try changing your search or filters.
+                            </div>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+
+                {/* PAGINATION */}
+
+                {totalCount > 0 && (
+
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        totalItems={totalCount}
+                        pageSize={pageSize}
+                        onPageChange={handlePageChange}
+                        onPageSizeChange={handlePageSizeChange}
+                    />
 
                 )}
 
             </div>
 
-
-            {/* ================================================= */}
-            {/* PAGINATION */}
-            {/* ================================================= */}
-
-            {totalCount > 0 && (
-
-                <Pagination
-
-                    currentPage={page}
-
-                    totalPages={totalPages}
-
-                    totalItems={totalCount}
-
-                    pageSize={pageSize}
-
-                    onPageChange={
-                        handlePageChange
-                    }
-
-                    onPageSizeChange={
-                        handlePageSizeChange
-                    }
-
-                />
-
-            )}
-
         </div>
-
     );
 };
 

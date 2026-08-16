@@ -3,7 +3,7 @@ import React, {
     useRef,
     useState
 } from "react";
-
+import "../styles/crud.css";
 
 const TableControls = ({
     onSearch,
