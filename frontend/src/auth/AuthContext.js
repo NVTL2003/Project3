@@ -1,3 +1,87 @@
+// import React, {
+//     createContext,
+//     useContext,
+//     useEffect,
+//     useState
+// } from "react";
+
+// import meService from "../api/meService";
+
+// const AuthContext = createContext(null);
+
+// export const AuthProvider = ({ children }) => {
+
+//     const [user, setUser] = useState(null);
+//     const [loading, setLoading] = useState(true);
+
+//     useEffect(() => {
+
+//         const token =
+//             localStorage.getItem("token");
+
+//         if (!token) {
+//             setLoading(false);
+//             return;
+//         }
+
+//         meService.getCurrentUser()
+//             .then(response => {
+//                 setUser(response.data);
+//             })
+//             .catch(error => {
+
+//                 console.error(
+//                     "Failed to load current user:",
+//                     error
+//                 );
+
+//                 localStorage.removeItem("token");
+//                 setUser(null);
+
+//             })
+//             .finally(() => {
+//                 setLoading(false);
+//             });
+
+//     }, []);
+
+//     const logout = () => {
+
+//         localStorage.removeItem("token");
+//         localStorage.removeItem("user");
+//         localStorage.removeItem("roles");
+//         localStorage.removeItem("permissions");
+
+//         setUser(null);
+
+//         window.location.href = "/login";
+//     };
+
+//     return (
+//         <AuthContext.Provider
+//             value={{
+//                 user,
+//                 loading,
+//                 logout
+//             }}
+//         >
+//             {children}
+//         </AuthContext.Provider>
+//     );
+// };
+
+// export const useAuth = () => {
+
+//     const context = useContext(AuthContext);
+
+//     if (!context) {
+//         throw new Error(
+//             "useAuth must be used inside AuthProvider"
+//         );
+//     }
+
+//     return context;
+// };
 import React, {
     createContext,
     useContext,
@@ -16,17 +100,16 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
 
-        const token =
-            localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
         if (!token) {
             setLoading(false);
             return;
         }
 
-        meService.getCurrentUser()
+        meService.getMe()
             .then(response => {
-                setUser(response.data);
+                setUser(response);
             })
             .catch(error => {
 
@@ -36,8 +119,11 @@ export const AuthProvider = ({ children }) => {
                 );
 
                 localStorage.removeItem("token");
-                setUser(null);
+                localStorage.removeItem("user");
+                localStorage.removeItem("roles");
+                localStorage.removeItem("permissions");
 
+                setUser(null);
             })
             .finally(() => {
                 setLoading(false);

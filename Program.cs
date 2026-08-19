@@ -101,6 +101,16 @@ builder.Services.AddScoped(
     typeof(CrudService<,,>));
 
 // ============================================================
+// CURRENT USER SERVICE
+// ============================================================
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<
+    ICurrentUserService,
+    CurrentUserService>();
+
+// ============================================================
 // OTHER SERVICES
 // ============================================================
 

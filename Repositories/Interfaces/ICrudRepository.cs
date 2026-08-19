@@ -5,6 +5,8 @@ namespace Project3.Repositories.Interfaces;
 public interface ICrudRepository<TEntity>
     where TEntity : class
 {
+    IQueryable<TEntity> Query();
+
     Task<IEnumerable<TEntity>> GetAllAsync();
 
     Task<TEntity?> GetByIdAsync(

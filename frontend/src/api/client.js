@@ -1,4 +1,4 @@
-//api\client.js
+//C:\Users\Admin\Desktop\Project3\frontend\src\api\client.js
 
 import axios from "axios";
 
@@ -50,6 +50,5 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
 
 export default api;

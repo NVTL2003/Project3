@@ -1,177 +1,186 @@
-import api from "../api/client";
+// import api from "../api/client";
 
 
-const facilityService = {
+// const facilityService = {
 
-    // =========================================================
-    // GET PAGED
-    // =========================================================
+//     =========================================================
+//     GET PAGED
+//     =========================================================
 
-    getPaged: (params = {}, config = {}) => {
+//     getPaged: (params = {}, config = {}) => {
 
-        const query = new URLSearchParams();
-
-
-        // -----------------------------------------------------
-        // SEARCH
-        // -----------------------------------------------------
-
-        if (
-            params.search !== undefined &&
-            params.search !== null &&
-            params.search.trim() !== ""
-        ) {
-
-            query.append(
-                "search",
-                params.search.trim()
-            );
-
-        }
+//         const query = new URLSearchParams();
 
 
-        // -----------------------------------------------------
-        // SORT
-        // -----------------------------------------------------
+//         -----------------------------------------------------
+//         SEARCH
+//         -----------------------------------------------------
 
-        if (
-            params.sortBy !== undefined &&
-            params.sortBy !== null &&
-            params.sortBy !== ""
-        ) {
+//         if (
+//             params.search !== undefined &&
+//             params.search !== null &&
+//             params.search.trim() !== ""
+//         ) {
 
-            query.append(
-                "sortBy",
-                params.sortBy
-            );
+//             query.append(
+//                 "search",
+//                 params.search.trim()
+//             );
 
-        }
-
-
-        query.append(
-            "sortOrder",
-            params.sortOrder || "asc"
-        );
+//         }
 
 
-        // -----------------------------------------------------
-        // PAGINATION
-        // -----------------------------------------------------
+//         -----------------------------------------------------
+//         SORT
+//         -----------------------------------------------------
 
-        query.append(
-            "page",
-            params.page || 1
-        );
+//         if (
+//             params.sortBy !== undefined &&
+//             params.sortBy !== null &&
+//             params.sortBy !== ""
+//         ) {
 
-        query.append(
-            "pageSize",
-            params.pageSize || 10
-        );
+//             query.append(
+//                 "sortBy",
+//                 params.sortBy
+//             );
 
-
-        // -----------------------------------------------------
-        // FILTERS
-        // -----------------------------------------------------
-
-        if (
-            params.filters &&
-            typeof params.filters === "object"
-        ) {
-
-            Object.entries(params.filters)
-                .forEach(([key, value]) => {
-
-                    if (
-                        value !== undefined &&
-                        value !== null &&
-                        value !== ""
-                    ) {
-
-                        query.append(
-                            `filters[${key}]`,
-                            String(value)
-                        );
-
-                    }
-
-                });
-
-        }
+//         }
 
 
-        const url =
-            `/facility/paged?${query.toString()}`;
+//         query.append(
+//             "sortOrder",
+//             params.sortOrder || "asc"
+//         );
 
 
-        console.log(
-            "📡 GET:",
-            url
-        );
+//         -----------------------------------------------------
+//         PAGINATION
+//         -----------------------------------------------------
+
+//         query.append(
+//             "page",
+//             params.page || 1
+//         );
+
+//         query.append(
+//             "pageSize",
+//             params.pageSize || 10
+//         );
 
 
-        return api.get(
-            url,
-            config
-        );
+//         -----------------------------------------------------
+//         FILTERS
+//         -----------------------------------------------------
 
-    },
+//         if (
+//             params.filters &&
+//             typeof params.filters === "object"
+//         ) {
 
+//             Object.entries(params.filters)
+//                 .forEach(([key, value]) => {
 
-    // =========================================================
-    // CREATE
-    // =========================================================
+//                     if (
+//                         value !== undefined &&
+//                         value !== null &&
+//                         value !== ""
+//                     ) {
 
-    create: (payload) => {
+//                         query.append(
+//                             `filters[${key}]`,
+//                             String(value)
+//                         );
 
-        console.log(
-            "📤 POST /facility:",
-            payload
-        );
+//                     }
 
-        return api.post(
-            "/facility",
-            payload
-        );
+//                 });
 
-    },
-
-
-    // =========================================================
-    // UPDATE
-    // =========================================================
-
-    update: (id, payload) => {
-
-        console.log(
-            "📤 PUT /facility/" + id,
-            payload
-        );
-
-        return api.put(
-            `/facility/${id}`,
-            payload
-        );
-
-    },
+//         }
 
 
-    // =========================================================
-    // DELETE
-    // =========================================================
+//         const url =
+//             `/facility/paged?${query.toString()}`;
 
-    delete: (id) => {
 
-        console.log(
-            "🗑️ DELETE /facility/" + id
-        );
+//         console.log(
+//             "📡 GET:",
+//             url
+//         );
 
-        return api.delete(
-            `/facility/${id}`
-        );
 
-    }
+//         return api.get(
+//             url,
+//             config
+//         );
 
-};
+//     },
 
+
+//     =========================================================
+//     CREATE
+//     =========================================================
+
+//     create: (payload) => {
+
+//         console.log(
+//             "📤 POST /facility:",
+//             payload
+//         );
+
+//         return api.post(
+//             "/facility",
+//             payload
+//         );
+
+//     },
+
+
+//     =========================================================
+//     UPDATE
+//     =========================================================
+
+//     update: (id, payload) => {
+
+//         console.log(
+//             "📤 PUT /facility/" + id,
+//             payload
+//         );
+
+//         return api.put(
+//             `/facility/${id}`,
+//             payload
+//         );
+
+//     },
+
+
+//     =========================================================
+//     DELETE
+//     =========================================================
+
+//     delete: (id) => {
+
+//         console.log(
+//             "🗑️ DELETE /facility/" + id
+//         );
+
+//         return api.delete(
+//             `/facility/${id}`
+//         );
+
+//     }
+
+// };
+
+
+// export default facilityService;
+
+// frontend/src/services/facilityService.js
+
+import createGenericService from "./genericService";
+
+const facilityService =
+    createGenericService("/facility");
 
 export default facilityService;

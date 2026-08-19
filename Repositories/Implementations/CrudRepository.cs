@@ -21,6 +21,11 @@ public class CrudRepository<TEntity>
             context.Set<TEntity>();
     }
 
+    public IQueryable<TEntity> Query()
+    {
+        return _dbSet.AsQueryable();
+    }
+
     // ============================================================
     // GET ALL
     // ============================================================
