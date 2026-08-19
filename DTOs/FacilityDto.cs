@@ -25,7 +25,7 @@ namespace Project3.DTOs
     {
         public string Name { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
-        public string FacilityType { get; set; } = "Branch";  // Default value
+        public string FacilityType { get; set; } = "Branch";
         public string AddressLine1 { get; set; } = string.Empty;
         public string? AddressLine2 { get; set; }
         public string City { get; set; } = string.Empty;

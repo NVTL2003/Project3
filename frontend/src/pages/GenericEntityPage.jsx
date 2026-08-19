@@ -15,6 +15,17 @@ import {
     hasPermission
 } from "../utils/permissionUtils";
 
+// const GenericEntityPage = ({
+//     entityName,
+//     permissionPrefix,
+//     service,
+//     fieldConfig = [],
+//     displayColumns = [],
+//     sortOptions = [],
+//     filterOptions = [],
+//     requirePermission = true
+// }) => {
+
 const GenericEntityPage = ({
     entityName,
     permissionPrefix,
@@ -22,8 +33,11 @@ const GenericEntityPage = ({
     fieldConfig = [],
     displayColumns = [],
     sortOptions = [],
-    filterOptions = []
+    filterOptions = [],
+    requirePermission = true,
+    extraActions = null  // Add this prop
 }) => {
+
 
     const [showForm, setShowForm] = useState(false);
 
@@ -64,63 +78,107 @@ const GenericEntityPage = ({
     // TABLE DATA
     // =========================================================
 
+    // const fetchData = useCallback(
+    //     async (params, config = {}) => {
+
+    //         console.log(
+    //             "📡 GenericEntityPage fetchData:",
+    //             params
+    //         );
+
+    //         try {
+    //             line 77 is the line below this
+    //             const response =
+    //                 await service.getPaged(
+    //                     params,
+    //                     config
+    //                 );
+
+    //             console.log(
+    //                 "📦 GenericEntityPage response:",
+    //                 response
+    //             );
+
+    //             console.log(
+    //                 "📦 GenericEntityPage response.data:",
+    //                 response?.data
+    //             );
+
+
+    //             /*
+    //              * Axios response:
+    //              *
+    //              * {
+    //              *     data: {
+    //              *         items: [],
+    //              *         totalCount: 7,
+    //              *         totalPages: 1
+    //              *     }
+    //              * }
+    //              */
+
+
+    //             return response?.data ?? {
+    //                 items: [],
+    //                 totalCount: 0,
+    //                 totalPages: 0
+    //             };
+
+    //         } catch (error) {
+
+    //             if (
+    //                 error?.name === "AbortError" ||
+    //                 error?.code === "ERR_CANCELED"
+    //             ) {
+
+    //                 console.log(
+    //                     "🛑 GenericEntityPage request cancelled"
+    //                 );
+
+    //                 return {
+    //                     items: [],
+    //                     totalCount: 0,
+    //                     totalPages: 0
+    //                 };
+    //             }
+
+    //             line 132 is the line below this
+    //             console.error(
+    //                 "❌ GenericEntityPage fetch error:",
+    //                 error
+    //             );
+
+    //             throw error;
+    //         }
+
+    //     },
+    //     [service]
+    // );
+
     const fetchData = useCallback(
         async (params, config = {}) => {
-
-            console.log(
-                "📡 GenericEntityPage fetchData:",
-                params
-            );
+            console.log("📡 GenericEntityPage fetchData:", params);
 
             try {
-                // line 77 is the line below this
-                const response =
-                    await service.getPaged(
-                        params,
-                        config
-                    );
+                const response = await service.getPaged(params, config);
 
-                console.log(
-                    "📦 GenericEntityPage response:",
-                    response
-                );
+                console.log("📦 GenericEntityPage response:", response);
+                console.log("📦 GenericEntityPage response.data:", response?.data);
 
-                console.log(
-                    "📦 GenericEntityPage response.data:",
-                    response?.data
-                );
+                // Handle different response formats
+                let data = response?.data;
 
+                // If data is an array (from GetMineAsync), wrap it
+                if (Array.isArray(data)) {
+                    return {
+                        items: data,
+                        totalCount: data.length,
+                        totalPages: Math.ceil(data.length / params.pageSize || 1)
+                    };
+                }
 
-                /*
-                 * Axios response:
-                 *
-                 * {
-                 *     data: {
-                 *         items: [],
-                 *         totalCount: 7,
-                 *         totalPages: 1
-                 *     }
-                 * }
-                 */
-
-
-                return response?.data ?? {
-                    items: [],
-                    totalCount: 0,
-                    totalPages: 0
-                };
-
-            } catch (error) {
-
-                if (
-                    error?.name === "AbortError" ||
-                    error?.code === "ERR_CANCELED"
-                ) {
-
-                    console.log(
-                        "🛑 GenericEntityPage request cancelled"
-                    );
-
+                // If data is null/undefined, return empty
+                if (!data) {
                     return {
                         items: [],
                         totalCount: 0,
@@ -128,15 +186,35 @@ const GenericEntityPage = ({
                     };
                 }
 
-                //line 132 is the line below this
-                console.error(
-                    "❌ GenericEntityPage fetch error:",
-                    error
-                );
+                // If data has items property, use it
+                if (data.items !== undefined) {
+                    return {
+                        items: data.items,
+                        totalCount: data.totalCount || data.items.length,
+                        totalPages: data.totalPages || Math.ceil((data.totalCount || data.items.length) / params.pageSize || 1)
+                    };
+                }
 
+                // If data is an object but not in expected format
+                return {
+                    items: [],
+                    totalCount: 0,
+                    totalPages: 0
+                };
+
+            } catch (error) {
+                if (error?.name === "AbortError" || error?.code === "ERR_CANCELED") {
+                    console.log("🛑 GenericEntityPage request cancelled");
+                    return {
+                        items: [],
+                        totalCount: 0,
+                        totalPages: 0
+                    };
+                }
+
+                console.error("❌ GenericEntityPage fetch error:", error);
                 throw error;
             }
-
         },
         [service]
     );
@@ -216,59 +294,99 @@ const GenericEntityPage = ({
 
         initialForm,
 
-        buildPayload: (formData) => {
+        // buildPayload: (formData) => {
 
+        //     const payload = {};
+
+        //     fieldConfig.forEach(field => {
+
+        //         /*
+        //          * ID is handled separately by useCrud.
+        //          */
+        //         if (field.name === "id") {
+        //             return;
+        //         }
+
+
+        //         const value =
+        //             formData[field.name];
+
+
+        //         /*
+        //          * Preserve checkbox false.
+        //          */
+        //         if (field.type === "checkbox") {
+
+        //             payload[field.name] =
+        //                 value ?? false;
+
+        //             return;
+        //         }
+
+
+        //         /*
+        //          * Don't accidentally send undefined.
+        //          */
+        //         if (
+        //             value !== undefined &&
+        //             value !== null
+        //         ) {
+
+        //             payload[field.name] =
+        //                 value;
+
+        //         }
+
+        //     });
+
+
+        //     console.log(
+        //         "📤 GenericEntityPage payload:",
+        //         payload
+        //     );
+
+        //     return payload;
+        // }
+
+
+        buildPayload: (formData) => {
             const payload = {};
 
             fieldConfig.forEach(field => {
-
-                /*
-                 * ID is handled separately by useCrud.
-                 */
                 if (field.name === "id") {
                     return;
                 }
 
+                const value = formData[field.name];
 
-                const value =
-                    formData[field.name];
-
-
-                /*
-                 * Preserve checkbox false.
-                 */
+                // Preserve checkbox false
                 if (field.type === "checkbox") {
-
-                    payload[field.name] =
-                        value ?? false;
-
+                    payload[field.name] = value ?? false;
                     return;
                 }
 
-
-                /*
-                 * Don't accidentally send undefined.
-                 */
+                // Skip empty values for non-required fields
                 if (
-                    value !== undefined &&
-                    value !== null
+                    (value === "" || value === undefined || value === null) &&
+                    !field.required
                 ) {
-
-                    payload[field.name] =
-                        value;
-
+                    // Don't include empty optional fields
+                    return;
                 }
 
+                // Include non-empty values
+                if (value !== undefined && value !== null && value !== "") {
+                    payload[field.name] = value;
+                } else if (field.required) {
+                    payload[field.name] = value;
+                }
             });
 
-
-            console.log(
-                "📤 GenericEntityPage payload:",
-                payload
-            );
-
+            console.log("📤 GenericEntityPage payload:", payload);
             return payload;
         }
+
+
 
     });
 
@@ -516,24 +634,29 @@ const GenericEntityPage = ({
     );
 
     const canRead =
+        !requirePermission ||
         hasPermission(
             `${permissionPrefix}.Read`
         );
 
     const canCreate =
+        !requirePermission ||
         hasPermission(
             `${permissionPrefix}.Create`
         );
 
     const canUpdate =
+        !requirePermission ||
         hasPermission(
             `${permissionPrefix}.Update`
         );
 
     const canDelete =
+        !requirePermission ||
         hasPermission(
             `${permissionPrefix}.Delete`
         );
+
     if (!canRead) {
         return (
             <div
@@ -662,21 +785,14 @@ const GenericEntityPage = ({
 
                     ) : safeData.length > 0 ? (
 
-                        <CrudList
-                            data={safeData}
-                            columns={displayColumns}
-                            onEdit={
-                                canUpdate
-                                    ? handleEdit
-                                    : undefined
-                            }
-                            onDelete={
-                                canDelete
-                                    ? handleDeleteItem
-                                    : undefined
-                            }
-                            layout="vertical"
-                        />
+                            <CrudList
+                                data={safeData}
+                                columns={displayColumns}
+                                onEdit={canUpdate ? handleEdit : undefined}
+                                onDelete={canDelete ? handleDeleteItem : undefined}
+                                                extraActions={extraActions}  // Add this line
+                                layout="vertical"
+                            />
 
                     ) : (
 

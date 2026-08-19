@@ -104,6 +104,15 @@ const MENU_GROUPS = [
         key: "shipment",
         label: "Shipment",
         entities: [
+
+
+                    {
+                        label: "My Shipment Requests",
+                        permission: "shipment_requests",
+                        path: "/my/shipment-requests"  // This should be first for customers
+                    },
+
+
             {
                 label: "Shipments",
                 permission: "shipments",
@@ -287,8 +296,6 @@ const MENU_GROUPS = [
         ]
     }
 ];
-
-
 /*
 |--------------------------------------------------------------------------
 | Permission helper

@@ -119,24 +119,44 @@ export function useCrud({
 
             return true;
 
+        // } catch (err) {
+
+        //     console.error(
+        //         "Delete error:",
+        //         err
+        //     );
+
+        //     setError(err);
+
+        //     alert(
+        //         `Error deleting: ${err.response?.data?.message ||
+        //         err.message
+        //         }`
+        //     );
+
+        //     return false;
+
+        // }
+
         } catch (err) {
+        console.error("Submit error:", err);
+        console.error("Response data:", err.response?.data);
+        console.error("Response status:", err.response?.status);
 
-            console.error(
-                "Delete error:",
-                err
-            );
+        // Show detailed error
+        if (err.response?.data?.errors) {
+            console.error("Validation errors:", err.response.data.errors);
+            alert("Validation errors: " + JSON.stringify(err.response.data.errors));
+        } else if (err.response?.data?.message) {
+            alert("Error: " + err.response.data.message);
+        } else if (err.response?.data?.title) {
+            alert("Error: " + err.response.data.title);
+        }
 
-            setError(err);
-
-            alert(
-                `Error deleting: ${err.response?.data?.message ||
-                err.message
-                }`
-            );
-
-            return false;
-
-        } finally {
+        setError(err);
+        return false;
+    }
+        finally {
 
             setLoading(false);
 
