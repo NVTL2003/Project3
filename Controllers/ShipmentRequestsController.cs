@@ -21,7 +21,7 @@ public class ShipmentRequestsController
 		IAuthorizationService authorizationService,
 		Pj3Context context,
 		ICurrentUserService currentUser)
-		: base(service, authorizationService)
+		: base(service, authorizationService,currentUser)
 	{
 		_context = context;
 		_currentUser = currentUser;

@@ -14,8 +14,9 @@ public class ShipmentsController
 {
     public ShipmentsController(
         ICrudService<Shipment, ShipmentDto, CreateShipmentDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService, currentUser)
     {
     }
 

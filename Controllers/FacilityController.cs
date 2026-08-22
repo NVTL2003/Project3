@@ -20,10 +20,11 @@ public class FacilityController
             Facility,
             FacilityDto,
             CreateFacilityDto> service,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
         : base(
             service,
-            authorizationService)
+            authorizationService, currentUser)
     {
     }
 }

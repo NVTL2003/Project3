@@ -146,50 +146,17 @@ builder.Services.AddCors(options =>
 builder.Services.AddAutoMapper(
     AppDomain.CurrentDomain.GetAssemblies());
 
-
-
-
 // ============================================================
 // SHIPMENT WORKFLOW SERVICES
 // ============================================================
 
 builder.Services.AddScoped<
-    ICrudService<ShipmentRequest, ShipmentRequestDto, CreateShipmentRequestDto>,
-    CrudService<ShipmentRequest, ShipmentRequestDto, CreateShipmentRequestDto>>();
-
-builder.Services.AddScoped<
     ICrudService<Shipment, ShipmentDto, CreateShipmentDto>,
-    CrudService<Shipment, ShipmentDto, CreateShipmentDto>>();
+    ShipmentService>();
 
-builder.Services.AddScoped<
-    ICrudService<PackageScan, PackageScanDto, CreatePackageScanDto>,
-    CrudService<PackageScan, PackageScanDto, CreatePackageScanDto>>();
-
-builder.Services.AddScoped<
-    ICrudService<TrackingEvent, TrackingEventDto, CreateTrackingEventDto>,
-    CrudService<TrackingEvent, TrackingEventDto, CreateTrackingEventDto>>();
-
-builder.Services.AddScoped<
-    ICrudService<TransportOrder, TransportOrderDto, CreateTransportOrderDto>,
-    CrudService<TransportOrder, TransportOrderDto, CreateTransportOrderDto>>();
-
-builder.Services.AddScoped<
-    ICrudService<DeliveryAttempt, DeliveryAttemptDto, CreateDeliveryAttemptDto>,
-    CrudService<DeliveryAttempt, DeliveryAttemptDto, CreateDeliveryAttemptDto>>();
-
-builder.Services.AddScoped<
-    ICrudService<ProofOfDelivery, ProofOfDeliveryDto, CreateProofOfDeliveryDto>,
-    CrudService<ProofOfDelivery, ProofOfDeliveryDto, CreateProofOfDeliveryDto>>();
 builder.Services.AddScoped<
     ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>,
-    CrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>>();
-builder.Services.AddScoped<
-    IMeCrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>,
-    CustomerAddressMeService>();
-builder.Services.AddScoped<
-    ICrudService<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>,
-    CrudService<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>>();
-
+    CustomerAddressService>();
 
 // ============================================================
 // BUILD

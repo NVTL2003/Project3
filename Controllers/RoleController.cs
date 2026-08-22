@@ -11,8 +11,9 @@ public class RoleController
 {
     public RoleController(
         ICrudService<Role, RoleDto, CreateRoleDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService,currentUser)
     {
     }
 }

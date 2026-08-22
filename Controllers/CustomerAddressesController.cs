@@ -12,8 +12,9 @@ public class CustomerAddressesController
 {
     public CustomerAddressesController(
         ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService,currentUser)
     {
     }
 

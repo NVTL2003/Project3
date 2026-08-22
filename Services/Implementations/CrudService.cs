@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project3.DTOs;
 using Project3.Repositories.Interfaces;
+using Project3.Services.Interfaces;
 using System.Globalization;
 using System.Linq.Expressions;
 
@@ -48,6 +50,209 @@ public class CrudService<TEntity, TDto, TCreateDto>
             return default;
 
         return _mapper.Map<TDto>(entity);
+    }
+
+    // ============================================================
+    // OWNERSHIP
+    // ============================================================
+
+    protected virtual IQueryable<TEntity> ApplyOwnerFilter(
+        IQueryable<TEntity> query,
+        Guid userId)
+    {
+        // By default, no ownership filter.
+        // Services that support "own" access override this.
+        return query;
+    }
+
+    // ============================================================
+    // GET MINE
+    // ============================================================
+
+    public virtual async Task<IEnumerable<TDto>> GetMineAsync(
+    Guid userId)
+    {
+        var query = ApplyOwnerFilter(
+            _repository.Query(),
+            userId);
+
+        var entities = await query.ToListAsync();
+
+        return _mapper.Map<IEnumerable<TDto>>(entities);
+    }
+
+    // ============================================================
+    // GET MINE BY ID
+    // ============================================================
+
+    public virtual async Task<TDto?> GetMineByIdAsync(
+        Guid userId,
+        Guid id)
+    {
+        var query =
+            ApplyOwnerFilter(
+                _repository.Query(),
+                userId);
+
+        var entity =
+            await query.FirstOrDefaultAsync(
+                e => EF.Property<Guid>(e, "Id") == id);
+
+        if (entity == null)
+            return default;
+
+        return _mapper.Map<TDto>(entity);
+    }
+
+    // ============================================================
+    // GET MINE PAGED
+    // ============================================================
+
+    public virtual async Task<PagedResult<TDto>> GetMinePagedAsync(
+        Guid userId,
+        QueryParamsDto queryParams)
+    {
+        var query =
+            ApplyOwnerFilter(
+                _repository.Query(),
+                userId);
+
+        // Reuse your existing generic search/filter/sort logic
+        var filter =
+            BuildFilter(queryParams);
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        var orderBy =
+            BuildSort(queryParams);
+
+        if (orderBy != null)
+            query = orderBy(query);
+
+        var page =
+            queryParams.Page < 1
+                ? 1
+                : queryParams.Page;
+
+        var pageSize =
+            queryParams.PageSize < 1
+                ? 10
+                : Math.Min(
+                    queryParams.PageSize,
+                    100);
+
+        var totalCount =
+            await query.CountAsync();
+
+        var entities =
+            await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+        return new PagedResult<TDto>
+        {
+            Items =
+                _mapper.Map<List<TDto>>(
+                    entities),
+
+            TotalCount =
+                totalCount,
+
+            Page =
+                page,
+
+            PageSize =
+                pageSize
+        };
+    }
+
+    // ============================================================
+    // CREATE MINE
+    // ============================================================
+
+    public virtual async Task<TDto?> CreateMineAsync(
+        Guid userId,
+        TCreateDto dto)
+    {
+        var entity =
+            _mapper.Map<TEntity>(dto);
+
+        if (entity == null)
+            return default;
+
+        entity =
+            await PrepareForCreateAsync(
+                entity,
+                userId);
+
+        await _repository.AddAsync(entity);
+
+        await _repository.SaveChangesAsync();
+
+        return _mapper.Map<TDto>(entity);
+    }
+
+    // ============================================================
+    // UPDATE MINE
+    // ============================================================
+
+    public virtual async Task<bool> UpdateMineAsync(
+        Guid userId,
+        Guid id,
+        TCreateDto dto)
+    {
+        var query =
+            ApplyOwnerFilter(
+                _repository.Query(),
+                userId);
+
+        var entity =
+            await query.FirstOrDefaultAsync(
+                e => EF.Property<Guid>(e, "Id") == id);
+
+        if (entity == null)
+            return false;
+
+        _mapper.Map(dto, entity);
+
+        await PrepareForUpdateAsync(
+            entity,
+            userId);
+
+        _repository.Update(entity);
+
+        return await _repository.SaveChangesAsync();
+    }
+
+    // ============================================================
+    // DELETE MINE
+    // ============================================================
+
+    public virtual async Task<bool> DeleteMineAsync(
+        Guid userId,
+        Guid id)
+    {
+        var query =
+            ApplyOwnerFilter(
+                _repository.Query(),
+                userId);
+
+        var entity =
+            await query.FirstOrDefaultAsync(
+                e => EF.Property<Guid>(e, "Id") == id);
+
+        if (entity == null)
+            return false;
+
+        await PrepareForDeleteAsync(
+            entity,
+            userId);
+
+        _repository.Delete(entity);
+
+        return await _repository.SaveChangesAsync();
     }
 
     // ============================================================
@@ -848,5 +1053,30 @@ public class CrudService<TEntity, TDto, TCreateDto>
                 ? _newParameter
                 : base.VisitParameter(node);
         }
+    }
+
+    // ============================================================
+    // OWNERSHIP / LIFECYCLE HOOKS
+    // ============================================================
+
+    protected virtual Task<TEntity> PrepareForCreateAsync(
+        TEntity entity,
+        Guid userId)
+    {
+        return Task.FromResult(entity);
+    }
+
+    protected virtual Task PrepareForUpdateAsync(
+        TEntity entity,
+        Guid userId)
+    {
+        return Task.CompletedTask;
+    }
+
+    protected virtual Task PrepareForDeleteAsync(
+        TEntity entity,
+        Guid userId)
+    {
+        return Task.CompletedTask;
     }
 }

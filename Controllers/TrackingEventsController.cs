@@ -14,8 +14,9 @@ public class TrackingEventsController
 {
     public TrackingEventsController(
         ICrudService<TrackingEvent, TrackingEventDto, CreateTrackingEventDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService,currentUser)
     {
     }
 

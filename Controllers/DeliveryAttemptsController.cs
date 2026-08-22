@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Project3.DTOs;
 using Project3.Models;
 using Project3.Services.Interfaces;
+using Project3.Authentication;
 
 namespace Project3.Controllers;
 
@@ -21,7 +22,7 @@ public class DeliveryAttemptsController
         IAuthorizationService authorizationService,
         Pj3Context context,
         ICurrentUserService currentUser)
-        : base(service, authorizationService)
+        : base(service, authorizationService,currentUser)
     {
         _context = context;
         _currentUser = currentUser;
@@ -30,8 +31,19 @@ public class DeliveryAttemptsController
     protected override string ResourceName => "delivery_attempts";
 
     [HttpPost]
-    public override async Task<IActionResult> Create([FromBody] CreateDeliveryAttemptDto dto)
+    public override async Task<IActionResult> Create(
+    [FromBody] CreateDeliveryAttemptDto dto)
     {
+        if (!await HasPermission(
+            PermissionActions.Create,
+            PermissionScopes.All))
+        {
+            return Forbid();
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var shipment = await _context.Shipments.FindAsync(dto.ShipmentId);
         if (shipment == null)
             return NotFound(new { message = "Shipment not found." });

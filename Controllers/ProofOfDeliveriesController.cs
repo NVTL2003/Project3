@@ -14,8 +14,9 @@ public class ProofOfDeliveriesController
 {
     public ProofOfDeliveriesController(
         ICrudService<ProofOfDelivery, ProofOfDeliveryDto, CreateProofOfDeliveryDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService,currentUser)
     {
     }
 

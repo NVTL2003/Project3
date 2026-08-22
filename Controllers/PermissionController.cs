@@ -11,8 +11,9 @@ public class PermissionController
 {
     public PermissionController(
         ICrudService<Permission, PermissionDto, CreatePermissionDto> service,
-        IAuthorizationService authorizationService)
-        : base(service, authorizationService)
+        IAuthorizationService authorizationService,
+        ICurrentUserService currentUser)
+        : base(service, authorizationService,currentUser)
     {
     }
 }
