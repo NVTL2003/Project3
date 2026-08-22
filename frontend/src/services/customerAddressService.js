@@ -17,11 +17,20 @@
 
 import createResourceService from "./genericResourceService";
 
-const customerAddressService = {
-    global: createResourceService("/customer-addresses"),
-    me: createResourceService("/me/customer-addresses", {
-        pagedPath: "" // The me endpoints don't use /paged
-    })
-};
+// const customerAddressService = {
+//     global: createResourceService(
+//         "/customer-addresses"
+//     ),
+
+//     me: createResourceService(
+//         "/customer-addresses/me",
+//         {
+//             pagedPath: "/paged"
+//         }
+//     )
+// };
+const customerAddressService =
+    createResourceService("/customer-addresses");
+
 
 export default customerAddressService;

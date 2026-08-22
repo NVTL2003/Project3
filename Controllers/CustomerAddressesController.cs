@@ -6,7 +6,7 @@ using Project3.Services.Interfaces;
 
 [ApiController]
 [Authorize]
-[Route("api/[controller]")]
+[Route("api/customer-addresses")]
 public class CustomerAddressesController
     : BaseCrudController<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>
 {
@@ -14,9 +14,9 @@ public class CustomerAddressesController
         ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto> service,
         IAuthorizationService authorizationService,
         ICurrentUserService currentUser)
-        : base(service, authorizationService,currentUser)
+        : base(service, authorizationService, currentUser)
     {
     }
 
-    protected override string ResourceName => "customer_addresses";
+    protected override string ResourceName => "customer-addresses";
 }

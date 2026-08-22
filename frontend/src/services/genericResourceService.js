@@ -1,75 +1,60 @@
 import api from "../api/client";
 
-const createResourceService = (
-    baseUrl,
-    options = {}
-) => {
+const createResourceService = (basePath) => {
 
-    const {
-        pagedPath = "/paged"
-    } = options;
+    const global = {
+
+        getAll: () =>
+            api.get(basePath),
+
+        getPaged: (params = {}, config = {}) =>
+            api.get(`${basePath}/paged`, {
+                params,
+                ...config
+            }),
+
+        getById: (id) =>
+            api.get(`${basePath}/${id}`),
+
+        create: (data) =>
+            api.post(basePath, data),
+
+        update: (id, data) =>
+            api.put(`${basePath}/${id}`, data),
+
+        remove: (id) =>
+            api.delete(`${basePath}/${id}`)
+    };
+
+
+    const me = {
+
+        getAll: () =>
+            api.get(`${basePath}/me`),
+
+        getPaged: (params = {}, config = {}) =>
+            api.get(`${basePath}/me/paged`, {
+                params,
+                ...config
+            }),
+
+        getById: (id) =>
+            api.get(`${basePath}/me/${id}`),
+
+        create: (data) =>
+            api.post(`${basePath}/me`, data),
+
+        update: (id, data) =>
+            api.put(`${basePath}/me/${id}`, data),
+
+        remove: (id) =>
+            api.delete(`${basePath}/me/${id}`)
+    };
+
 
     return {
-
-        getAll: (config = {}) =>
-            api.get(
-                baseUrl,
-                config
-            ),
-
-        getPaged: (
-            params = {},
-            config = {}
-        ) =>
-            api.get(
-                pagedPath
-                    ? `${baseUrl}${pagedPath}`
-                    : baseUrl,
-                {
-                    ...config,
-                    params
-                }
-            ),
-
-        getById: (
-            id,
-            config = {}
-        ) =>
-            api.get(
-                `${baseUrl}/${id}`,
-                config
-            ),
-
-        create: (
-            data,
-            config = {}
-        ) =>
-            api.post(
-                baseUrl,
-                data,
-                config
-            ),
-
-        update: (
-            id,
-            data,
-            config = {}
-        ) =>
-            api.put(
-                `${baseUrl}/${id}`,
-                data,
-                config
-            ),
-
-        delete: (
-            id,
-            config = {}
-        ) =>
-            api.delete(
-                `${baseUrl}/${id}`,
-                config
-            )
-
+        ...global,
+        me
     };
 };
 

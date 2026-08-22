@@ -529,33 +529,127 @@ function App() {
     return (
         <BrowserRouter>
             <AuthProvider>
+
                 <Routes>
+
                     {/* PUBLIC */}
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/customer-addresses" element={<CustomerAddressPage scope="global" />} />
-                    <Route path="/my/customer-addresses" element={<CustomerAddressPage scope="me" />} />
+
+                    <Route
+                        path="/login"
+                        element={<LoginPage />}
+                    />
+
+                    <Route
+                        path="/register"
+                        element={<RegisterPage />}
+                    />
+
 
                     {/* PROTECTED */}
-                    <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-                        <Route path="/" element={<Dashboard />} />
-                        <Route path="/facilities" element={<FacilitiesPage />} />
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/shipment-requests" element={<ShipmentRequestsPage />} />
-                        <Route path="/shipments" element={<ShipmentsPage />} />
-                        <Route path="/package-scans" element={<PackageScansPage />} />
-                        <Route path="/tracking-events" element={<TrackingEventsPage />} />
-                        <Route path="/transport-orders" element={<TransportOrdersPage />} />
-                        <Route path="/delivery-attempts" element={<DeliveryAttemptsPage />} />
-                        <Route path="/proof-of-deliveries" element={<ProofOfDeliveriesPage />} />
-                        <Route path="/my/shipment-requests" element={<MyShipmentRequestsPage />} />
-                        <Route path="/customer-addresses" element={<CustomerAddressPage scope="me" />} />
-                        <Route path="/delivery-assignments" element={<DeliveryAssignmentsPage />} />
+
+                    <Route
+                        element={
+                            <ProtectedRoute>
+                                <AppLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+
+                        <Route
+                            path="/"
+                            element={<Dashboard />}
+                        />
+
+                        <Route
+                            path="/facilities"
+                            element={<FacilitiesPage />}
+                        />
+
+                        <Route
+                            path="/profile"
+                            element={<ProfilePage />}
+                        />
+
+                        <Route
+                            path="/customer-addresses"
+                            element={
+                                <CustomerAddressPage
+                                    scope="global"
+                                />
+                            }
+                        />
+
+                        <Route
+                            path="/my/customer-addresses"
+                            element={
+                                <CustomerAddressPage
+                                    scope="me"
+                                />
+                            }
+                        />
+
+                        <Route
+                            path="/shipment-requests"
+                            element={<ShipmentRequestsPage />}
+                        />
+
+                        <Route
+                            path="/my/shipment-requests"
+                            element={<MyShipmentRequestsPage />}
+                        />
+
+                        <Route
+                            path="/shipments"
+                            element={<ShipmentsPage />}
+                        />
+
+                        <Route
+                            path="/package-scans"
+                            element={<PackageScansPage />}
+                        />
+
+                        <Route
+                            path="/tracking-events"
+                            element={<TrackingEventsPage />}
+                        />
+
+                        <Route
+                            path="/transport-orders"
+                            element={<TransportOrdersPage />}
+                        />
+
+                        <Route
+                            path="/delivery-attempts"
+                            element={<DeliveryAttemptsPage />}
+                        />
+
+                        <Route
+                            path="/proof-of-deliveries"
+                            element={<ProofOfDeliveriesPage />}
+                        />
+
+                        <Route
+                            path="/delivery-assignments"
+                            element={<DeliveryAssignmentsPage />}
+                        />
+
                     </Route>
 
+
                     {/* FALLBACK */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
+
+                    <Route
+                        path="*"
+                        element={
+                            <Navigate
+                                to="/"
+                                replace
+                            />
+                        }
+                    />
+
                 </Routes>
+
             </AuthProvider>
         </BrowserRouter>
     );

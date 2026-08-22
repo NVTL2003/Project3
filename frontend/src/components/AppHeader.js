@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import meService from "../api/meService";
 import "../styles/app-header.css";
 
-
 /*
 |--------------------------------------------------------------------------
 | ENTITY MENU CONFIGURATION
@@ -12,7 +11,8 @@ import "../styles/app-header.css";
 | Each entity has:
 |
 |   permission -> permission prefix from backend
-|   path       -> React route
+|   children   -> scope-based menu items (own/all)
+|   path       -> React route (for entities without children)
 |
 | The header uses the user's permissions to decide what is visible.
 |
@@ -95,7 +95,18 @@ const MENU_GROUPS = [
             {
                 label: "Customer Addresses",
                 permission: "customer_addresses",
-                path: "/customer-addresses"
+                children: [
+                    {
+                        label: "My Addresses",
+                        scope: "own",
+                        path: "/my/customer-addresses"
+                    },
+                    {
+                        label: "All Addresses",
+                        scope: "all",
+                        path: "/customer-addresses"
+                    }
+                ]
             }
         ]
     },
@@ -104,34 +115,69 @@ const MENU_GROUPS = [
         key: "shipment",
         label: "Shipment",
         entities: [
-
-
-                    {
-                        label: "My Shipment Requests",
-                        permission: "shipment_requests",
-                        path: "/my/shipment-requests"  // This should be first for customers
-                    },
-
-
-            {
-                label: "Shipments",
-                permission: "shipments",
-                path: "/shipments"
-            },
             {
                 label: "Shipment Requests",
                 permission: "shipment_requests",
-                path: "/shipment-requests"
+                children: [
+                    {
+                        label: "My Shipment Requests",
+                        scope: "own",
+                        path: "/my/shipment-requests"
+                    },
+                    {
+                        label: "All Shipment Requests",
+                        scope: "all",
+                        path: "/shipment-requests"
+                    }
+                ]
+            },
+            {
+                label: "Shipments",
+                permission: "shipments",
+                children: [
+                    {
+                        label: "My Shipments",
+                        scope: "own",
+                        path: "/my/shipments"
+                    },
+                    {
+                        label: "All Shipments",
+                        scope: "all",
+                        path: "/shipments"
+                    }
+                ]
             },
             {
                 label: "Shipment Contacts",
                 permission: "shipment_contacts",
-                path: "/shipment-contacts"
+                children: [
+                    {
+                        label: "My Contacts",
+                        scope: "own",
+                        path: "/my/shipment-contacts"
+                    },
+                    {
+                        label: "All Contacts",
+                        scope: "all",
+                        path: "/shipment-contacts"
+                    }
+                ]
             },
             {
                 label: "Shipment Charges",
                 permission: "shipment_charges",
-                path: "/shipment-charges"
+                children: [
+                    {
+                        label: "My Charges",
+                        scope: "own",
+                        path: "/my/shipment-charges"
+                    },
+                    {
+                        label: "All Charges",
+                        scope: "all",
+                        path: "/shipment-charges"
+                    }
+                ]
             },
             {
                 label: "Shipment Manifests",
@@ -188,7 +234,18 @@ const MENU_GROUPS = [
             {
                 label: "Transport Orders",
                 permission: "transport_orders",
-                path: "/transport-orders"
+                children: [
+                    {
+                        label: "My Transport Orders",
+                        scope: "own",
+                        path: "/my/transport-orders"
+                    },
+                    {
+                        label: "All Transport Orders",
+                        scope: "all",
+                        path: "/transport-orders"
+                    }
+                ]
             }
         ]
     },
@@ -200,12 +257,34 @@ const MENU_GROUPS = [
             {
                 label: "Invoices",
                 permission: "invoices",
-                path: "/invoices"
+                children: [
+                    {
+                        label: "My Invoices",
+                        scope: "own",
+                        path: "/my/invoices"
+                    },
+                    {
+                        label: "All Invoices",
+                        scope: "all",
+                        path: "/invoices"
+                    }
+                ]
             },
             {
                 label: "Payments",
                 permission: "payments",
-                path: "/payments"
+                children: [
+                    {
+                        label: "My Payments",
+                        scope: "own",
+                        path: "/my/payments"
+                    },
+                    {
+                        label: "All Payments",
+                        scope: "all",
+                        path: "/payments"
+                    }
+                ]
             },
             {
                 label: "Expenses",
@@ -222,22 +301,66 @@ const MENU_GROUPS = [
             {
                 label: "Delivery Assignments",
                 permission: "delivery_assignments",
-                path: "/delivery-assignments"
+                children: [
+                    {
+                        label: "My Assignments",
+                        scope: "own",
+                        path: "/my/delivery-assignments"
+                    },
+                    {
+                        label: "All Assignments",
+                        scope: "all",
+                        path: "/delivery-assignments"
+                    }
+                ]
             },
             {
                 label: "Delivery Attempts",
                 permission: "delivery_attempts",
-                path: "/delivery-attempts"
+                children: [
+                    {
+                        label: "My Attempts",
+                        scope: "own",
+                        path: "/my/delivery-attempts"
+                    },
+                    {
+                        label: "All Attempts",
+                        scope: "all",
+                        path: "/delivery-attempts"
+                    }
+                ]
             },
             {
                 label: "Proof of Delivery",
                 permission: "proof_of_delivery",
-                path: "/proof-of-delivery"
+                children: [
+                    {
+                        label: "My Proofs",
+                        scope: "own",
+                        path: "/my/proof-of-delivery"
+                    },
+                    {
+                        label: "All Proofs",
+                        scope: "all",
+                        path: "/proof-of-delivery"
+                    }
+                ]
             },
             {
                 label: "Tracking Events",
                 permission: "tracking_events",
-                path: "/tracking-events"
+                children: [
+                    {
+                        label: "My Tracking Events",
+                        scope: "own",
+                        path: "/my/tracking-events"
+                    },
+                    {
+                        label: "All Tracking Events",
+                        scope: "all",
+                        path: "/tracking-events"
+                    }
+                ]
             },
             {
                 label: "Tracking Status",
@@ -291,49 +414,55 @@ const MENU_GROUPS = [
             {
                 label: "Notifications",
                 permission: "notifications",
-                path: "/notifications"
+                children: [
+                    {
+                        label: "My Notifications",
+                        scope: "own",
+                        path: "/my/notifications"
+                    },
+                    {
+                        label: "All Notifications",
+                        scope: "all",
+                        path: "/notifications"
+                    }
+                ]
             }
         ]
     }
 ];
+
 /*
 |--------------------------------------------------------------------------
-| Permission helper
+| Permission helpers
 |--------------------------------------------------------------------------
 */
 
-const canAccessEntity = (permissions, entityPermission) => {
-
+/**
+ * Check if user has a specific permission for a resource, action, and scope
+ * 
+ * @param {Array} permissions - User's permission strings
+ * @param {string} resource - Resource name (e.g., "customer_addresses")
+ * @param {string} action - Action name (e.g., "read", "create", "update", "delete")
+ * @param {string} scope - Scope name (e.g., "own", "all")
+ * @returns {boolean}
+ */
+const hasPermission = (
+    permissions,
+    resource,
+    action,
+    scope
+) => {
     if (!Array.isArray(permissions)) {
         return false;
     }
 
-    return permissions.some(permission => {
+    const expected =
+        `${resource}.${action}.${scope}`.toLowerCase();
 
-        const normalized =
-            permission.toLowerCase();
-
-        const prefix =
-            entityPermission.toLowerCase();
-
-        /*
-         * Read/view/manage are enough to make
-         * the entity visible in navigation.
-         */
-
-        return (
-            normalized === `${prefix}.read` ||
-            normalized === `${prefix}.view` ||
-            normalized === `${prefix}.manage` ||
-            normalized === `${prefix}.update` ||
-            normalized === `${prefix}.create` ||
-            normalized === `${prefix}.edit`
-        );
-
-    });
-
+    return permissions.some(permission =>
+        permission.toLowerCase() === expected
+    );
 };
-
 
 /*
 |--------------------------------------------------------------------------
@@ -351,7 +480,6 @@ function AppHeader() {
 
     const [loading, setLoading] =
         useState(true);
-
 
     /*
      * Load current user from /api/me
@@ -407,7 +535,6 @@ function AppHeader() {
 
     }, []);
 
-
     /*
      * Logout
      */
@@ -422,7 +549,6 @@ function AppHeader() {
         window.location.href = "/login";
     };
 
-
     /*
      * Current user information
      */
@@ -435,16 +561,17 @@ function AppHeader() {
         user?.username ||
         "User";
 
-
     const permissions =
         user?.permissions ?? [];
-
 
     /*
      * Build navigation dynamically.
      *
      * Only groups containing at least one
      * accessible entity are rendered.
+     * 
+     * For entities with children, each child is
+     * checked individually using scope-based permissions.
      */
 
     const visibleGroups =
@@ -454,12 +581,56 @@ function AppHeader() {
                 .map(group => {
 
                     const visibleEntities =
-                        group.entities.filter(entity =>
-                            canAccessEntity(
-                                permissions,
-                                entity.permission
-                            )
-                        );
+                        group.entities
+                            .map(entity => {
+
+                                // =================================================
+                                // ENTITY WITH SCOPES (children)
+                                // =================================================
+
+                                if (entity.children) {
+
+                                    const visibleChildren =
+                                        entity.children.filter(child => {
+
+                                            return hasPermission(
+                                                permissions,
+                                                entity.permission,
+                                                "read",
+                                                child.scope
+                                            );
+
+                                        });
+
+                                    if (visibleChildren.length === 0) {
+                                        return null;
+                                    }
+
+                                    return {
+                                        ...entity,
+                                        children: visibleChildren
+                                    };
+                                }
+
+                                // =================================================
+                                // NORMAL ENTITY (no children)
+                                // =================================================
+
+                                const canRead =
+                                    permissions.some(permission =>
+                                        permission
+                                            .toLowerCase()
+                                            .startsWith(
+                                                `${entity.permission.toLowerCase()}.`
+                                            )
+                                    );
+
+                                return canRead
+                                    ? entity
+                                    : null;
+
+                            })
+                            .filter(Boolean);
 
                     return {
                         ...group,
@@ -473,7 +644,6 @@ function AppHeader() {
 
         }, [permissions]);
 
-
     /*
      * Active route
      */
@@ -484,13 +654,11 @@ function AppHeader() {
 
     };
 
-
     return (
 
         <header className="app-header">
 
             <div className="app-header-inner">
-
 
                 {/* ================================================= */}
                 {/* BRAND */}
@@ -519,13 +687,11 @@ function AppHeader() {
 
                 </Link>
 
-
                 {/* ================================================= */}
                 {/* NAVIGATION */}
                 {/* ================================================= */}
 
                 <nav className="app-navigation">
-
 
                     {/* DASHBOARD */}
 
@@ -540,7 +706,6 @@ function AppHeader() {
                     >
                         Dashboard
                     </Link>
-
 
                     {/* DYNAMIC GROUPS */}
 
@@ -564,36 +729,75 @@ function AppHeader() {
 
                                 </button>
 
-
                                 <div className="app-nav-dropdown-menu">
 
                                     <div className="app-nav-dropdown-title">
                                         {group.label}
                                     </div>
 
-
                                     {group.entities.map(entity => (
 
-                                        <Link
-                                            key={entity.path}
-                                            to={entity.path}
-                                            className={
-                                                `app-nav-dropdown-item ${isActive(entity.path)
-                                                    ? "active"
-                                                    : ""
-                                                }`
-                                            }
-                                        >
+                                        <React.Fragment key={entity.permission}>
 
-                                            <span>
-                                                {entity.label}
-                                            </span>
+                                            {entity.children ? (
 
-                                            <span className="app-nav-item-arrow">
-                                                →
-                                            </span>
+                                                <>
+                                                    <div className="app-nav-dropdown-section">
+                                                        {entity.label}
+                                                    </div>
 
-                                        </Link>
+                                                    {entity.children.map(child => (
+
+                                                        <Link
+                                                            key={child.path}
+                                                            to={child.path}
+                                                            className={
+                                                                `app-nav-dropdown-item ${isActive(child.path)
+                                                                    ? "active"
+                                                                    : ""
+                                                                }`
+                                                            }
+                                                        >
+
+                                                            <span>
+                                                                {child.label}
+                                                            </span>
+
+                                                            <span className="app-nav-item-arrow">
+                                                                →
+                                                            </span>
+
+                                                        </Link>
+
+                                                    ))}
+                                                </>
+
+                                            ) : (
+
+                                                <Link
+                                                    key={entity.path}
+                                                    to={entity.path}
+                                                    className={
+                                                        `app-nav-dropdown-item ${isActive(entity.path)
+                                                            ? "active"
+                                                            : ""
+                                                        }`
+                                                    }
+                                                >
+
+                                                    <span>
+                                                        {entity.label}
+                                                    </span>
+
+                                                    <span className="app-nav-item-arrow">
+                                                        →
+                                                    </span>
+
+                                                </Link>
+
+                                            )}
+
+                                        </React.Fragment>
 
                                     ))}
 
@@ -605,13 +809,11 @@ function AppHeader() {
 
                 </nav>
 
-
                 {/* ================================================= */}
                 {/* USER */}
                 {/* ================================================= */}
 
                 <div className="app-header-user">
-
 
                     <button
                         className="app-user-button"
@@ -628,7 +830,6 @@ function AppHeader() {
 
                         </div>
 
-
                         <div className="app-user-info">
 
                             <div className="app-user-name">
@@ -641,13 +842,11 @@ function AppHeader() {
 
                         </div>
 
-
                         <span className="app-user-arrow">
                             ›
                         </span>
 
                     </button>
-
 
                     <button
                         className="app-logout-button"
