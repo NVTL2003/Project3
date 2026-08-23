@@ -234,6 +234,13 @@ const useGenericEntity = ({
                         return;
                     }
 
+                    if (
+                        field.readOnly &&
+                        formData.id
+                    ) {
+                        return;
+                    }
+
                     const value =
                         formData[field.name];
 

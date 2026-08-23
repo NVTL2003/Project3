@@ -89,6 +89,9 @@ namespace Project3.Mapping
 
             CreateMap<InsurancePlan, InsurancePlanDto>();
             CreateMap<CreateInsurancePlanDto, InsurancePlan>();
+
+            CreateMap<Customer, CustomerDto>();
+            CreateMap<CreateCustomerDto, Customer>();
         }
 
         private string GenerateDefaultCode(string name)

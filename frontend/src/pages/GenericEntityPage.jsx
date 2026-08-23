@@ -27,7 +27,9 @@ const GenericEntityPage = ({
 
     requirePermission = true,
 
-    extraActions = null
+    extraActions = null,
+
+    showCreate = true
 }) => {
 
     const entity = useGenericEntity({
@@ -75,21 +77,11 @@ const GenericEntityPage = ({
                 {/* ================================================= */}
 
                 <EntityHeader
-
                     entityName={entityName}
-
                     showForm={entity.showForm}
-
-                    canCreate={entity.canCreate}
-
-                    onAddNew={
-                        entity.handleAddNew
-                    }
-
-                    onCancel={
-                        entity.handleCancel
-                    }
-
+                    canCreate={showCreate && entity.canCreate}
+                    onAddNew={entity.handleAddNew}
+                    onCancel={entity.handleCancel}
                 />
 
 

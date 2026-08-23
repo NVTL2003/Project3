@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
+
 import RelationSelect
     from "./generic/RelationSelect";
+
+
 function CrudForm({
     fields,
     initialData,
@@ -11,9 +14,22 @@ function CrudForm({
     const [form, setForm] = useState({});
 
 
+    // =========================================================
+    // EDIT MODE
+    // =========================================================
+
+    const isEditing =
+        !!initialData?.id;
+
+
+    // =========================================================
+    // INITIALIZE FORM
+    // =========================================================
+
     useEffect(() => {
 
         const initialFormState = {};
+
 
         fields.forEach(field => {
 
@@ -41,21 +57,31 @@ function CrudForm({
 
                     initialFormState[field.name] =
                         "";
+
                 }
 
             }
 
         });
 
+
         console.log(
             "CrudForm - Initializing with:",
             initialFormState
         );
 
+
         setForm(initialFormState);
 
-    }, [initialData, fields]);
+    }, [
+        initialData,
+        fields
+    ]);
 
+
+    // =========================================================
+    // HANDLE CHANGE
+    // =========================================================
 
     const handleChange = (
         name,
@@ -67,6 +93,7 @@ function CrudForm({
             value
         );
 
+
         setForm(prevForm => ({
             ...prevForm,
             [name]: value
@@ -75,6 +102,10 @@ function CrudForm({
     };
 
 
+    // =========================================================
+    // SUBMIT
+    // =========================================================
+
     const handleSubmit = () => {
 
         console.log(
@@ -82,7 +113,9 @@ function CrudForm({
             form
         );
 
+
         const missingFields = [];
+
 
         for (const field of fields) {
 
@@ -94,6 +127,7 @@ function CrudForm({
 
                 const value =
                     form[field.name];
+
 
                 if (
                     value === undefined ||
@@ -127,10 +161,15 @@ function CrudForm({
             form
         );
 
+
         onSubmit(form);
 
     };
 
+
+    // =========================================================
+    // RENDER
+    // =========================================================
 
     return (
 
@@ -140,9 +179,22 @@ function CrudForm({
 
                 {fields.map(field => {
 
+                    // -------------------------------------------------
+                    // HIDDEN
+                    // -------------------------------------------------
+
                     if (field.type === "hidden") {
                         return null;
                     }
+
+
+                    // -------------------------------------------------
+                    // FIELD DISABLED STATE
+                    // -------------------------------------------------
+
+                    const disabled =
+                        isEditing &&
+                        field.disabledWhenEditing === true;
 
 
                     return (
@@ -171,21 +223,37 @@ function CrudForm({
                             </label>
 
 
-                            {field.type === "checkbox" ? (
+                            {/* ================================================= */}
+                            {/* CHECKBOX */}
+                            {/* ================================================= */}
+
+                            {field.readAble ? (
+
+                                <div className="crud-readonly-value">
+                                    {form[field.name] || "Not available"}
+                                </div>
+
+                            ) : field.type === "checkbox" ? (
 
                                 <label className="crud-checkbox">
 
                                     <input
+
                                         type="checkbox"
+
                                         checked={
                                             form[field.name] || false
                                         }
+
+                                        disabled={disabled}
+
                                         onChange={(e) =>
                                             handleChange(
                                                 field.name,
                                                 e.target.checked
                                             )
                                         }
+
                                     />
 
                                     <span>
@@ -194,24 +262,36 @@ function CrudForm({
 
                                 </label>
 
+
                             ) : field.type === "select" ? (
 
+                                /* ================================================= */
+                                /* NORMAL SELECT */
+                                /* ================================================= */
+
                                 <select
+
                                     className="crud-form-input"
+
                                     value={
                                         form[field.name] || ""
                                     }
+
+                                    disabled={disabled}
+
                                     onChange={(e) =>
                                         handleChange(
                                             field.name,
                                             e.target.value
                                         )
                                     }
+
                                 >
 
                                     <option value="">
                                         Select {field.label}
                                     </option>
+
 
                                     {field.options?.map(opt => (
 
@@ -224,50 +304,96 @@ function CrudForm({
 
                                     ))}
 
-                                    </select>
+                                </select>
+
+
                             ) : field.type === "relation" ? (
 
+                                /* ================================================= */
+                                /* RELATION */
+                                /* ================================================= */
+
                                 <RelationSelect
+
                                     field={field}
-                                    value={form[field.name]}
+
+                                    value={
+                                        form[field.name]
+                                    }
+
+                                    disabled={disabled}
+
                                     onChange={(value) =>
                                         handleChange(
                                             field.name,
                                             value
                                         )
                                     }
+
                                 />
+
+
                             ) : field.type === "textarea" ? (
 
+                                /* ================================================= */
+                                /* TEXTAREA */
+                                /* ================================================= */
+
                                 <textarea
+
                                     className="crud-form-input crud-form-textarea"
-                                    placeholder={field.label}
+
+                                    placeholder={
+                                        field.label
+                                    }
+
                                     value={
                                         form[field.name] || ""
                                     }
+
+                                    disabled={disabled}
+
                                     onChange={(e) =>
                                         handleChange(
                                             field.name,
                                             e.target.value
                                         )
                                     }
+
                                 />
+
 
                             ) : (
 
+                                /* ================================================= */
+                                /* NORMAL INPUT */
+                                /* ================================================= */
+
                                 <input
+
                                     className="crud-form-input"
-                                    type={field.type || "text"}
-                                    placeholder={field.label}
+
+                                    type={
+                                        field.type || "text"
+                                    }
+
+                                    placeholder={
+                                        field.label
+                                    }
+
                                     value={
                                         form[field.name] || ""
                                     }
+
+                                    disabled={disabled}
+
                                     onChange={(e) =>
                                         handleChange(
                                             field.name,
                                             e.target.value
                                         )
                                     }
+
                                 />
 
                             )}
@@ -281,14 +407,24 @@ function CrudForm({
             </div>
 
 
+            {/* ========================================================= */}
+            {/* ACTIONS */}
+            {/* ========================================================= */}
+
             <div className="crud-form-actions">
 
                 <button
+
                     type="button"
+
                     className="crud-button crud-button-primary"
+
                     onClick={handleSubmit}
+
                 >
+
                     {submitLabel || "Submit"}
+
                 </button>
 
             </div>
@@ -298,5 +434,6 @@ function CrudForm({
     );
 
 }
+
 
 export default CrudForm;

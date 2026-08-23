@@ -15,10 +15,20 @@ function RelationSelect({
 
         const loadOptions = async () => {
 
+            // =====================================================
+            // READ ONLY
+            // =====================================================
+
+            if (field.readOnly) {
+                return;
+            }
+
             if (!field.service) {
+
                 console.error(
                     `RelationSelect: No service provided for ${field.label}`
                 );
+
                 return;
             }
 
@@ -34,7 +44,10 @@ function RelationSelect({
 
                 if (field.fetchMode === "mine") {
 
-                    if (typeof field.service.getMine !== "function") {
+                    if (
+                        typeof field.service.getMine !== "function"
+                    ) {
+
                         throw new Error(
                             `${field.label}: service does not implement getMine()`
                         );
@@ -49,7 +62,10 @@ function RelationSelect({
 
                 } else {
 
-                    if (typeof field.service.getPaged !== "function") {
+                    if (
+                        typeof field.service.getPaged !== "function"
+                    ) {
+
                         throw new Error(
                             `${field.label}: service does not implement getPaged()`
                         );
@@ -74,7 +90,7 @@ function RelationSelect({
                 }
 
                 // =====================================================
-                // NORMALIZE RESPONSE
+                // NORMALIZE
                 // =====================================================
 
                 const data =
@@ -124,6 +140,30 @@ function RelationSelect({
     }, [field]);
 
 
+    // =============================================================
+    // READ ONLY DISPLAY
+    // =============================================================
+
+    if (field.readOnly) {
+
+        return (
+            <input
+                className="crud-form-input"
+                value={field.getReadOnlyLabel
+                    ? field.getReadOnlyLabel(value)
+                    : value || ""
+                }
+                readOnly
+                disabled
+            />
+        );
+    }
+
+
+    // =============================================================
+    // NORMAL SELECT
+    // =============================================================
+
     return (
 
         <select
@@ -166,7 +206,6 @@ function RelationSelect({
             })}
 
         </select>
-
     );
 }
 

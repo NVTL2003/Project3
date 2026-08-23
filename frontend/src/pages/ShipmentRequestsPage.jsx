@@ -2,7 +2,7 @@ import React from "react";
 import GenericEntityPage from "./GenericEntityPage";
 import shipmentRequestService from "../services/shipmentRequestService";
 import customerAddressService from "../services/customerAddressService"
-import customerService from "../services/customerService";
+import customerService from "../services/customerService"
 import serviceService from "../services/serviceService";
 import insurancePlanService from "../services/insurancePlanService";
 
@@ -20,6 +20,10 @@ const buildShipmentRequestFieldConfig = (isMine) => [
                 type: "relation",
                 required: true,
 
+                readOnly: !isMine,
+
+                displayField: "customerName",
+
                 service: customerService,
                 fetchMode: "all",
 
@@ -27,40 +31,46 @@ const buildShipmentRequestFieldConfig = (isMine) => [
 
                 getOptionLabel: customer =>
                     `${customer.companyName} (${customer.accountNumber})`
-            }
+            },
+            {
+                name: "senderAddressId",
+                label: "Sender Address",
+                type: "relation",
+                required: true,
+
+                readOnly: !isMine,
+
+                displayField: "senderAddress",
+
+                service: customerAddressService,
+                fetchMode: isMine ? "mine" : "all",
+
+                valueField: "id",
+
+                getOptionLabel: address =>
+                    `${address.addressType} - ${address.addressLine1}, ${address.city}`
+            },
+            {
+                name: "receiverAddressId",
+                label: "Receiver Address",
+                type: "relation",
+                required: true,
+
+                readOnly: !isMine,
+
+                displayField: "receiverAddress",
+
+                service: customerAddressService,
+                fetchMode: isMine ? "mine" : "all",
+
+                valueField: "id",
+
+                getOptionLabel: address =>
+                    `${address.addressType} - ${address.addressLine1}, ${address.city}`
+            },
         ]
-        : []),
-
-    {
-        name: "senderAddressId",
-        label: "Sender Address",
-        type: "relation",
-        required: true,
-
-        service: customerAddressService,
-
-        fetchMode: isMine ? "mine" : "all",
-
-        valueField: "id",
-
-        getOptionLabel: address =>
-            `${address.addressType} - ${address.addressLine1}, ${address.city}`
-    },
-    {
-        name: "receiverAddressId",
-        label: "Receiver Address",
-        type: "relation",
-        required: true,
-
-        service: customerAddressService,
-
-        fetchMode: isMine ? "mine" : "all",
-
-        valueField: "id",
-
-        getOptionLabel: address =>
-            `${address.addressType} - ${address.addressLine1}, ${address.city}`
-    },
+        : [
+        ]),
 
     {
         name: "serviceId",
@@ -73,7 +83,7 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         valueField: "id",
 
         getOptionLabel: service =>
-            `${service.name}`
+            service.name
     },
 
     {
@@ -88,26 +98,31 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         required: true,
         type: "number"
     },
+
     {
         name: "length",
         label: "Length (cm)",
         required: false
     },
+
     {
         name: "width",
         label: "Width (cm)",
         required: false
     },
+
     {
         name: "height",
         label: "Height (cm)",
         required: false
     },
+
     {
         name: "declaredValue",
         label: "Declared Value",
         required: false
     },
+
     {
         name: "insurancePlanId",
         label: "Insurance Plan",
@@ -120,14 +135,16 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         valueField: "id",
 
         getOptionLabel: plan =>
-            `${plan.name}`
+            plan.name
     },
+
     {
         name: "specialInstructions",
         label: "Special Instructions",
         type: "textarea",
         required: false
     },
+
     {
         name: "isFragile",
         label: "Fragile",
@@ -135,6 +152,7 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         required: false,
         defaultValue: false
     },
+
     {
         name: "isLarge",
         label: "Large",
