@@ -86,6 +86,9 @@ namespace Project3.Mapping
 
             CreateMap<Service, ServiceDto>();
             CreateMap<CreateServiceDto, Service>();
+
+            CreateMap<InsurancePlan, InsurancePlanDto>();
+            CreateMap<CreateInsurancePlanDto, InsurancePlan>();
         }
 
         private string GenerateDefaultCode(string name)

@@ -4,6 +4,7 @@ import shipmentRequestService from "../services/shipmentRequestService";
 import customerAddressService from "../services/customerAddressService"
 import customerService from "../services/customerService";
 import serviceService from "../services/serviceService";
+import insurancePlanService from "../services/insurancePlanService";
 
 const buildShipmentRequestFieldConfig = (isMine) => [
     {
@@ -37,14 +38,14 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         required: true,
 
         service: customerAddressService,
-        fetchMode: "mine",
+
+        fetchMode: isMine ? "mine" : "all",
 
         valueField: "id",
 
         getOptionLabel: address =>
             `${address.addressType} - ${address.addressLine1}, ${address.city}`
     },
-
     {
         name: "receiverAddressId",
         label: "Receiver Address",
@@ -52,7 +53,8 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         required: true,
 
         service: customerAddressService,
-        fetchMode: "mine",
+
+        fetchMode: isMine ? "mine" : "all",
 
         valueField: "id",
 
@@ -108,8 +110,17 @@ const buildShipmentRequestFieldConfig = (isMine) => [
     },
     {
         name: "insurancePlanId",
-        label: "Insurance Plan ID",
-        required: false
+        label: "Insurance Plan",
+        type: "relation",
+        required: false,
+
+        service: insurancePlanService,
+        fetchMode: "all",
+
+        valueField: "id",
+
+        getOptionLabel: plan =>
+            `${plan.name}`
     },
     {
         name: "specialInstructions",

@@ -110,10 +110,14 @@ const CustomerAddressPage = ({
     const isMyAddresses =
         scope === "me";
 
-    const service =
-        isMyAddresses
-            ? customerAddressService.me
-            : customerAddressService;
+    const service = isMyAddresses
+        ? {
+            ...customerAddressService,
+
+            getPaged: (params, config = {}) =>
+                customerAddressService.getMine(config)
+        }
+        : customerAddressService;
 
     return (
         <GenericEntityPage

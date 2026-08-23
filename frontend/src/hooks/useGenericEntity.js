@@ -6,7 +6,7 @@ import {
 
 import { useCrud } from "./useCrud";
 import useTableControls from "./useTableControls";
-import { hasPermission } from "../utils/permissionUtils";
+import {getPermissions,hasPermission} from "../utils/permissionUtils";
 
 const emptyResult = {
     items: [],
@@ -60,30 +60,43 @@ const useGenericEntity = ({
     // PERMISSIONS
     // =========================================================
 
+    const permissions = getPermissions();
+
     const canRead =
         !requirePermission ||
         hasPermission(
-            `${permissionPrefix}.Read`
+            permissions,
+            permissionPrefix,
+            "read",
+            "all"
         );
 
     const canCreate =
         !requirePermission ||
         hasPermission(
-            `${permissionPrefix}.Create`
+            permissions,
+            permissionPrefix,
+            "create",
+            "all"
         );
 
     const canUpdate =
         !requirePermission ||
         hasPermission(
-            `${permissionPrefix}.Update`
+            permissions,
+            permissionPrefix,
+            "update",
+            "all"
         );
 
     const canDelete =
         !requirePermission ||
         hasPermission(
-            `${permissionPrefix}.Delete`
+            permissions,
+            permissionPrefix,
+            "delete",
+            "all"
         );
-
 
     // =========================================================
     // FETCH DATA

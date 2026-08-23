@@ -18,23 +18,12 @@ const update = (id, data, config = {}) =>
 const remove = (id, config = {}) =>
     client.delete(`/CustomerAddresses/${id}`, config);
 
-
 const customerAddressService = {
-
-    // Global/admin
     getPaged,
+    getMine,
     create,
     update,
-    delete: remove,
-
-    // Customer
-    me: {
-        getPaged: getMine,
-        create,
-        update,
-        delete: remove
-    }
-
+    delete: remove
 };
 
 export default customerAddressService;

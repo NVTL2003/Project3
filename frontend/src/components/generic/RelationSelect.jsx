@@ -34,6 +34,12 @@ function RelationSelect({
 
                 if (field.fetchMode === "mine") {
 
+                    if (typeof field.service.getMine !== "function") {
+                        throw new Error(
+                            `${field.label}: service does not implement getMine()`
+                        );
+                    }
+
                     console.log(
                         `🔗 Loading MY ${field.label}`
                     );
@@ -42,6 +48,12 @@ function RelationSelect({
                         await field.service.getMine();
 
                 } else {
+
+                    if (typeof field.service.getPaged !== "function") {
+                        throw new Error(
+                            `${field.label}: service does not implement getPaged()`
+                        );
+                    }
 
                     console.log(
                         `🔗 Loading ALL ${field.label}`

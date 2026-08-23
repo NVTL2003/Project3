@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Project3.Authentication;
 using Project3.DTOs;
 using Project3.Models;
 using Project3.Services.Interfaces;
-
-namespace Project3.Controllers;
+using Project3.Authentication;
 
 [ApiController]
 [Authorize]
@@ -19,60 +17,34 @@ public class ShipmentRequestsController
     private readonly IShipmentRequestService _shipmentRequestService;
 
     public ShipmentRequestsController(
-        IShipmentRequestService service,
+        IShipmentRequestService shipmentRequestService,
         IAuthorizationService authorizationService,
         ICurrentUserService currentUser)
         : base(
-            service,
+            shipmentRequestService,
             authorizationService,
             currentUser)
     {
-        _shipmentRequestService = service;
+        _shipmentRequestService = shipmentRequestService;
     }
 
-    // ============================================================
-    // APPROVE
-    // ============================================================
-
-    [HttpPost("{id}/approve")]
+    [HttpPost("{id:guid}/approve")]
     public async Task<IActionResult> Approve(Guid id)
     {
-        var userId = _currentUser.UserId;
+        if (!await HasPermission(
+            PermissionActions.Update,
+            PermissionScopes.All))
+        {
+            return Forbid();
+        }
 
-        if (userId == null)
+        if (!TryGetCurrentUserId(out var userId))
             return Unauthorized();
 
-        var result = await _authorizationService.AuthorizeAsync(
-            User,
-            null,
-            new PermissionRequirement(
-                "shipment_requests.update.all"));
+        var result =
+            await _shipmentRequestService
+                .ApproveAsync(id, userId);
 
-        if (!result.Succeeded)
-            return Forbid();
-
-        try
-        {
-            var response =
-                await _shipmentRequestService.ApproveAsync(
-                    id,
-                    userId.Value);
-
-            return Ok(response);
-        }
-        catch (KeyNotFoundException ex)
-        {
-            return NotFound(new
-            {
-                message = ex.Message
-            });
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(new
-            {
-                message = ex.Message
-            });
-        }
+        return Ok(result);
     }
 }
