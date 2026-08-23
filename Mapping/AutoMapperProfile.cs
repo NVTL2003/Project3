@@ -53,7 +53,17 @@ namespace Project3.Mapping
             CreateMap<CustomerAddress, CustomerAddressDto>();
 
             // Shipment Request mappings
-            CreateMap<CreateShipmentRequestDto, ShipmentRequest>();
+            CreateMap<CreateShipmentRequestDto, ShipmentRequest>()
+                .ForMember(d => d.CustomerId, o => o.Ignore())
+                .ForMember(d => d.SenderAddressId, o => o.Ignore())
+                .ForMember(d => d.ReceiverAddressId, o => o.Ignore())
+                .ForMember(d => d.Id, o => o.Ignore())
+                .ForMember(d => d.RequestNumber, o => o.Ignore())
+                .ForMember(d => d.Status, o => o.Ignore())
+                .ForMember(d => d.ApprovedBy, o => o.Ignore())
+                .ForMember(d => d.ApprovedAt, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
             CreateMap<ShipmentRequest, ShipmentRequestDto>();
 
             // Shipment mappings
