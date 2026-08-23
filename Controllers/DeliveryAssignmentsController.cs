@@ -9,7 +9,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/delivery-assignments")]
+[Route("api/[controller]")]
 public class DeliveryAssignmentsController
     : BaseCrudController<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>
 {

@@ -13,6 +13,7 @@ export function getPermissions() {
     }
 }
 
+
 export function getRoles() {
     try {
         const roles = JSON.parse(
@@ -28,6 +29,7 @@ export function getRoles() {
     }
 }
 
+
 export function getCurrentUser() {
     try {
         return JSON.parse(
@@ -39,23 +41,84 @@ export function getCurrentUser() {
     }
 }
 
-export function hasPermission(permission) {
 
-    const permissions =
-        getPermissions();
+/*
+ * Check exact permission
+ *
+ * Example:
+ *
+ * hasPermission(
+ *     permissions,
+ *     "customer_addresses",
+ *     "read",
+ *     "own"
+ * )
+ *
+ * => customer_addresses.read.own
+ */
+export function hasPermission(
+    permissions,
+    resource,
+    action,
+    scope
+) {
+    if (!Array.isArray(permissions)) {
+        return false;
+    }
 
-    return permissions.some(
-        p =>
-            typeof p === "string" &&
-            p.toLowerCase() ===
-            permission.toLowerCase()
+    const required =
+        `${resource}.${action}.${scope}`.toLowerCase();
+
+    return permissions.some(permission =>
+        typeof permission === "string" &&
+        permission.toLowerCase() === required
     );
 }
 
+
+/*
+ * Check whether the user has ANY permission
+ * for a resource.
+ *
+ * Example:
+ *
+ * hasResourcePermission(
+ *     permissions,
+ *     "facilities"
+ * )
+ *
+ * true if user has:
+ *
+ * facilities.read.all
+ * facilities.create.all
+ * facilities.update.all
+ * etc.
+ */
+export function hasResourcePermission(
+    permissions,
+    resource
+) {
+    if (!Array.isArray(permissions)) {
+        return false;
+    }
+
+    const prefix =
+        `${resource}.`.toLowerCase();
+
+    return permissions.some(permission =>
+        typeof permission === "string" &&
+        permission.toLowerCase().startsWith(prefix)
+    );
+}
+
+
 export function hasRole(role) {
 
-    const roles =
-        getRoles();
+    const roles = getRoles();
+
+    if (!role) {
+        return false;
+    }
 
     return roles.some(
         r =>

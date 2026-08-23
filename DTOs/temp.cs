@@ -214,4 +214,21 @@ namespace Project3.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
+
+    public class ApproveShipmentRequestDto
+    {
+        public Guid ShipmentId { get; set; }
+
+        public string TrackingNumber { get; set; } = string.Empty;
+
+        public string Message { get; set; } = string.Empty;
+    }
+    public class ApproveShipmentRequestResult
+    {
+        public Guid ShipmentId { get; set; }
+
+        public string TrackingNumber { get; set; } = string.Empty;
+
+        public string Message { get; set; } = string.Empty;
+    }
 }

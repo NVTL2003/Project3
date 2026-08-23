@@ -22,7 +22,7 @@ const createResourceService = (basePath) => {
         update: (id, data) =>
             api.put(`${basePath}/${id}`, data),
 
-        remove: (id) =>
+        delete: (id) =>
             api.delete(`${basePath}/${id}`)
     };
 
@@ -47,7 +47,7 @@ const createResourceService = (basePath) => {
         update: (id, data) =>
             api.put(`${basePath}/me/${id}`, data),
 
-        remove: (id) =>
+        delete: (id) =>
             api.delete(`${basePath}/me/${id}`)
     };
 

@@ -10,7 +10,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/package-scans")]
+[Route("api/[controller]")]
 public class PackageScansController
     : BaseCrudController<PackageScan, PackageScanDto, CreatePackageScanDto>
 {

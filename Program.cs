@@ -118,6 +118,17 @@ builder.Services.AddScoped<
     ICrudService<Facility, FacilityDto, CreateFacilityDto>,
     FacilityService>();
 
+builder.Services.AddScoped<
+    ICrudService<Shipment, ShipmentDto, CreateShipmentDto>,
+    ShipmentService>();
+
+builder.Services.AddScoped<
+    IShipmentRequestService,
+    ShipmentRequestService>();
+
+builder.Services.AddScoped<
+    ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>,
+    CustomerAddressService>();
 // ============================================================
 // CONTROLLERS
 // ============================================================

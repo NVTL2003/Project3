@@ -1,38 +1,38 @@
-import createResourceService from "./genericResourceService";
-import api from "../api/client";
+// import createResourceService from "./genericResourceService";
+// import api from "../api/client";
 
-export const shipmentRequestService = {
-    ...createResourceService("/shipment-requests"),
+// export const shipmentRequestService = {
+//     ...createResourceService("/shipment-requests"),
     
-    approve: (id) => 
-        api.post(`/shipment-requests/${id}/approve`)
-};
+//     approve: (id) => 
+//         api.post(`/shipment-requests/${id}/approve`)
+// };
 
-export const meShipmentRequestService = createResourceService("/me/shipment-requests");
+// export const meShipmentRequestService = createResourceService("/me/shipment-requests");
 
-export const shipmentService = createResourceService("/shipments");
+// export const shipmentService = createResourceService("/shipments");
 
-export const packageScanService = {
-    ...createResourceService("/package-scans"),
+// export const packageScanService = {
+//     ...createResourceService("/package-scans"),
     
-    scan: (data) => 
-        api.post(`/package-scans/scan`, data)
-};
+//     scan: (data) => 
+//         api.post(`/package-scans/scan`, data)
+// };
 
-export const trackingEventService = createResourceService("/tracking-events");
+// export const trackingEventService = createResourceService("/tracking-events");
 
-export const transportOrderService = {
-    ...createResourceService("/transport-orders"),
+// export const transportOrderService = {
+//     ...createResourceService("/transport-orders"),
     
-    assign: (data) => 
-        api.post(`/transport-orders/assign`, data)
-};
+//     assign: (data) => 
+//         api.post(`/transport-orders/assign`, data)
+// };
 
-export const deliveryAttemptService = {
-    ...createResourceService("/delivery-attempts"),
+// export const deliveryAttemptService = {
+//     ...createResourceService("/delivery-attempts"),
     
-    deliver: (data) => 
-        api.post(`/delivery-attempts/deliver`, data)
-};
-export const deliveryAssignmentService = createResourceService("/delivery-assignments");
-export const proofOfDeliveryService = createResourceService("/proof-of-deliveries");
+//     deliver: (data) => 
+//         api.post(`/delivery-attempts/deliver`, data)
+// };
+// export const deliveryAssignmentService = createResourceService("/delivery-assignments");
+// export const proofOfDeliveryService = createResourceService("/proof-of-deliveries");

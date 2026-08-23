@@ -13,8 +13,8 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
 {
     protected readonly ICrudService<TEntity, TDto, TCreateDto> _service;
 
-    private readonly IAuthorizationService _authorizationService;
-    private readonly ICurrentUserService _currentUser;
+    protected readonly IAuthorizationService _authorizationService;
+    protected readonly ICurrentUserService _currentUser;
 
     protected BaseCrudController(
         ICrudService<TEntity, TDto, TCreateDto> service,
@@ -27,7 +27,7 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
     }
 
     protected virtual string ResourceName =>
-        typeof(TEntity).Name.ToLowerInvariant();
+        PermissionResourceMap.GetResource<TEntity>();
 
     // ============================================================
     // PERMISSION

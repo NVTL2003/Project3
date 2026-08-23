@@ -10,7 +10,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/transport-orders")]
+[Route("api/[controller]")]
 public class TransportOrdersController
     : BaseCrudController<TransportOrder, TransportOrderDto, CreateTransportOrderDto>
 {

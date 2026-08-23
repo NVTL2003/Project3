@@ -8,7 +8,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/tracking-events")]
+[Route("api/[controller]")]
 public class TrackingEventsController
     : BaseCrudController<TrackingEvent, TrackingEventDto, CreateTrackingEventDto>
 {

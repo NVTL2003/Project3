@@ -1,829 +1,237 @@
-import React, {
-    useCallback,
-    useMemo,
-    useState
-} from "react";
+import React from "react";
 
-import { useCrud } from "../hooks/useCrud";
-import useTableControls from "../hooks/useTableControls";
-import "../styles/crud.css";
-import CrudForm from "../components/CrudForm";
-import CrudList from "../components/CrudList";
+import useGenericEntity from "../hooks/useGenericEntity";
+
 import TableControls from "../components/TableControls";
 import Pagination from "../components/Pagination";
-import {
-    hasPermission
-} from "../utils/permissionUtils";
 
-// const GenericEntityPage = ({
-//     entityName,
-//     permissionPrefix,
-//     service,
-//     fieldConfig = [],
-//     displayColumns = [],
-//     sortOptions = [],
-//     filterOptions = [],
-//     requirePermission = true
-// }) => {
+import EntityHeader from "../components/generic/EntityHeader";
+import EntityFormSection from "../components/generic/EntityFormSection";
+import EntityTableSection from "../components/generic/EntityTableSection";
+import AccessDenied from "../components/generic/AccessDenied";
+
+import "../styles/crud.css";
 
 const GenericEntityPage = ({
     entityName,
     permissionPrefix,
     service,
+
     fieldConfig = [],
+
     displayColumns = [],
+
     sortOptions = [],
+
     filterOptions = [],
+
     requirePermission = true,
-    extraActions = null  // Add this prop
+
+    extraActions = null
 }) => {
 
+    const entity = useGenericEntity({
 
-    const [showForm, setShowForm] = useState(false);
+        entityName,
 
-
-    // =========================================================
-    // DEFAULT FORM
-    // =========================================================
-
-    const initialForm = useMemo(() => {
-
-        const form = {};
-
-        fieldConfig.forEach(field => {
-
-            if (field.type === "checkbox") {
-
-                form[field.name] =
-                    field.defaultValue ?? false;
-
-            } else if (field.type === "hidden") {
-
-                form[field.name] = null;
-
-            } else {
-
-                form[field.name] =
-                    field.defaultValue ?? "";
-            }
-
-        });
-
-        return form;
-
-    }, [fieldConfig]);
-
-
-    // =========================================================
-    // TABLE DATA
-    // =========================================================
-
-    // const fetchData = useCallback(
-    //     async (params, config = {}) => {
-
-    //         console.log(
-    //             "📡 GenericEntityPage fetchData:",
-    //             params
-    //         );
-
-    //         try {
-    //             line 77 is the line below this
-    //             const response =
-    //                 await service.getPaged(
-    //                     params,
-    //                     config
-    //                 );
-
-    //             console.log(
-    //                 "📦 GenericEntityPage response:",
-    //                 response
-    //             );
-
-    //             console.log(
-    //                 "📦 GenericEntityPage response.data:",
-    //                 response?.data
-    //             );
-
-
-    //             /*
-    //              * Axios response:
-    //              *
-    //              * {
-    //              *     data: {
-    //              *         items: [],
-    //              *         totalCount: 7,
-    //              *         totalPages: 1
-    //              *     }
-    //              * }
-    //              */
-
-
-    //             return response?.data ?? {
-    //                 items: [],
-    //                 totalCount: 0,
-    //                 totalPages: 0
-    //             };
-
-    //         } catch (error) {
-
-    //             if (
-    //                 error?.name === "AbortError" ||
-    //                 error?.code === "ERR_CANCELED"
-    //             ) {
-
-    //                 console.log(
-    //                     "🛑 GenericEntityPage request cancelled"
-    //                 );
-
-    //                 return {
-    //                     items: [],
-    //                     totalCount: 0,
-    //                     totalPages: 0
-    //                 };
-    //             }
-
-    //             line 132 is the line below this
-    //             console.error(
-    //                 "❌ GenericEntityPage fetch error:",
-    //                 error
-    //             );
-
-    //             throw error;
-    //         }
-
-    //     },
-    //     [service]
-    // );
-
-    const fetchData = useCallback(
-        async (params, config = {}) => {
-            console.log("📡 GenericEntityPage fetchData:", params);
-
-            try {
-                const response = await service.getPaged(params, config);
-
-                console.log("📦 GenericEntityPage response:", response);
-                console.log("📦 GenericEntityPage response.data:", response?.data);
-
-                // Handle different response formats
-                let data = response?.data;
-
-                // If data is an array (from GetMineAsync), wrap it
-                if (Array.isArray(data)) {
-                    return {
-                        items: data,
-                        totalCount: data.length,
-                        totalPages: Math.ceil(data.length / params.pageSize || 1)
-                    };
-                }
-
-                // If data is null/undefined, return empty
-                if (!data) {
-                    return {
-                        items: [],
-                        totalCount: 0,
-                        totalPages: 0
-                    };
-                }
-
-                // If data has items property, use it
-                if (data.items !== undefined) {
-                    return {
-                        items: data.items,
-                        totalCount: data.totalCount || data.items.length,
-                        totalPages: data.totalPages || Math.ceil((data.totalCount || data.items.length) / params.pageSize || 1)
-                    };
-                }
-
-                // If data is an object but not in expected format
-                return {
-                    items: [],
-                    totalCount: 0,
-                    totalPages: 0
-                };
-
-            } catch (error) {
-                if (error?.name === "AbortError" || error?.code === "ERR_CANCELED") {
-                    console.log("🛑 GenericEntityPage request cancelled");
-                    return {
-                        items: [],
-                        totalCount: 0,
-                        totalPages: 0
-                    };
-                }
-
-                console.error("❌ GenericEntityPage fetch error:", error);
-                throw error;
-            }
-        },
-        [service]
-    );
-
-
-    // =========================================================
-    // TABLE CONTROLS
-    // =========================================================
-
-    const {
-        data,
-        loading,
-
-        page,
-        pageSize,
-
-        totalCount,
-        totalPages,
-
-        search,
-        sortBy,
-        sortOrder,
-        filters,
-
-        handleSearch,
-        handleSort,
-        handleFilter,
-
-        handlePageChange,
-        handlePageSizeChange,
-
-        reloadData
-
-    } = useTableControls({
-
-        fetchData,
-
-        initialPage: 1,
-        initialPageSize: 10,
-
-        initialSearch: "",
-        initialSort: "",
-        initialSortOrder: "asc",
-
-        initialFilters: {}
-
-    });
-
-
-    // =========================================================
-    // SAFE TABLE DATA
-    // =========================================================
-
-    const safeData =
-        Array.isArray(data)
-            ? data
-            : [];
-
-
-    // =========================================================
-    // CRUD
-    // =========================================================
-
-    const {
-        form,
-        setForm,
-
-        handleSubmit: crudSubmit,
-
-        handleDelete,
-
-        resetForm
-
-    } = useCrud({
+        permissionPrefix,
 
         service,
 
-        initialForm,
+        fieldConfig,
 
-        // buildPayload: (formData) => {
-
-        //     const payload = {};
-
-        //     fieldConfig.forEach(field => {
-
-        //         /*
-        //          * ID is handled separately by useCrud.
-        //          */
-        //         if (field.name === "id") {
-        //             return;
-        //         }
-
-
-        //         const value =
-        //             formData[field.name];
-
-
-        //         /*
-        //          * Preserve checkbox false.
-        //          */
-        //         if (field.type === "checkbox") {
-
-        //             payload[field.name] =
-        //                 value ?? false;
-
-        //             return;
-        //         }
-
-
-        //         /*
-        //          * Don't accidentally send undefined.
-        //          */
-        //         if (
-        //             value !== undefined &&
-        //             value !== null
-        //         ) {
-
-        //             payload[field.name] =
-        //                 value;
-
-        //         }
-
-        //     });
-
-
-        //     console.log(
-        //         "📤 GenericEntityPage payload:",
-        //         payload
-        //     );
-
-        //     return payload;
-        // }
-
-
-        buildPayload: (formData) => {
-            const payload = {};
-
-            fieldConfig.forEach(field => {
-                if (field.name === "id") {
-                    return;
-                }
-
-                const value = formData[field.name];
-
-                // Preserve checkbox false
-                if (field.type === "checkbox") {
-                    payload[field.name] = value ?? false;
-                    return;
-                }
-
-                // Skip empty values for non-required fields
-                if (
-                    (value === "" || value === undefined || value === null) &&
-                    !field.required
-                ) {
-                    // Don't include empty optional fields
-                    return;
-                }
-
-                // Include non-empty values
-                if (value !== undefined && value !== null && value !== "") {
-                    payload[field.name] = value;
-                } else if (field.required) {
-                    payload[field.name] = value;
-                }
-            });
-
-            console.log("📤 GenericEntityPage payload:", payload);
-            return payload;
-        }
-
-
+        requirePermission
 
     });
 
 
     // =========================================================
-    // EDIT
+    // ACCESS DENIED
     // =========================================================
 
-    const handleEdit = useCallback(
-        (item) => {
+    if (!entity.canRead) {
 
-            console.log(
-                "✏️ Editing item:",
-                item
-            );
-
-
-            const mapped = {};
-
-            fieldConfig.forEach(field => {
-
-                const value =
-                    item[field.name];
-
-
-                if (field.type === "checkbox") {
-
-                    mapped[field.name] =
-                        value ?? false;
-
-                } else if (field.type === "hidden") {
-
-                    mapped[field.name] =
-                        value ?? null;
-
-                } else {
-
-                    mapped[field.name] =
-                        value ?? "";
-                }
-
-            });
-
-
-            /*
-             * Handle different possible ID casing.
-             */
-            mapped.id =
-                item.id ??
-                item.Id ??
-                item.facilityId ??
-                item.FacilityId ??
-                null;
-
-
-            console.log(
-                "✏️ Mapped edit form:",
-                mapped
-            );
-
-
-            setForm(mapped);
-
-            setShowForm(true);
-
-        },
-        [
-            fieldConfig,
-            setForm
-        ]
-    );
-
-
-    // =========================================================
-    // ADD NEW
-    // =========================================================
-
-    const handleAddNew = useCallback(() => {
-
-        console.log(
-            "➕ Add new clicked"
-        );
-
-
-        resetForm();
-
-        setShowForm(true);
-
-    }, [resetForm]);
-
-
-    // =========================================================
-    // CANCEL FORM
-    // =========================================================
-
-    const handleCancel = useCallback(() => {
-
-        console.log(
-            "❌ Form cancelled"
-        );
-
-
-        resetForm();
-
-        setShowForm(false);
-
-    }, [resetForm]);
-
-
-    // =========================================================
-    // CREATE / UPDATE
-    // =========================================================
-
-    const handleSubmit = useCallback(
-        async (formData) => {
-
-            console.log(
-                "📤 GenericEntityPage submit:",
-                formData
-            );
-
-
-            const success =
-                await crudSubmit(formData);
-
-
-            /*
-             * IMPORTANT:
-             *
-             * Do not close/reload if CRUD failed.
-             */
-            if (!success) {
-
-                console.log(
-                    "❌ CRUD operation failed"
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "✅ CRUD operation successful"
-            );
-
-
-            setShowForm(false);
-
-
-            /*
-             * Reload the current table.
-             */
-            await reloadData();
-
-        },
-        [
-            crudSubmit,
-            reloadData
-        ]
-    );
-
-
-    // =========================================================
-    // DELETE
-    // =========================================================
-
-    const handleDeleteItem = useCallback(
-        async (id) => {
-
-            console.log(
-                "🗑️ Delete requested:",
-                id
-            );
-
-
-            const success =
-                await handleDelete(id);
-
-
-            if (!success) {
-
-                console.log(
-                    "❌ Delete failed"
-                );
-
-                return;
-            }
-
-
-            console.log(
-                "✅ Delete successful"
-            );
-
-
-            await reloadData();
-
-        },
-        [
-            handleDelete,
-            reloadData
-        ]
-    );
-
-
-    // =========================================================
-    // SEARCH
-    // =========================================================
-
-    const handleSearchChange = useCallback(
-        (value) => {
-
-            console.log(
-                "🔍 GenericEntityPage search:",
-                value
-            );
-
-            handleSearch(
-                value || ""
-            );
-
-        },
-        [handleSearch]
-    );
-
-
-    // =========================================================
-    // FILTER
-    // =========================================================
-
-    const handleFilterChange = useCallback(
-        (newFilters) => {
-
-            console.log(
-                "🏷️ GenericEntityPage filters:",
-                newFilters
-            );
-
-
-            handleFilter(
-                newFilters || {}
-            );
-
-        },
-        [handleFilter]
-    );
-
-    const canRead =
-        !requirePermission ||
-        hasPermission(
-            `${permissionPrefix}.Read`
-        );
-
-    const canCreate =
-        !requirePermission ||
-        hasPermission(
-            `${permissionPrefix}.Create`
-        );
-
-    const canUpdate =
-        !requirePermission ||
-        hasPermission(
-            `${permissionPrefix}.Update`
-        );
-
-    const canDelete =
-        !requirePermission ||
-        hasPermission(
-            `${permissionPrefix}.Delete`
-        );
-
-    if (!canRead) {
         return (
-            <div
-                style={{
-                    padding: "40px",
-                    textAlign: "center"
-                }}
-            >
-                <h2>Access Denied</h2>
-
-                <p>
-                    You do not have permission to view{" "}
-                    {entityName}.
-                </p>
-            </div>
+            <AccessDenied
+                entityName={entityName}
+            />
         );
     }
+
+
     // =========================================================
-    // UI
+    // PAGE
     // =========================================================
+
     return (
+
         <div className="crud-page">
 
             <div className="crud-container">
 
+
+                {/* ================================================= */}
                 {/* HEADER */}
+                {/* ================================================= */}
 
-                <div className="crud-header">
+                <EntityHeader
 
-                    <div className="crud-header-content">
+                    entityName={entityName}
 
-                        <h1 className="crud-title">
-                            {entityName} Management
-                        </h1>
+                    showForm={entity.showForm}
 
-                        <p className="crud-subtitle">
-                            Manage and maintain your {entityName.toLowerCase()}.
-                        </p>
+                    canCreate={entity.canCreate}
 
-                    </div>
+                    onAddNew={
+                        entity.handleAddNew
+                    }
 
-                    {!showForm ? (
+                    onCancel={
+                        entity.handleCancel
+                    }
 
-                        canCreate && (
-                            <button
-                                className="crud-button crud-button-primary"
-                                onClick={handleAddNew}
-                            >
-                                + Add New
-                            </button>
-                        )
-
-                    ) : (
-
-                        <button
-                            className="crud-button crud-button-secondary"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </button>
-
-                    )}
-
-                </div>
+                />
 
 
+                {/* ================================================= */}
                 {/* FORM */}
+                {/* ================================================= */}
 
-                {showForm && (
+                {entity.showForm && (
 
-                    <div className="crud-form-card">
+                    <EntityFormSection
 
-                        <div className="crud-form-header">
+                        entityName={entityName}
 
-                            <h2 className="crud-form-title">
+                        form={entity.form}
 
-                                {form?.id
-                                    ? `Edit ${entityName.replace(/s$/, "")}`
-                                    : `Create New ${entityName.replace(/s$/, "")}`
-                                }
+                        fields={fieldConfig}
 
-                            </h2>
+                        onSubmit={
+                            entity.handleSubmit
+                        }
 
-                        </div>
-
-                        <CrudForm
-                            fields={fieldConfig}
-                            initialData={form}
-                            onSubmit={handleSubmit}
-                            submitLabel={
-                                form?.id
-                                    ? "Update"
-                                    : "Create"
-                            }
-                        />
-
-                    </div>
+                    />
 
                 )}
 
 
-                {/* CONTROLS */}
+                {/* ================================================= */}
+                {/* TABLE CONTROLS */}
+                {/* ================================================= */}
 
                 <TableControls
-                    onSearch={handleSearchChange}
-                    onSort={handleSort}
-                    onFilter={handleFilterChange}
-                    sortOptions={sortOptions}
-                    filterOptions={filterOptions}
-                    initialSearch={search}
-                    initialSort={sortBy}
-                    initialSortOrder={sortOrder}
-                    initialFilters={filters}
+
+                    onSearch={
+                        entity.handleSearchChange
+                    }
+
+                    onSort={
+                        entity.handleSort
+                    }
+
+                    onFilter={
+                        entity.handleFilterChange
+                    }
+
+                    sortOptions={
+                        sortOptions
+                    }
+
+                    filterOptions={
+                        filterOptions
+                    }
+
+                    initialSearch={
+                        entity.search
+                    }
+
+                    initialSort={
+                        entity.sortBy
+                    }
+
+                    initialSortOrder={
+                        entity.sortOrder
+                    }
+
+                    initialFilters={
+                        entity.filters
+                    }
+
                 />
 
 
+                {/* ================================================= */}
                 {/* TABLE */}
+                {/* ================================================= */}
 
-                <div className="crud-table-card">
+                <EntityTableSection
 
-                    {loading ? (
+                    data={entity.data}
 
-                        <div className="crud-loading">
-                            Loading...
-                        </div>
+                    loading={entity.loading}
 
-                    ) : safeData.length > 0 ? (
+                    entityName={entityName}
 
-                            <CrudList
-                                data={safeData}
-                                columns={displayColumns}
-                                onEdit={canUpdate ? handleEdit : undefined}
-                                onDelete={canDelete ? handleDeleteItem : undefined}
-                                                extraActions={extraActions}  // Add this line
-                                layout="vertical"
-                            />
+                    displayColumns={
+                        displayColumns
+                    }
 
-                    ) : (
+                    canUpdate={
+                        entity.canUpdate
+                    }
 
-                        <div className="crud-empty">
+                    canDelete={
+                        entity.canDelete
+                    }
 
-                            <div className="crud-empty-title">
-                                No {entityName.toLowerCase()} found
-                            </div>
+                    onEdit={
+                        entity.handleEdit
+                    }
 
-                            <div>
-                                Try changing your search or filters.
-                            </div>
+                    onDelete={
+                        entity.handleDeleteItem
+                    }
 
-                        </div>
+                    extraActions={
+                        extraActions
+                    }
 
-                    )}
-
-                </div>
+                />
 
 
+                {/* ================================================= */}
                 {/* PAGINATION */}
+                {/* ================================================= */}
 
-                {totalCount > 0 && (
+                {entity.totalCount > 0 && (
 
                     <Pagination
-                        currentPage={page}
-                        totalPages={totalPages}
-                        totalItems={totalCount}
-                        pageSize={pageSize}
-                        onPageChange={handlePageChange}
-                        onPageSizeChange={handlePageSizeChange}
+
+                        currentPage={
+                            entity.page
+                        }
+
+                        totalPages={
+                            entity.totalPages
+                        }
+
+                        totalItems={
+                            entity.totalCount
+                        }
+
+                        pageSize={
+                            entity.pageSize
+                        }
+
+                        onPageChange={
+                            entity.handlePageChange
+                        }
+
+                        onPageSizeChange={
+                            entity.handlePageSizeChange
+                        }
+
                     />
 
                 )}
@@ -833,6 +241,5 @@ const GenericEntityPage = ({
         </div>
     );
 };
-
 
 export default GenericEntityPage;

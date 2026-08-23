@@ -1,36 +1,40 @@
-// import createResourceService from "./genericResourceService";
+import client from "../api/client";
 
-// const customerAddressService = {
-//     global: createResourceService(
-//         "/customer-addresses"
-//     ),
+const getPaged = (params, config = {}) =>
+    client.get("/CustomerAddresses/paged", {
+        params,
+        ...config
+    });
 
-//     me: createResourceService(
-//         "/me/customer-addresses",
-//         {
-//             pagedPath: ""
-//         }
-//     )
-// };
+const getMine = (config = {}) =>
+    client.get("/CustomerAddresses/me", config);
 
-// export default customerAddressService;
+const create = (data, config = {}) =>
+    client.post("/CustomerAddresses", data, config);
 
-import createResourceService from "./genericResourceService";
+const update = (id, data, config = {}) =>
+    client.put(`/CustomerAddresses/${id}`, data, config);
 
-// const customerAddressService = {
-//     global: createResourceService(
-//         "/customer-addresses"
-//     ),
+const remove = (id, config = {}) =>
+    client.delete(`/CustomerAddresses/${id}`, config);
 
-//     me: createResourceService(
-//         "/customer-addresses/me",
-//         {
-//             pagedPath: "/paged"
-//         }
-//     )
-// };
-const customerAddressService =
-    createResourceService("/customer-addresses");
 
+const customerAddressService = {
+
+    // Global/admin
+    getPaged,
+    create,
+    update,
+    delete: remove,
+
+    // Customer
+    me: {
+        getPaged: getMine,
+        create,
+        update,
+        delete: remove
+    }
+
+};
 
 export default customerAddressService;

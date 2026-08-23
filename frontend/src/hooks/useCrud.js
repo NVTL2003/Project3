@@ -119,25 +119,6 @@ export function useCrud({
 
             return true;
 
-        // } catch (err) {
-
-        //     console.error(
-        //         "Delete error:",
-        //         err
-        //     );
-
-        //     setError(err);
-
-        //     alert(
-        //         `Error deleting: ${err.response?.data?.message ||
-        //         err.message
-        //         }`
-        //     );
-
-        //     return false;
-
-        // }
-
         } catch (err) {
         console.error("Submit error:", err);
         console.error("Response data:", err.response?.data);

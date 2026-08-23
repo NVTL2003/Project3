@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-
+import RelationSelect
+    from "./generic/RelationSelect";
 function CrudForm({
     fields,
     initialData,
@@ -223,8 +224,19 @@ function CrudForm({
 
                                     ))}
 
-                                </select>
+                                    </select>
+                            ) : field.type === "relation" ? (
 
+                                <RelationSelect
+                                    field={field}
+                                    value={form[field.name]}
+                                    onChange={(value) =>
+                                        handleChange(
+                                            field.name,
+                                            value
+                                        )
+                                    }
+                                />
                             ) : field.type === "textarea" ? (
 
                                 <textarea

@@ -19,6 +19,4 @@ public class ShipmentsController
         : base(service, authorizationService, currentUser)
     {
     }
-
-    protected override string ResourceName => "shipments";
 }

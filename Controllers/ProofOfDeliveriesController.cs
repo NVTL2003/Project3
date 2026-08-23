@@ -8,7 +8,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/proof-of-deliveries")]
+[Route("api/[controller]")]
 public class ProofOfDeliveriesController
     : BaseCrudController<ProofOfDelivery, ProofOfDeliveryDto, CreateProofOfDeliveryDto>
 {

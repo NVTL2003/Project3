@@ -10,7 +10,7 @@ namespace Project3.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("api/delivery-attempts")]
+[Route("api/[controller]")]
 public class DeliveryAttemptsController
     : BaseCrudController<DeliveryAttempt, DeliveryAttemptDto, CreateDeliveryAttemptDto>
 {
