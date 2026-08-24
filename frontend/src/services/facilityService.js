@@ -1,8 +1,6 @@
 import createResourceService from "./genericResourceService";
 
-const facilityService =
+export const facilityService =
     createResourceService(
         "/facility"
-    );
-
-export default facilityService;
+    );;

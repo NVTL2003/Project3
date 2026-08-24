@@ -53,7 +53,8 @@ export const useNavigation = () => {
                                     hasPermission(
                                         permissions,
                                         entity.permission,
-                                        "read"
+                                        "read",
+                                        "all"
                                     );
 
                                 return canRead

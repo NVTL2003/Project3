@@ -129,6 +129,19 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>,
     CustomerAddressService>();
+
+builder.Services.AddScoped<
+    IPackageScanService,
+    PackageScanService>();
+
+builder.Services.AddScoped<
+    IVehicleService,
+    VehicleService>();
+
+builder.Services.AddScoped<
+    ITransportOrderService,
+    TransportOrderService>();
+
 // ============================================================
 // CONTROLLERS
 // ============================================================

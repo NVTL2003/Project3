@@ -1,6 +1,4 @@
 import createResourceService from "./genericResourceService";
 
-const shipmentService =
+export const shipmentService =
     createResourceService("/shipments");
-
-export default shipmentService;

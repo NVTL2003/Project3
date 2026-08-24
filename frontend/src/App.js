@@ -15,11 +15,11 @@ import CustomerAddressPage from "./pages/CustomerAddressPage";
 import ShipmentRequestsPage from "./pages/ShipmentRequestsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
 import PackageScansPage from "./pages/PackageScansPage";
-import TrackingEventsPage from "./pages/TrackingEventsPage";
-import TransportOrdersPage from "./pages/TransportOrdersPage";
-import DeliveryAttemptsPage from "./pages/DeliveryAttemptsPage";
-import ProofOfDeliveriesPage from "./pages/ProofOfDeliveriesPage";
-import DeliveryAssignmentsPage from "./pages/DeliveryAssignmentsPage";
+// import TrackingEventsPage from "./pages/TrackingEventsPage";
+// import TransportOrdersPage from "./pages/TransportOrdersPage";
+// import DeliveryAttemptsPage from "./pages/DeliveryAttemptsPage";
+// import ProofOfDeliveriesPage from "./pages/ProofOfDeliveriesPage";
+// import DeliveryAssignmentsPage from "./pages/DeliveryAssignmentsPage";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
@@ -133,7 +133,7 @@ function App() {
                             element={<PackageScansPage />}
                         />
 
-                        <Route
+                        {/* <Route
                             path="/tracking-events"
                             element={<TrackingEventsPage />}
                         />
@@ -156,7 +156,7 @@ function App() {
                         <Route
                             path="/delivery-assignments"
                             element={<DeliveryAssignmentsPage />}
-                        />
+                        /> */}
 
                     </Route>
 

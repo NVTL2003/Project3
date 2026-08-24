@@ -81,29 +81,6 @@ namespace Project3.DTOs
         public DateTime UpdatedAt { get; set; }
     }
 
-    // ----- Package Scan -----
-    public class CreatePackageScanDto
-    {
-        public Guid ShipmentId { get; set; }
-        public Guid? EmployeeId { get; set; }  // Make optional
-        public Guid? FacilityId { get; set; }
-        public Guid? VehicleId { get; set; }
-        public string LocationType { get; set; } = string.Empty;
-        public string ScanType { get; set; } = string.Empty;
-        public decimal? Latitude { get; set; }
-        public decimal? Longitude { get; set; }
-        public string? IpAddress { get; set; }
-        public string? Notes { get; set; }
-    }
-
-    public class PackageScanDto : CreatePackageScanDto
-    {
-        public Guid Id { get; set; }
-        public string ScanNumber { get; set; } = string.Empty;
-        public DateTime? ScanTime { get; set; }
-        public DateTime CreatedAt { get; set; }
-    }
-
     // ----- Tracking Event -----
     public class CreateTrackingEventDto
     {
@@ -119,32 +96,6 @@ namespace Project3.DTOs
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
-    }
-
-    // ----- Transport Order -----
-    public class CreateTransportOrderDto
-    {
-        public Guid ShipmentId { get; set; }
-        public int? Priority { get; set; }
-        public decimal Weight { get; set; }
-        public decimal? Volume { get; set; }
-        public string? SpecialInstructions { get; set; }
-        public Guid? CreatedBy { get; set; }
-        public Guid? AssignedVehicleId { get; set; }
-        public Guid? AssignedDriverId { get; set; }
-        public DateTime? PlannedDeparture { get; set; }
-        public DateTime? PlannedArrival { get; set; }
-    }
-
-    public class TransportOrderDto : CreateTransportOrderDto
-    {
-        public Guid Id { get; set; }
-        public string OrderNumber { get; set; } = string.Empty;
-        public string Status { get; set; } = "created";
-        public DateTime? ActualDeparture { get; set; }
-        public DateTime? ActualArrival { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
     }
 
     // ----- Delivery Attempt -----

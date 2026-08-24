@@ -1,6 +1,6 @@
 import React from "react";
 import GenericEntityPage from "./GenericEntityPage";
-import facilityService from "../services/facilityService";
+import { facilityService } from "../services/facilityService";
 
 const facilityFieldConfig = [
     { name: "id", type: "hidden" },
