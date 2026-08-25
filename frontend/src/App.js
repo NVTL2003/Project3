@@ -16,7 +16,7 @@ import ShipmentRequestsPage from "./pages/ShipmentRequestsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
 import PackageScansPage from "./pages/PackageScansPage";
 // import TrackingEventsPage from "./pages/TrackingEventsPage";
-// import TransportOrdersPage from "./pages/TransportOrdersPage";
+import TransportOrdersPage from "./pages/TransportOrdersPage";
 // import DeliveryAttemptsPage from "./pages/DeliveryAttemptsPage";
 // import ProofOfDeliveriesPage from "./pages/ProofOfDeliveriesPage";
 // import DeliveryAssignmentsPage from "./pages/DeliveryAssignmentsPage";
@@ -136,14 +136,14 @@ function App() {
                         {/* <Route
                             path="/tracking-events"
                             element={<TrackingEventsPage />}
-                        />
+                        /> */}
 
                         <Route
                             path="/transport-orders"
                             element={<TransportOrdersPage />}
                         />
 
-                        <Route
+                        {/* <Route
                             path="/delivery-attempts"
                             element={<DeliveryAttemptsPage />}
                         />

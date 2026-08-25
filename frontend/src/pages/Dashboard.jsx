@@ -40,7 +40,7 @@ function Dashboard() {
             <div style={styles.hero}>
                 <div style={styles.heroContent}>
                     <h1 style={styles.heroTitle}>ELMS Logistics</h1>
-                    <p style={styles.heroTagline}>Delivering Excellence Across India</p>
+                    <p style={styles.heroTagline}>Delivering Excellence Across The World</p>
                     <p style={styles.heroDescription}>
                         Your trusted partner for all logistics needs. From small parcels to large freight,
                         we ensure your packages reach their destination safely and on time.
@@ -78,7 +78,7 @@ function Dashboard() {
                     <h2 style={styles.sectionTitle}>About ELMS</h2>
                     <p style={styles.aboutText}>
                         Founded in 2024, ELMS (Enterprise Logistics Management System) has quickly become
-                        one of India's leading courier and logistics companies. With a network spanning
+                        one of the world's leading courier and logistics companies. With a network spanning
                         over 500 cities and a fleet of modern vehicles, we provide end-to-end logistics
                         solutions for businesses and individuals alike.
                     </p>

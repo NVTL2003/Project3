@@ -105,6 +105,9 @@ namespace Project3.Mapping
 
             CreateMap<Vehicle, VehicleDto>();
             CreateMap<CreateVehicleDto, Vehicle>();
+
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<CreateEmployeeDto, Employee>();
         }
 
         private string GenerateDefaultCode(string name)
