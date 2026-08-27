@@ -15,11 +15,8 @@ import CustomerAddressPage from "./pages/CustomerAddressPage";
 import ShipmentRequestsPage from "./pages/ShipmentRequestsPage";
 import ShipmentsPage from "./pages/ShipmentsPage";
 import PackageScansPage from "./pages/PackageScansPage";
-// import TrackingEventsPage from "./pages/TrackingEventsPage";
+import RoutesPage from "./pages/RoutesPage";
 import TransportOrdersPage from "./pages/TransportOrdersPage";
-// import DeliveryAttemptsPage from "./pages/DeliveryAttemptsPage";
-// import ProofOfDeliveriesPage from "./pages/ProofOfDeliveriesPage";
-// import DeliveryAssignmentsPage from "./pages/DeliveryAssignmentsPage";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
@@ -133,30 +130,16 @@ function App() {
                             element={<PackageScansPage />}
                         />
 
-                        {/* <Route
-                            path="/tracking-events"
-                            element={<TrackingEventsPage />}
-                        /> */}
+                        <Route
+                            path="/routes"
+                            element={<RoutesPage />}
+                        />
 
                         <Route
                             path="/transport-orders"
                             element={<TransportOrdersPage />}
                         />
 
-                        {/* <Route
-                            path="/delivery-attempts"
-                            element={<DeliveryAttemptsPage />}
-                        />
-
-                        <Route
-                            path="/proof-of-deliveries"
-                            element={<ProofOfDeliveriesPage />}
-                        />
-
-                        <Route
-                            path="/delivery-assignments"
-                            element={<DeliveryAssignmentsPage />}
-                        /> */}
 
                     </Route>
 

@@ -330,8 +330,8 @@ const TableControls = ({
                                     background: "white",
                                     cursor: "pointer"
                                 }}
-                            >
-
+                            > 
+                            
                                 {sortOrder === "asc"
                                     ? "↑ Asc"
                                     : "↓ Desc"

@@ -108,6 +108,12 @@ namespace Project3.Mapping
 
             CreateMap<Employee, EmployeeDto>();
             CreateMap<CreateEmployeeDto, Employee>();
+
+            CreateMap<Project3.Models.Route, RouteDto>();
+            CreateMap<CreateRouteDto, Project3.Models.Route>();
+
+            CreateMap<RouteStop, RouteStopDto>();
+            CreateMap<CreateRouteStopDto, RouteStop>();
         }
 
         private string GenerateDefaultCode(string name)

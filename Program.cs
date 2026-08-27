@@ -142,6 +142,9 @@ builder.Services.AddScoped<
     ITransportOrderService,
     TransportOrderService>();
 
+builder.Services.AddScoped<IRouteService, RouteService>();
+builder.Services.AddScoped<IRouteStopService, RouteStopService>();
+
 // ============================================================
 // CONTROLLERS
 // ============================================================
