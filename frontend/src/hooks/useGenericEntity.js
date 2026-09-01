@@ -307,13 +307,16 @@ const useGenericEntity = ({
     const handleEdit = useCallback(
         (item) => {
 
+            console.log("=================================");
+            console.log("EDIT ITEM:", item);
+            console.log("EDIT ITEM ID:", item.id);
+
             const mapped = {};
 
             fieldConfig.forEach(field => {
 
                 const value =
                     item[field.name];
-
 
                 if (field.type === "checkbox") {
 
@@ -330,11 +333,8 @@ const useGenericEntity = ({
                     mapped[field.name] =
                         value ?? "";
                 }
-
             });
 
-
-            // Handle possible ID casing
             mapped.id =
                 item.id ??
                 item.Id ??
@@ -342,6 +342,9 @@ const useGenericEntity = ({
                 item.FacilityId ??
                 null;
 
+            console.log("MAPPED EDIT FORM:", mapped);
+            console.log("MAPPED EDIT ID:", mapped.id);
+            console.log("=================================");
 
             crud.setForm(mapped);
 

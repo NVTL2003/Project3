@@ -1,5 +1,4 @@
 using Project3.DTOs;
-using Project3.Models;
 
 namespace Project3.Services.Interfaces;
 
@@ -9,4 +8,12 @@ public interface IRouteService
         RouteDto,
         CreateRouteDto>
 {
+    Task<IEnumerable<RouteStopDto>> GetStopsAsync(
+        Guid routeId);
+
+    Task<bool> ActivateAsync(
+        Guid routeId);
+
+    Task<bool> DeactivateAsync(
+        Guid routeId);
 }

@@ -12,6 +12,11 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         type: "hidden"
     },
 
+    // =========================================================
+    // CUSTOMER
+    // GLOBAL ONLY
+    // =========================================================
+
     ...(!isMine
         ? [
             {
@@ -19,8 +24,6 @@ const buildShipmentRequestFieldConfig = (isMine) => [
                 label: "Customer",
                 type: "relation",
                 required: true,
-
-                readOnly: !isMine,
 
                 displayField: "customerName",
 
@@ -31,51 +34,73 @@ const buildShipmentRequestFieldConfig = (isMine) => [
 
                 getOptionLabel: customer =>
                     `${customer.companyName} (${customer.accountNumber})`
-            },
-            {
-                name: "senderAddressId",
-                label: "Sender Address",
-                type: "relation",
-                required: true,
-
-                readOnly: !isMine,
-
-                displayField: "senderAddress",
-
-                service: customerAddressService,
-                fetchMode: isMine ? "mine" : "all",
-
-                valueField: "id",
-
-                getOptionLabel: address =>
-                    `${address.addressType} - ${address.addressLine1}, ${address.city}`
-            },
-            {
-                name: "receiverAddressId",
-                label: "Receiver Address",
-                type: "relation",
-                required: true,
-
-                readOnly: !isMine,
-
-                displayField: "receiverAddress",
-
-                service: customerAddressService,
-                fetchMode: isMine ? "mine" : "all",
-
-                valueField: "id",
-
-                getOptionLabel: address =>
-                    `${address.addressType} - ${address.addressLine1}, ${address.city}`
-            },
+            }
         ]
-        : [
-        ]),
+        : []
+    ),
+
+
+    // =========================================================
+    // SENDER ADDRESS
+    // BOTH GLOBAL + MINE
+    // =========================================================
+
+    {
+        name: "senderAddressId",
+        label: "Sender Address",
+        type: "relation",
+        required: true,
+
+        displayField: "senderAddress",
+
+        service: customerAddressService,
+
+        fetchMode: isMine
+            ? "mine"
+            : "all",
+
+        valueField: "id",
+
+        getOptionLabel: address =>
+            `${address.addressType || "Address"} - ${address.addressLine1}, ${address.city}`
+    },
+
+
+    // =========================================================
+    // RECEIVER ADDRESS
+    // BOTH GLOBAL + MINE
+    // =========================================================
+
+    {
+        name: "receiverAddressId",
+        label: "Receiver Address",
+        type: "relation",
+        required: true,
+
+        displayField: "receiverAddress",
+
+        service: customerAddressService,
+
+        fetchMode: isMine
+            ? "mine"
+            : "all",
+
+        valueField: "id",
+
+        getOptionLabel: address =>
+            `${address.addressType || "Address"} - ${address.addressLine1}, ${address.city}`
+    },
+
+
+    // =========================================================
+    // SERVICE
+    // =========================================================
 
     {
         name: "serviceId",
         label: "Service",
         type: "relation",
+        required: true,
 
         service: serviceService,
         fetchMode: "all",
@@ -86,11 +111,17 @@ const buildShipmentRequestFieldConfig = (isMine) => [
             service.name
     },
 
+
+    // =========================================================
+    // PACKAGE
+    // =========================================================
+
     {
         name: "packageType",
         label: "Package Type",
         required: true
     },
+
 
     {
         name: "weight",
@@ -99,29 +130,42 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         type: "number"
     },
 
+
     {
         name: "length",
         label: "Length (cm)",
-        required: false
+        required: false,
+        type: "number"
     },
+
 
     {
         name: "width",
         label: "Width (cm)",
-        required: false
+        required: false,
+        type: "number"
     },
+
 
     {
         name: "height",
         label: "Height (cm)",
-        required: false
+        required: false,
+        type: "number"
     },
+
 
     {
         name: "declaredValue",
         label: "Declared Value",
-        required: false
+        required: false,
+        type: "number"
     },
+
+
+    // =========================================================
+    // INSURANCE
+    // =========================================================
 
     {
         name: "insurancePlanId",
@@ -138,12 +182,22 @@ const buildShipmentRequestFieldConfig = (isMine) => [
             plan.name
     },
 
+
+    // =========================================================
+    // SPECIAL INSTRUCTIONS
+    // =========================================================
+
     {
         name: "specialInstructions",
         label: "Special Instructions",
         type: "textarea",
         required: false
     },
+
+
+    // =========================================================
+    // FLAGS
+    // =========================================================
 
     {
         name: "isFragile",
@@ -152,6 +206,7 @@ const buildShipmentRequestFieldConfig = (isMine) => [
         required: false,
         defaultValue: false
     },
+
 
     {
         name: "isLarge",

@@ -207,11 +207,6 @@ const MENU_GROUPS = [
                 path: "/routes"
             },
             {
-                label: "Route Stops",
-                permission: "route_stops",
-                path: "/route-stops"
-            },
-            {
                 label: "Transport Orders",
                 permission: "transport_orders",
                 children: [

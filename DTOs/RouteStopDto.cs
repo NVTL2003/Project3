@@ -30,4 +30,10 @@ public class RouteStopDto : CreateRouteStopDto
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public string? FacilityCode { get; set; }
+
+    public string? FacilityName { get; set; }
+
+    public string? FacilityType { get; set; }
 }

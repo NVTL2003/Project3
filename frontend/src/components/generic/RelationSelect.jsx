@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 function RelationSelect({
     field,
     value,
-    onChange
+    onChange,
+    disabled = false
 }) {
 
     const [options, setOptions] = useState([]);

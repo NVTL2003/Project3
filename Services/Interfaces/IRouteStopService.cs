@@ -9,4 +9,6 @@ public interface IRouteStopService
         RouteStopDto,
         CreateRouteStopDto>
 {
+    Task<IEnumerable<RouteStopDto>> GetByRouteAsync(
+        Guid routeId);
 }

@@ -19,7 +19,7 @@ function CrudForm({
     // =========================================================
 
     const isEditing =
-        !!initialData?.id;
+        !!initialData?.id ;
 
 
     // =========================================================
@@ -28,10 +28,16 @@ function CrudForm({
 
     useEffect(() => {
 
-        const initialFormState = {};
-
+        const initialFormState = {
+            id: initialData?.id ?? null
+        };
 
         fields.forEach(field => {
+
+            // ID is handled separately above
+            if (field.name === "id") {
+                return;
+            }
 
             if (
                 initialData?.[field.name] !== undefined &&
@@ -46,7 +52,7 @@ function CrudForm({
                 if (field.type === "checkbox") {
 
                     initialFormState[field.name] =
-                        false;
+                        field.defaultValue ?? false;
 
                 } else if (field.type === "hidden") {
 
@@ -56,7 +62,7 @@ function CrudForm({
                 } else {
 
                     initialFormState[field.name] =
-                        "";
+                        field.defaultValue ?? "";
 
                 }
 
@@ -64,12 +70,10 @@ function CrudForm({
 
         });
 
-
         console.log(
             "CrudForm - Initializing with:",
             initialFormState
         );
-
 
         setForm(initialFormState);
 
@@ -83,22 +87,62 @@ function CrudForm({
     // HANDLE CHANGE
     // =========================================================
 
-    const handleChange = (
-        name,
-        value
-    ) => {
+    const handleChange = (name, value) => {
 
-        console.log(
-            `Updating ${name} to:`,
-            value
+        const field = fields.find(
+            field => field.name === name
         );
 
+        // =====================================================
+        // NUMBER
+        // =====================================================
 
-        setForm(prevForm => ({
-            ...prevForm,
-            [name]: value
-        }));
+        if (field?.type === "number") {
+            const numericValue = value === "" ? "" : Number(value);
+            setForm(prev => ({ ...prev, [name]: numericValue }));
+            return;
+        }
 
+        // =====================================================
+        // DATETIME LOCAL
+        // =====================================================
+
+        if (field?.type === "datetime-local") {
+            if (value === "") {
+                setForm(prev => ({ ...prev, [name]: "" }));
+                return;
+            }
+
+            const yearMatch = value.match(/^(\d{4})-/);
+            if (!yearMatch) {
+                console.warn(`Invalid ${name}:`, value);
+                return;
+            }
+
+            const year = Number(yearMatch[1]);
+            if (year < 1 || year > 9999) {
+                alert(`${field.label} must contain a valid year between 0001 and 9999.`);
+                return;
+            }
+
+            setForm(prev => ({ ...prev, [name]: value }));
+            return;
+        }
+
+        // =====================================================
+        // CHECKBOX
+        // =====================================================
+
+        if (field?.type === "checkbox") {
+            setForm(prev => ({ ...prev, [name]: value === true }));
+            return;
+        }
+
+        // =====================================================
+        // DEFAULT
+        // =====================================================
+
+        setForm(prev => ({ ...prev, [name]: value }));
     };
 
 

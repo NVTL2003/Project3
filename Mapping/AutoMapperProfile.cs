@@ -54,16 +54,34 @@ namespace Project3.Mapping
 
             // Shipment Request mappings
             CreateMap<CreateShipmentRequestDto, ShipmentRequest>()
-                .ForMember(d => d.CustomerId, o => o.Ignore())
-                .ForMember(d => d.SenderAddressId, o => o.Ignore())
-                .ForMember(d => d.ReceiverAddressId, o => o.Ignore())
-                .ForMember(d => d.Id, o => o.Ignore())
-                .ForMember(d => d.RequestNumber, o => o.Ignore())
-                .ForMember(d => d.Status, o => o.Ignore())
-                .ForMember(d => d.ApprovedBy, o => o.Ignore())
-                .ForMember(d => d.ApprovedAt, o => o.Ignore())
-                .ForMember(d => d.CreatedAt, o => o.Ignore())
-                .ForMember(d => d.UpdatedAt, o => o.Ignore());
+                // Customer is determined from JWT / current user
+                .ForMember(
+                    d => d.CustomerId,
+                    o => o.Ignore())
+
+                // Server-generated fields
+                .ForMember(
+                    d => d.Id,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.RequestNumber,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.Status,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.ApprovedBy,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.ApprovedAt,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.CreatedAt,
+                    o => o.Ignore())
+                .ForMember(
+                    d => d.UpdatedAt,
+                    o => o.Ignore());
+
             CreateMap<ShipmentRequest, ShipmentRequestDto>();
 
             // Shipment mappings
@@ -109,10 +127,37 @@ namespace Project3.Mapping
             CreateMap<Employee, EmployeeDto>();
             CreateMap<CreateEmployeeDto, Employee>();
 
-            CreateMap<Project3.Models.Route, RouteDto>();
+            CreateMap<Project3.Models.Route, RouteDto>()
+                .ForMember(
+                    dest => dest.Stops,
+                    opt => opt.MapFrom(src =>
+                        src.RouteStops
+                            .OrderBy(rs => rs.StopSequence)))
+                .ForMember(
+                    dest => dest.OriginFacilityName,
+                    opt => opt.MapFrom(src =>
+                        src.OriginFacility.Name))
+                .ForMember(
+                    dest => dest.DestinationFacilityName,
+                    opt => opt.MapFrom(src =>
+                        src.DestinationFacility.Name));
+
             CreateMap<CreateRouteDto, Project3.Models.Route>();
 
-            CreateMap<RouteStop, RouteStopDto>();
+            CreateMap<RouteStop, RouteStopDto>()
+                .ForMember(
+                    dest => dest.FacilityCode,
+                    opt => opt.MapFrom(src =>
+                        src.Facility.Code))
+                .ForMember(
+                    dest => dest.FacilityName,
+                    opt => opt.MapFrom(src =>
+                        src.Facility.Name))
+                .ForMember(
+                    dest => dest.FacilityType,
+                    opt => opt.MapFrom(src =>
+                        src.Facility.FacilityType));
+
             CreateMap<CreateRouteStopDto, RouteStop>();
         }
 

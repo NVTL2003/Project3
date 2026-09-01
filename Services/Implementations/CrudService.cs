@@ -176,19 +176,22 @@ public class CrudService<TEntity, TDto, TCreateDto>
         Guid userId,
         TCreateDto dto)
     {
-        var entity =
-            _mapper.Map<TEntity>(dto);
+        var entity = _mapper.Map<TEntity>(dto);
+
+        Console.WriteLine("========================================");
+        Console.WriteLine("CRUD MAPPING DEBUG");
+        Console.WriteLine($"DTO Type: {dto?.GetType().FullName}");
+        Console.WriteLine($"Entity Type: {entity?.GetType().FullName}");
+        Console.WriteLine("========================================");
 
         if (entity == null)
             return default;
 
-        entity =
-            await PrepareForCreateAsync(
-                entity,
-                userId);
+        entity = await PrepareForCreateAsync(
+            entity,
+            userId);
 
         await _repository.AddAsync(entity);
-
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<TDto>(entity);

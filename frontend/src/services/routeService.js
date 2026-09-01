@@ -1,4 +1,30 @@
-import createResourceService from "./genericResourceService";
+import createResourceService
+    from "./genericResourceService";
 
-export const routeService =
-    createResourceService("/routes");
+import client
+    from "../api/client";
+
+
+const baseService =
+    createResourceService("/Routes");
+
+
+export const routeService = {
+
+    ...baseService,
+
+
+    // GET /api/Routes/{routeId}/stops
+    getStops: (routeId) =>
+        client.get(`/Routes/${routeId}/stops`),
+
+
+    // POST /api/Routes/{routeId}/activate
+    activate: (routeId) =>
+        client.post(`/Routes/${routeId}/activate`),
+
+
+    // POST /api/Routes/{routeId}/deactivate
+    deactivate: (routeId) =>
+        client.post(`/Routes/${routeId}/deactivate`)
+};

@@ -21,7 +21,7 @@ import TransportOrdersPage from "./pages/TransportOrdersPage";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
 import AppLayout from "./components/AppLayout";
-
+import RouteDetailsPage from "./pages/RouteDetailsPage";
 import "./styles/app.css";
 
 function App() {
@@ -133,6 +133,11 @@ function App() {
                         <Route
                             path="/routes"
                             element={<RoutesPage />}
+                        />
+
+                        <Route
+                            path="/routes/:id"
+                            element={<RouteDetailsPage />}
                         />
 
                         <Route

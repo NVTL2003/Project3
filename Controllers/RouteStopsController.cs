@@ -16,6 +16,8 @@ public class RouteStopsController
         RouteStopDto,
         CreateRouteStopDto>
 {
+    private readonly IRouteStopService _routeStopService;
+
     public RouteStopsController(
         IRouteStopService service,
         IAuthorizationService authorizationService,
@@ -25,5 +27,20 @@ public class RouteStopsController
             authorizationService,
             currentUser)
     {
+        _routeStopService = service;
+    }
+
+    // ============================================================
+    // GET STOPS BY ROUTE
+    // ============================================================
+
+    [HttpGet("route/{routeId:guid}")]
+    public async Task<ActionResult<IEnumerable<RouteStopDto>>>
+        GetByRoute(Guid routeId)
+    {
+        var stops =
+            await _routeStopService.GetByRouteAsync(routeId);
+
+        return Ok(stops);
     }
 }

@@ -25,5 +25,9 @@ public class RouteDto : CreateRouteDto
 
     public DateTime? UpdatedAt { get; set; }
 
+    public string? OriginFacilityName { get; set; }
+
+    public string? DestinationFacilityName { get; set; }
+
     public List<RouteStopDto> Stops { get; set; } = new();
 }

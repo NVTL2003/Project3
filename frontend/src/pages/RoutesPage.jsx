@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 import GenericEntityPage
     from "./GenericEntityPage";
@@ -9,7 +10,11 @@ import { routeService }
 import { facilityService }
     from "../services/facilityService";
 
+
 const RoutesPage = () => {
+
+    const navigate = useNavigate();
+
 
     const fieldConfig = [
 
@@ -141,6 +146,28 @@ const RoutesPage = () => {
     ];
 
 
+    // =========================================================
+    // EXTRA ACTIONS
+    // =========================================================
+
+    const extraActions = (route) => {
+
+        return (
+
+            <button
+                className="crud-action-button"
+                onClick={() =>
+                    navigate(`/routes/${route.id}`)
+                }
+            >
+                Details
+            </button>
+
+        );
+
+    };
+
+
     return (
 
         <GenericEntityPage
@@ -156,6 +183,8 @@ const RoutesPage = () => {
             displayColumns={displayColumns}
 
             sortOptions={sortOptions}
+
+            extraActions={extraActions}
 
         />
 

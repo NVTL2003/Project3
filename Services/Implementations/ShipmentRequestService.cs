@@ -38,16 +38,107 @@ public class ShipmentRequestService
             ShipmentRequest entity,
             Guid userId)
     {
+        // ========================================================
+        // DEBUG
+        // ========================================================
+
+        Console.WriteLine("========================================");
+        Console.WriteLine("SHIPMENT REQUEST DEBUG");
+        Console.WriteLine($"JWT User ID:        {userId}");
+        Console.WriteLine($"Entity Customer ID: {entity.CustomerId}");
+        Console.WriteLine($"Sender Address ID:  {entity.SenderAddressId}");
+        Console.WriteLine($"Receiver Address ID:{entity.ReceiverAddressId}");
+        Console.WriteLine("========================================");
+
+        // ========================================================
+        // 1. Find customer
+        // ========================================================
+
         var customer = await _context.Customers
             .FirstOrDefaultAsync(c =>
                 c.UserId == userId);
 
         if (customer == null)
+        {
             throw new InvalidOperationException(
-                "Customer not found.");
+                $"Customer not found for user {userId}.");
+        }
+
+        Console.WriteLine("CUSTOMER FOUND");
+        Console.WriteLine($"Customer ID: {customer.Id}");
+        Console.WriteLine($"Customer User ID: {customer.UserId}");
+
+        // ========================================================
+        // 2. Find sender address
+        // ========================================================
+
+        var senderAddress = await _context.CustomerAddresses
+            .FirstOrDefaultAsync(a =>
+                a.Id == entity.SenderAddressId &&
+                a.CustomerId == customer.Id);
+
+        Console.WriteLine("SENDER ADDRESS RESULT");
+
+        if (senderAddress == null)
+        {
+            Console.WriteLine("Sender address NOT FOUND!");
+
+            // Extra diagnostic query
+            var addressById = await _context.CustomerAddresses
+                .FirstOrDefaultAsync(a =>
+                    a.Id == entity.SenderAddressId);
+
+            if (addressById == null)
+            {
+                Console.WriteLine(
+                    "Address does NOT exist at all.");
+            }
+            else
+            {
+                Console.WriteLine(
+                    $"Address exists, but belongs to customer: {addressById.CustomerId}");
+
+                Console.WriteLine(
+                    $"Expected customer: {customer.Id}");
+            }
+
+            throw new InvalidOperationException(
+                "Sender address does not belong to the current customer.");
+        }
+
+        Console.WriteLine(
+            $"Sender address found: {senderAddress.Id}");
+
+        // ========================================================
+        // 3. Receiver
+        // ========================================================
+
+        var receiverAddress = await _context.CustomerAddresses
+            .FirstOrDefaultAsync(a =>
+                a.Id == entity.ReceiverAddressId &&
+                a.CustomerId == customer.Id);
+
+        if (receiverAddress == null)
+        {
+            throw new InvalidOperationException(
+                "Receiver address does not belong to the current customer.");
+        }
+
+        // ========================================================
+        // 4. Set ownership
+        // ========================================================
 
         entity.CustomerId = customer.Id;
+
+        // ========================================================
+        // 5. Generate ID
+        // ========================================================
+
         entity.Id = Guid.NewGuid();
+
+        // ========================================================
+        // 6. Generate request number
+        // ========================================================
 
         entity.RequestNumber =
             "REQ-" +
@@ -58,13 +149,21 @@ public class ShipmentRequestService
                 .Substring(0, 4)
                 .ToUpper();
 
+        // ========================================================
+        // 7. Status
+        // ========================================================
+
         entity.Status = "pending";
+
+        // ========================================================
+        // 8. Timestamps
+        // ========================================================
+
         entity.CreatedAt = DateTime.UtcNow;
         entity.UpdatedAt = DateTime.UtcNow;
 
         return entity;
     }
-
     // ============================================================
     // APPROVE
     // ============================================================
