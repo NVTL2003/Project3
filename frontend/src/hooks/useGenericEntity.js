@@ -18,8 +18,9 @@ const useGenericEntity = ({
     entityName,
     permissionPrefix,
     service,
-    fieldConfig = [],
-    requirePermission = true
+    fieldConfig,
+    requirePermission,
+    permissionScope = "all"
 }) => {
 
     const [showForm, setShowForm] = useState(false);
@@ -68,7 +69,7 @@ const useGenericEntity = ({
             permissions,
             permissionPrefix,
             "read",
-            "all"
+            permissionScope
         );
 
     const canCreate =
@@ -77,7 +78,7 @@ const useGenericEntity = ({
             permissions,
             permissionPrefix,
             "create",
-            "all"
+            permissionScope
         );
 
     const canUpdate =
@@ -86,7 +87,7 @@ const useGenericEntity = ({
             permissions,
             permissionPrefix,
             "update",
-            "all"
+            permissionScope
         );
 
     const canDelete =
@@ -95,7 +96,7 @@ const useGenericEntity = ({
             permissions,
             permissionPrefix,
             "delete",
-            "all"
+            permissionScope
         );
 
     // =========================================================

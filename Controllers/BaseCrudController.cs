@@ -167,10 +167,9 @@ public abstract class BaseCrudController<TEntity, TDto, TCreateDto>
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var created =
-            await _service.CreateAsync(dto);
+        var result = await _service.CreateAsync(dto);
 
-        return Ok(created);
+        return Ok(result);
     }
 
     // ============================================================

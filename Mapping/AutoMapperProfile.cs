@@ -39,6 +39,18 @@ namespace Project3.Mapping
             CreateMap<CreateUserRoleDto, UserRole>();
             CreateMap<UserRole, UserRoleDto>();
 
+            // Delivery Assignment mappings
+            CreateMap<DeliveryAssignment, DeliveryAssignmentDto>();
+            CreateMap<CreateDeliveryAssignmentDto, DeliveryAssignment>();
+
+            // Delivery Attempt mappings
+            CreateMap<DeliveryAttempt, DeliveryAttemptDto>();
+            CreateMap<CreateDeliveryAttemptDto, DeliveryAttempt>();
+
+            // Proof of Delivery mappings
+            CreateMap<ProofOfDelivery, ProofOfDeliveryDto>();
+            CreateMap<CreateProofOfDeliveryDto, ProofOfDelivery>();
+
             // Role mappings
             CreateMap<CreateRoleDto, Role>()
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
@@ -47,6 +59,14 @@ namespace Project3.Mapping
                 .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
 
             CreateMap<Role, RoleDto>();
+
+            // Shipment Manifest mappings
+            CreateMap<ShipmentManifest, ShipmentManifestDto>();
+            CreateMap<CreateShipmentManifestDto, ShipmentManifest>();
+
+            // Manifest Item mappings
+            CreateMap<ManifestItem, ManifestItemDto>();
+            CreateMap<CreateManifestItemDto, ManifestItem>();
 
             // Customer Address mappings
             CreateMap<CreateCustomerAddressDto, CustomerAddress>();

@@ -1,7 +1,10 @@
 const MENU_GROUPS = [
+    // =========================================================
+    // USER & ACCESS
+    // =========================================================
     {
         key: "user",
-        label: "User",
+        label: "User & Access",
         entities: [
             {
                 label: "Users",
@@ -26,6 +29,34 @@ const MENU_GROUPS = [
         ]
     },
 
+    // =========================================================
+    // EMPLOYEE
+    // =========================================================
+    {
+        key: "employee",
+        label: "Employee",
+        entities: [
+            {
+                label: "Employees",
+                permission: "employees",
+                path: "/employees"
+            },
+            {
+                label: "Departments",
+                permission: "departments",
+                path: "/departments"
+            },
+            {
+                label: "Positions",
+                permission: "positions",
+                path: "/positions"
+            }
+        ]
+    },
+
+    // =========================================================
+    // COMPANY / MASTER DATA
+    // =========================================================
     {
         key: "company",
         label: "Company",
@@ -63,6 +94,9 @@ const MENU_GROUPS = [
         ]
     },
 
+    // =========================================================
+    // CUSTOMER
+    // =========================================================
     {
         key: "customer",
         label: "Customer",
@@ -91,6 +125,9 @@ const MENU_GROUPS = [
         ]
     },
 
+    // =========================================================
+    // SHIPMENT
+    // =========================================================
     {
         key: "shipment",
         label: "Shipment",
@@ -111,6 +148,7 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
             {
                 label: "Shipments",
                 permission: "shipments",
@@ -127,6 +165,7 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
             {
                 label: "Shipment Contacts",
                 permission: "shipment_contacts",
@@ -143,6 +182,7 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
             {
                 label: "Shipment Charges",
                 permission: "shipment_charges",
@@ -159,16 +199,17 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
+            // -------------------------------------------------
+            // Manifest is the parent.
+            // Manifest Items are NOT a separate menu item.
+            // -------------------------------------------------
             {
                 label: "Shipment Manifests",
                 permission: "shipment_manifests",
                 path: "/shipment-manifests"
             },
-            {
-                label: "Manifest Items",
-                permission: "manifest_items",
-                path: "/manifest-items"
-            },
+
             {
                 label: "Shipment Status History",
                 permission: "shipment_status_history",
@@ -177,6 +218,9 @@ const MENU_GROUPS = [
         ]
     },
 
+    // =========================================================
+    // TRANSPORTATION
+    // =========================================================
     {
         key: "transportation",
         label: "Transportation",
@@ -186,45 +230,87 @@ const MENU_GROUPS = [
                 permission: "vehicles",
                 path: "/vehicles"
             },
+
             {
                 label: "Vehicle Maintenance",
                 permission: "vehicle_maintenance",
                 path: "/vehicle-maintenance"
             },
+
             {
                 label: "Vehicle Fuel Logs",
                 permission: "vehicle_fuel_logs",
                 path: "/vehicle-fuel-logs"
             },
+
             {
                 label: "Vehicle GPS",
                 permission: "vehicle_gps",
                 path: "/vehicle-gps"
             },
+
             {
                 label: "Routes",
                 permission: "routes",
                 path: "/routes"
             },
+
             {
                 label: "Transport Orders",
                 permission: "transport_orders",
-                children: [
-                    {
-                        label: "My Transport Orders",
-                        scope: "own",
-                        path: "/my/transport-orders"
-                    },
-                    {
-                        label: "All Transport Orders",
-                        scope: "all",
-                        path: "/transport-orders"
-                    }
-                ]
+                path: "/transport-orders"
             }
         ]
     },
 
+    // =========================================================
+    // DELIVERY & TRACKING
+    // =========================================================
+    {
+        key: "delivery",
+        label: "Delivery & Tracking",
+        entities: [
+            {
+                label: "Delivery Assignments",
+                permission: "delivery_assignments",
+                path: "/delivery-assignments"
+            },
+
+            {
+                label: "Delivery Attempts",
+                permission: "delivery_attempts",
+                path: "/delivery-attempts"
+            },
+
+            {
+                label: "Proof of Delivery",
+                permission: "proof_of_delivery",
+                path: "/proof-of-delivery"
+            },
+
+            {
+                label: "Tracking Events",
+                permission: "tracking_events",
+                path: "/tracking-events"
+            },
+
+            {
+                label: "Tracking Status",
+                permission: "tracking_status",
+                path: "/tracking-status"
+            },
+
+            {
+                label: "Package Scans",
+                permission: "package_scans",
+                path: "/package-scans"
+            }
+        ]
+    },
+
+    // =========================================================
+    // FINANCE
+    // =========================================================
     {
         key: "finance",
         label: "Finance",
@@ -245,6 +331,7 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
             {
                 label: "Payments",
                 permission: "payments",
@@ -261,6 +348,7 @@ const MENU_GROUPS = [
                     }
                 ]
             },
+
             {
                 label: "Expenses",
                 permission: "expenses",
@@ -269,123 +357,25 @@ const MENU_GROUPS = [
         ]
     },
 
-    {
-        key: "delivery",
-        label: "Delivery",
-        entities: [
-            {
-                label: "Delivery Assignments",
-                permission: "delivery_assignments",
-                children: [
-                    {
-                        label: "My Assignments",
-                        scope: "own",
-                        path: "/my/delivery-assignments"
-                    },
-                    {
-                        label: "All Assignments",
-                        scope: "all",
-                        path: "/delivery-assignments"
-                    }
-                ]
-            },
-            {
-                label: "Delivery Attempts",
-                permission: "delivery_attempts",
-                children: [
-                    {
-                        label: "My Attempts",
-                        scope: "own",
-                        path: "/my/delivery-attempts"
-                    },
-                    {
-                        label: "All Attempts",
-                        scope: "all",
-                        path: "/delivery-attempts"
-                    }
-                ]
-            },
-            {
-                label: "Proof of Delivery",
-                permission: "proof_of_delivery",
-                children: [
-                    {
-                        label: "My Proofs",
-                        scope: "own",
-                        path: "/my/proof-of-delivery"
-                    },
-                    {
-                        label: "All Proofs",
-                        scope: "all",
-                        path: "/proof-of-delivery"
-                    }
-                ]
-            },
-            {
-                label: "Tracking Events",
-                permission: "tracking_events",
-                children: [
-                    {
-                        label: "My Tracking Events",
-                        scope: "own",
-                        path: "/my/tracking-events"
-                    },
-                    {
-                        label: "All Tracking Events",
-                        scope: "all",
-                        path: "/tracking-events"
-                    }
-                ]
-            },
-            {
-                label: "Tracking Status",
-                permission: "tracking_status",
-                path: "/tracking-status"
-            },
-            {
-                label: "Package Scans",
-                permission: "package_scans",
-                path: "/package-scans"
-            }
-        ]
-    },
-
-    {
-        key: "employee",
-        label: "Employee",
-        entities: [
-            {
-                label: "Employees",
-                permission: "employees",
-                path: "/employees"
-            },
-            {
-                label: "Departments",
-                permission: "departments",
-                path: "/departments"
-            },
-            {
-                label: "Positions",
-                permission: "positions",
-                path: "/positions"
-            }
-        ]
-    },
-
+    // =========================================================
+    // SYSTEM / LOGS
+    // =========================================================
     {
         key: "logs",
-        label: "Logs",
+        label: "System & Logs",
         entities: [
             {
                 label: "Audit Logs",
                 permission: "audit_logs",
                 path: "/audit-logs"
             },
+
             {
                 label: "Login History",
                 permission: "login_history",
                 path: "/login-history"
             },
+
             {
                 label: "Notifications",
                 permission: "notifications",
@@ -405,4 +395,5 @@ const MENU_GROUPS = [
         ]
     }
 ];
+
 export { MENU_GROUPS };

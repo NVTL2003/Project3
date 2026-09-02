@@ -12,8 +12,6 @@ public class FacilityController
         FacilityDto,
         CreateFacilityDto>
 {
-    protected override string ResourceName =>
-        "facilities";
 
     public FacilityController(
         ICrudService<

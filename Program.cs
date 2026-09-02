@@ -114,6 +114,18 @@ builder.Services.AddScoped<
 // OTHER SERVICES
 // ============================================================
 
+// Delivery Assignment
+builder.Services.AddScoped<ICrudRepository<DeliveryAssignment>, CrudRepository<DeliveryAssignment>>();
+builder.Services.AddScoped<ICrudService<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>, DeliveryAssignmentService>();
+
+// Delivery Attempt
+builder.Services.AddScoped<ICrudRepository<DeliveryAttempt>, CrudRepository<DeliveryAttempt>>();
+builder.Services.AddScoped<ICrudService<DeliveryAttempt, DeliveryAttemptDto, CreateDeliveryAttemptDto>, DeliveryAttemptService>();
+
+// Proof of Delivery
+builder.Services.AddScoped<ICrudRepository<ProofOfDelivery>, CrudRepository<ProofOfDelivery>>();
+builder.Services.AddScoped<ICrudService<ProofOfDelivery, ProofOfDeliveryDto, CreateProofOfDeliveryDto>, ProofOfDeliveryService>();
+
 builder.Services.AddScoped<
     ICrudService<Facility, FacilityDto, CreateFacilityDto>,
     FacilityService>();
@@ -145,6 +157,12 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<IRouteService, RouteService>();
 builder.Services.AddScoped<IRouteStopService, RouteStopService>();
 
+builder.Services.AddScoped<
+    ICrudService<
+        ShipmentManifest,
+        ShipmentManifestDto,
+        CreateShipmentManifestDto>,
+    ShipmentManifestService>();
 // ============================================================
 // CONTROLLERS
 // ============================================================

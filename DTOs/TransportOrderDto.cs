@@ -12,10 +12,6 @@ namespace Project3.DTOs
 
         public string? SpecialInstructions { get; set; }
 
-        public Guid? AssignedVehicleId { get; set; }
-
-        public Guid? AssignedDriverId { get; set; }
-
         public DateTime? PlannedDeparture { get; set; }
 
         public DateTime? PlannedArrival { get; set; }

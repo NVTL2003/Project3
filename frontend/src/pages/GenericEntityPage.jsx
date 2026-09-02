@@ -27,9 +27,15 @@ const GenericEntityPage = ({
 
     requirePermission = true,
 
+    permissionScope = "all",
+
     extraActions = null,
 
-    showCreate = true
+    showCreate = true,
+
+    showEdit = true,
+
+    showDelete = true
 }) => {
 
     const entity = useGenericEntity({
@@ -42,7 +48,9 @@ const GenericEntityPage = ({
 
         fieldConfig,
 
-        requirePermission
+        requirePermission,
+
+        permissionScope
 
     });
 
@@ -170,11 +178,11 @@ const GenericEntityPage = ({
                     }
 
                     canUpdate={
-                        entity.canUpdate
+                        showEdit && entity.canUpdate
                     }
 
                     canDelete={
-                        entity.canDelete
+                        showDelete && entity.canDelete
                     }
 
                     onEdit={

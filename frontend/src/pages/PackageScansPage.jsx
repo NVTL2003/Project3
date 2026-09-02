@@ -385,7 +385,6 @@ const PackageScansPage = () => {
                                 marginBottom: "20px"
                             }}
                         >
-
                             <label>
                                 Scan Type
                             </label>
@@ -402,17 +401,24 @@ const PackageScansPage = () => {
                                     marginTop: "6px"
                                 }}
                             >
-
                                 <option value="pickup">
                                     Pickup
                                 </option>
 
-                                <option value="sorting">
-                                    Sorting
+                                <option value="load">
+                                    Load
                                 </option>
 
-                                <option value="loaded">
-                                    Loaded
+                                <option value="depart">
+                                    Depart
+                                </option>
+
+                                <option value="arrive">
+                                    Arrive
+                                </option>
+
+                                <option value="unload">
+                                    Unload
                                 </option>
 
                                 <option value="out_for_delivery">
@@ -422,9 +428,7 @@ const PackageScansPage = () => {
                                 <option value="delivered">
                                     Delivered
                                 </option>
-
                             </select>
-
                         </div>
 
 

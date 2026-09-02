@@ -45,54 +45,28 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 2. Validate vehicle if supplied
+        // 2. Prevent duplicate active transport orders
         // --------------------------------------------------------
 
-        Guid? vehicleId = null;
+        var existingOrder = await _context.TransportOrders
+            .AnyAsync(o =>
+                o.ShipmentId == dto.ShipmentId &&
+                o.Status != "completed" &&
+                o.Status != "cancelled");
 
-        if (dto.AssignedVehicleId.HasValue &&
-            dto.AssignedVehicleId.Value != Guid.Empty)
+        if (existingOrder)
         {
-            var vehicleExists = await _context.Vehicles
-                .AnyAsync(v => v.Id == dto.AssignedVehicleId.Value);
-
-            if (!vehicleExists)
-            {
-                throw new KeyNotFoundException(
-                    "Assigned vehicle not found.");
-            }
-
-            vehicleId = dto.AssignedVehicleId.Value;
+            throw new InvalidOperationException(
+                "This shipment already has an active transport order.");
         }
 
         // --------------------------------------------------------
-        // 3. Validate driver if supplied
-        // --------------------------------------------------------
-
-        Guid? driverId = null;
-
-        if (dto.AssignedDriverId.HasValue &&
-            dto.AssignedDriverId.Value != Guid.Empty)
-        {
-            var driverExists = await _context.Employees
-                .AnyAsync(e => e.Id == dto.AssignedDriverId.Value);
-
-            if (!driverExists)
-            {
-                throw new KeyNotFoundException(
-                    "Assigned driver not found.");
-            }
-
-            driverId = dto.AssignedDriverId.Value;
-        }
-
-        // --------------------------------------------------------
-        // 4. Find current employee from JWT
+        // 3. Find current employee from JWT
         // --------------------------------------------------------
 
         var userId = _currentUser.UserId;
 
-        if (userId == null)
+        if (!userId.HasValue)
         {
             throw new UnauthorizedAccessException(
                 "Authenticated user not found.");
@@ -109,7 +83,29 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 5. Create transport order
+        // 4. Validate weight
+        // --------------------------------------------------------
+
+        if (dto.Weight <= 0)
+        {
+            throw new InvalidOperationException(
+                "Transport order weight must be greater than zero.");
+        }
+
+        // --------------------------------------------------------
+        // 5. Validate planned dates
+        // --------------------------------------------------------
+
+        if (dto.PlannedDeparture.HasValue &&
+            dto.PlannedArrival.HasValue &&
+            dto.PlannedArrival.Value < dto.PlannedDeparture.Value)
+        {
+            throw new InvalidOperationException(
+                "Planned arrival cannot be earlier than planned departure.");
+        }
+
+        // --------------------------------------------------------
+        // 6. Create transport order
         // --------------------------------------------------------
 
         var now = DateTime.UtcNow;
@@ -120,7 +116,7 @@ public class TransportOrderService
 
             OrderNumber = GenerateOrderNumber(),
 
-            ShipmentId = dto.ShipmentId,
+            ShipmentId = shipment.Id,
 
             Priority = dto.Priority ?? 5,
 
@@ -135,9 +131,14 @@ public class TransportOrderService
             // Server determines creator
             CreatedBy = employee.Id,
 
-            AssignedVehicleId = vehicleId,
-
-            AssignedDriverId = driverId,
+            // ----------------------------------------------------
+            // Driver / vehicle are NOT assigned here.
+            //
+            // Actual driver + vehicle assignment belongs to
+            // ShipmentManifest.
+            // ----------------------------------------------------
+            AssignedVehicleId = null,
+            AssignedDriverId = null,
 
             PlannedDeparture = dto.PlannedDeparture,
 
@@ -151,14 +152,17 @@ public class TransportOrderService
         _context.TransportOrders.Add(order);
 
         // --------------------------------------------------------
-        // 6. Update shipment
-        // --------------------------------------------------------
-
-        shipment.CurrentStatus = "in_transit";
-        shipment.UpdatedAt = now;
-
-        // --------------------------------------------------------
-        // 7. Save
+        // 7. DO NOT update Shipment.CurrentStatus
+        //
+        // Creating a TransportOrder means:
+        //
+        //     "Transportation has been planned."
+        //
+        // It does NOT mean:
+        //
+        //     "The shipment is moving."
+        //
+        // Physical movement will be handled by PackageScanService.
         // --------------------------------------------------------
 
         await _context.SaveChangesAsync();
@@ -179,6 +183,6 @@ public class TransportOrderService
             Guid.NewGuid()
                 .ToString("N")
                 .Substring(0, 4)
-                .ToUpper();
+                .ToUpperInvariant();
     }
 }

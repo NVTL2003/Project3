@@ -19,6 +19,4 @@ public class ProofOfDeliveriesController
         : base(service, authorizationService,currentUser)
     {
     }
-
-    protected override string ResourceName => "proof_of_delivery";
 }

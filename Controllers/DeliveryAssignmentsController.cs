@@ -26,6 +26,4 @@ public class DeliveryAssignmentsController
         _context = context;
         _currentUser = currentUser;
     }
-
-    protected override string ResourceName => "delivery_assignments";
 }

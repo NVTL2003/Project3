@@ -28,8 +28,6 @@ public class DeliveryAttemptsController
         _currentUser = currentUser;
     }
 
-    protected override string ResourceName => "delivery_attempts";
-
     [HttpPost]
     public override async Task<IActionResult> Create(
     [FromBody] CreateDeliveryAttemptDto dto)
