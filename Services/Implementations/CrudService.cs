@@ -262,13 +262,18 @@ public class CrudService<TEntity, TDto, TCreateDto>
     // CREATE
     // ============================================================
 
-    public virtual async Task<TDto> CreateAsync(
-    TCreateDto dto)
+    public virtual async Task<TDto> CreateAsync(TCreateDto dto)
     {
         var entity = _mapper.Map<TEntity>(dto);
 
-        await _repository.AddAsync(entity);
+        if (entity == null)
+            return default!;
 
+        entity = await PrepareForCreateAsync(
+            entity,
+            Guid.Empty);
+
+        await _repository.AddAsync(entity);
         await _repository.SaveChangesAsync();
 
         return _mapper.Map<TDto>(entity);

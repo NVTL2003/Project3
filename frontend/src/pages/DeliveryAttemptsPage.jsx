@@ -1,4 +1,308 @@
-import React, { useEffect, useState } from "react";
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+
+// import GenericEntityPage from "./GenericEntityPage";
+
+// import deliveryAttemptService
+//     from "../services/deliveryAttemptService";
+
+// import { shipmentService }
+//     from "../services/shipmentService";
+
+// import deliveryAssignmentService
+//     from "../services/deliveryAssignmentService";
+
+
+// const DeliveryAttemptsPage = () => {
+
+//     const navigate = useNavigate();
+
+
+//     /*
+//      * ============================================================
+//      * FORM FIELDS
+//      * ============================================================
+//      */
+
+//     const fieldConfig = [
+
+//         {
+//             name: "shipmentId",
+//             label: "Shipment",
+//             type: "relation",
+//             required: true,
+
+//             service: shipmentService,
+
+//             valueField: "id",
+
+//             sortBy: "trackingNumber",
+
+//             getOptionLabel: shipment =>
+//                 `${ shipment.trackingNumber || shipment.id } — ${ shipment.currentStatus || "Unknown" } `
+//         },
+
+//         {
+//             name: "deliveryAssignmentId",
+//             label: "Delivery Assignment",
+//             type: "relation",
+//             required: true,
+
+//             service: deliveryAssignmentService,
+
+//             valueField: "id",
+
+//             sortBy: "assignmentNumber",
+
+//             getOptionLabel: assignment =>
+//                 `${ assignment.assignmentNumber || assignment.id } — ${ assignment.status || "Unknown" } `
+//         },
+
+//         {
+//             name: "status",
+//             label: "Status",
+//             type: "select",
+//             required: true,
+
+//             defaultValue: "attempted",
+
+//             options: [
+//                 {
+//                     value: "attempted",
+//                     label: "Attempted"
+//                 },
+//                 {
+//                     value: "failed",
+//                     label: "Failed"
+//                 },
+//                 {
+//                     value: "delivered",
+//                     label: "Delivered"
+//                 }
+//             ]
+//         },
+
+//         {
+//             name: "reason",
+//             label: "Failure / Attempt Reason",
+//             type: "textarea"
+//         },
+
+//         {
+//             name: "notes",
+//             label: "Notes",
+//             type: "textarea"
+//         },
+
+//         {
+//             name: "latitude",
+//             label: "Latitude",
+//             type: "number"
+//         },
+
+//         {
+//             name: "longitude",
+//             label: "Longitude",
+//             type: "number"
+//         },
+
+
+//         /*
+//          * ========================================================
+//          * PROOF OF DELIVERY
+//          *
+//          * These fields are only displayed when:
+//          *
+//          * status === "delivered"
+//          * ========================================================
+//          */
+
+//         {
+//             name: "receiverName",
+//             label: "Receiver Name",
+//             type: "text",
+//             required: true,
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         },
+
+//         {
+//             name: "receiverSignature",
+//             label: "Receiver Signature",
+//             type: "text",
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         },
+
+//         {
+//             name: "receiverRelation",
+//             label: "Receiver Relation",
+//             type: "text",
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         },
+
+//         {
+//             name: "deliveryPhoto",
+//             label: "Delivery Photo",
+//             type: "text",
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         },
+
+//         {
+//             name: "gpsAccuracy",
+//             label: "GPS Accuracy",
+//             type: "number",
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         },
+
+//         {
+//             name: "proofNotes",
+//             label: "Proof of Delivery Notes",
+//             type: "textarea",
+
+//             showWhen: form =>
+//                 form.status === "delivered"
+//         }
+//     ];
+
+
+//     /*
+//      * ============================================================
+//      * TABLE COLUMNS
+//      * ============================================================
+//      */
+
+//     const displayColumns = [
+
+//         {
+//             key: "attemptNumber",
+//             label: "Attempt"
+//         },
+
+//         {
+//             key: "shipmentId",
+//             label: "Shipment"
+//         },
+
+//         {
+//             key: "deliveryAssignmentId",
+//             label: "Assignment"
+//         },
+
+//         {
+//             key: "status",
+//             label: "Status"
+//         },
+
+//         {
+//             key: "attemptTime",
+//             label: "Attempt Time"
+//         },
+
+//         {
+//             key: "reason",
+//             label: "Reason"
+//         }
+//     ];
+
+
+//     /*
+//      * ============================================================
+//      * SORT OPTIONS
+//      * ============================================================
+//      */
+
+//     const sortOptions = [
+
+//         {
+//             value: "attemptNumber",
+//             label: "Attempt Number"
+//         },
+
+//         {
+//             value: "attemptTime",
+//             label: "Attempt Time"
+//         },
+
+//         {
+//             value: "status",
+//             label: "Status"
+//         }
+
+//     ];
+
+
+//     /*
+//      * ============================================================
+//      * EXTRA ACTIONS
+//      * ============================================================
+//      */
+
+//     const extraActions = (attempt) => (
+
+//         <button
+//             className="crud-action-button"
+//             onClick={() =>
+//                 navigate(
+//                     `/ delivery - attempts / ${ attempt.id } `
+//                 )
+//             }
+//         >
+//             Details
+//         </button>
+
+//     );
+
+
+//     /*
+//      * ============================================================
+//      * PAGE
+//      * ============================================================
+//      */
+
+//     return (
+
+//         <GenericEntityPage
+
+//             entityName="Delivery Attempts"
+
+//             permissionPrefix="delivery_attempts"
+
+//             service={deliveryAttemptService}
+
+//             fieldConfig={fieldConfig}
+
+//             displayColumns={displayColumns}
+
+//             sortOptions={sortOptions}
+
+//             extraActions={extraActions}
+
+//             showCreate={true}
+
+//             showEdit={false}
+
+//             showDelete={false}
+
+//         />
+
+//     );
+// };
+
+
+// export default DeliveryAttemptsPage;
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import GenericEntityPage from "./GenericEntityPage";
 
 import deliveryAttemptService
     from "../services/deliveryAttemptService";
@@ -6,812 +310,711 @@ import deliveryAttemptService
 import deliveryAssignmentService
     from "../services/deliveryAssignmentService";
 
-import shipmentService
+import { shipmentManifestService }
+    from "../services/shipmentManifestService";
+
+import {manifestItemService}
+    from "../services/manifestItemService";
+
+import { transportOrderService }
+    from "../services/transportOrderService";
+
+import {shipmentService}
     from "../services/shipmentService";
 
 
 const DeliveryAttemptsPage = () => {
 
-    const [attempts, setAttempts] = useState([]);
+    const navigate = useNavigate();
 
     const [assignments, setAssignments] = useState([]);
-
     const [shipments, setShipments] = useState([]);
 
-    const [loading, setLoading] = useState(true);
+    const [selectedAssignment, setSelectedAssignment] =
+        useState(null);
 
-    const [submitting, setSubmitting] = useState(false);
-
-    const [error, setError] = useState("");
-
-    const [success, setSuccess] = useState("");
-
-    const [form, setForm] = useState({
-
-        shipmentId: "",
-
-        deliveryAssignmentId: "",
-
-        status: "attempted",
-
-        reason: "",
-
-        notes: "",
-
-        latitude: "",
-
-        longitude: "",
-
-        receiverName: "",
-
-        receiverSignature: "",
-
-        receiverRelation: "",
-
-        deliveryPhoto: "",
-
-        gpsAccuracy: "",
-
-        proofNotes: ""
-    });
+    const [loadingRelations, setLoadingRelations] =
+        useState(false);
 
 
-    const loadData = async () => {
-
-        try {
-
-            setLoading(true);
-
-            setError("");
-
-            const [
-                attemptsResponse,
-                assignmentsResponse,
-                shipmentsResponse
-            ] = await Promise.all([
-
-                deliveryAttemptService.getPaged({
-                    page: 1,
-                    pageSize: 100
-                }),
-
-                deliveryAssignmentService.getPaged({
-                    page: 1,
-                    pageSize: 100
-                }),
-
-                shipmentService.getPaged({
-                    page: 1,
-                    pageSize: 100
-                })
-            ]);
-
-
-            const attemptsData =
-                attemptsResponse.data;
-
-            const assignmentsData =
-                assignmentsResponse.data;
-
-            const shipmentsData =
-                shipmentsResponse.data;
-
-
-            setAttempts(
-                attemptsData?.items ??
-                attemptsData?.data ??
-                attemptsData ??
-                []
-            );
-
-            setAssignments(
-                assignmentsData?.items ??
-                assignmentsData?.data ??
-                assignmentsData ??
-                []
-            );
-
-            setShipments(
-                shipmentsData?.items ??
-                shipmentsData?.data ??
-                shipmentsData ??
-                []
-            );
-
-        } catch (err) {
-
-            console.error(err);
-
-            setError(
-                err.response?.data?.message ??
-                "Failed to load delivery attempt data."
-            );
-
-        } finally {
-
-            setLoading(false);
-        }
-    };
-
+    // =========================================================
+    // LOAD DELIVERY ASSIGNMENTS
+    // =========================================================
 
     useEffect(() => {
 
-        loadData();
+        const loadAssignments = async () => {
+
+            try {
+
+                const response =
+                    await deliveryAssignmentService.getPaged({
+                        page: 1,
+                        pageSize: 100
+                    });
+
+                setAssignments(
+                    response?.data?.items ||
+                    response?.data ||
+                    []
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to load delivery assignments:",
+                    error
+                );
+
+                setAssignments([]);
+            }
+        };
+
+        loadAssignments();
 
     }, []);
 
 
-    const handleChange = (event) => {
-
-        const {
-            name,
-            value
-        } = event.target;
-
-
-        setForm(previous => ({
-
-            ...previous,
-
-            [name]: value
-
-        }));
-    };
-
-
-    const handleSubmit = async (event) => {
-
-        event.preventDefault();
-
-        setError("");
-
-        setSuccess("");
-
-        setSubmitting(true);
-
-
-        try {
-
-            if (!form.shipmentId) {
-
-                throw new Error(
-                    "Please select a shipment."
-                );
-            }
-
-
-            if (!form.deliveryAssignmentId) {
-
-                throw new Error(
-                    "Please select a delivery assignment."
-                );
-            }
-
-
-            if (
-                form.status === "delivered" &&
-                !form.receiverName.trim()
-            ) {
-
-                throw new Error(
-                    "Receiver name is required when the shipment is delivered."
-                );
-            }
-
-
-            const payload = {
-
-                shipmentId:
-                    form.shipmentId,
-
-                deliveryAssignmentId:
-                    form.deliveryAssignmentId,
-
-                status:
-                    form.status,
-
-                reason:
-                    form.reason.trim() || null,
-
-                notes:
-                    form.notes.trim() || null,
-
-                latitude:
-                    form.latitude === ""
-                        ? null
-                        : Number(form.latitude),
-
-                longitude:
-                    form.longitude === ""
-                        ? null
-                        : Number(form.longitude),
-
-                proofOfDelivery:
-                    form.status === "delivered"
-                        ? {
-
-                            receiverName:
-                                form.receiverName.trim(),
-
-                            receiverSignature:
-                                form.receiverSignature.trim() || null,
-
-                            receiverRelation:
-                                form.receiverRelation.trim() || null,
-
-                            deliveryPhoto:
-                                form.deliveryPhoto.trim() || null,
-
-                            gpsAccuracy:
-                                form.gpsAccuracy === ""
-                                    ? null
-                                    : Number(form.gpsAccuracy),
-
-                            notes:
-                                form.proofNotes.trim() || null
-
-                        }
-                        : null
-            };
-
-
-            await deliveryAttemptService.create(
-                payload
-            );
-
-
-            setSuccess(
-                form.status === "delivered"
-                    ? "Delivery completed successfully. Proof of delivery was created."
-                    : "Delivery attempt recorded successfully."
-            );
-
-
-            setForm({
-
-                shipmentId: "",
-
-                deliveryAssignmentId: "",
-
-                status: "attempted",
-
-                reason: "",
-
-                notes: "",
-
-                latitude: "",
-
-                longitude: "",
-
-                receiverName: "",
-
-                receiverSignature: "",
-
-                receiverRelation: "",
-
-                deliveryPhoto: "",
-
-                gpsAccuracy: "",
-
-                proofNotes: ""
-            });
-
-
-            await loadData();
-
-        } catch (err) {
-
-            console.error(err);
-
-            setError(
-                err.response?.data?.message ??
-                err.message ??
-                "Failed to create delivery attempt."
-            );
-
-        } finally {
-
-            setSubmitting(false);
+    // =========================================================
+    // WHEN ASSIGNMENT CHANGES
+    //
+    // Resolve:
+    //
+    // Assignment
+    //     ↓
+    // Manifest
+    //     ↓
+    // ManifestItems
+    //     ↓
+    // TransportOrders
+    //     ↓
+    // Shipments
+    // =========================================================
+
+    useEffect(() => {
+
+        if (!selectedAssignment?.manifestId) {
+
+            setShipments([]);
+
+            return;
         }
-    };
 
 
-    const getShipmentLabel = (shipment) => {
+        const loadAssignmentShipments = async () => {
 
-        return (
-            shipment.trackingNumber ??
-            shipment.shipmentNumber ??
-            shipment.id
+            setLoadingRelations(true);
+
+            try {
+
+                // -------------------------------------------------
+                // 1. Load manifest
+                // -------------------------------------------------
+
+                const manifestResponse =
+                    await shipmentManifestService.getById(
+                        selectedAssignment.manifestId
+                    );
+
+                const manifest =
+                    manifestResponse?.data;
+
+                if (!manifest) {
+
+                    setShipments([]);
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // 2. Load manifest items
+                // -------------------------------------------------
+
+                const itemsResponse =
+                    await manifestItemService.getPaged({
+                        page: 1,
+                        pageSize: 100
+                    });
+
+                const allItems =
+                    itemsResponse?.data?.items ||
+                    itemsResponse?.data ||
+                    [];
+
+
+                const manifestItems =
+                    allItems.filter(
+                        item =>
+                            item.manifestId ===
+                            selectedAssignment.manifestId
+                    );
+
+
+                if (manifestItems.length === 0) {
+
+                    setShipments([]);
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // 3. Load transport orders
+                // -------------------------------------------------
+
+                const transportOrdersResponse =
+                    await transportOrderService.getPaged({
+                        page: 1,
+                        pageSize: 100
+                    });
+
+                const allTransportOrders =
+                    transportOrdersResponse?.data?.items ||
+                    transportOrdersResponse?.data ||
+                    [];
+
+
+                // -------------------------------------------------
+                // 4. Resolve shipment IDs
+                // -------------------------------------------------
+
+                const transportOrderIds =
+                    new Set(
+                        manifestItems.map(
+                            item => item.transportOrderId
+                        )
+                    );
+
+
+                const manifestTransportOrders =
+                    allTransportOrders.filter(
+                        order =>
+                            transportOrderIds.has(order.id)
+                    );
+
+
+                const shipmentIds =
+                    [
+                        ...new Set(
+                            manifestTransportOrders
+                                .map(order => order.shipmentId)
+                                .filter(Boolean)
+                        )
+                    ];
+
+
+                if (shipmentIds.length === 0) {
+
+                    setShipments([]);
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // 5. Load shipment records
+                // -------------------------------------------------
+
+                const shipmentResponses =
+                    await Promise.all(
+                        shipmentIds.map(
+                            shipmentId =>
+                                shipmentService.getById(
+                                    shipmentId
+                                )
+                        )
+                    );
+
+
+                const resolvedShipments =
+                    shipmentResponses
+                        .map(response => response?.data)
+                        .filter(Boolean);
+
+
+                setShipments(
+                    resolvedShipments
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to resolve assignment shipments:",
+                    error
+                );
+
+                setShipments([]);
+
+            } finally {
+
+                setLoadingRelations(false);
+            }
+        };
+
+
+        loadAssignmentShipments();
+
+    }, [selectedAssignment]);
+
+
+    // =========================================================
+    // FIELD CONFIG
+    // =========================================================
+
+    const fieldConfig = useMemo(() => [
+
+        // -----------------------------------------------------
+        // DELIVERY ASSIGNMENT
+        // -----------------------------------------------------
+
+        {
+            name: "deliveryAssignmentId",
+
+            label: "Delivery Assignment",
+
+            type: "relation",
+
+            required: true,
+
+            service: deliveryAssignmentService,
+
+            valueField: "id",
+
+            sortBy: "assignmentNumber",
+
+            getOptionLabel: assignment =>
+                `${ assignment.assignmentNumber || assignment.id }
+                 — ${ assignment.status || "Unknown" } `,
+
+            onChange: async (
+                value,
+                form,
+                setForm
+            ) => {
+
+                const assignment =
+                    assignments.find(
+                        item =>
+                            item.id === value
+                    );
+
+                setSelectedAssignment(
+                    assignment || null
+                );
+
+                // Clear shipment when assignment changes.
+                setForm(previous => ({
+                    ...previous,
+
+                    deliveryAssignmentId: value,
+
+                    shipmentId: ""
+                }));
+            }
+        },
+
+
+        // -----------------------------------------------------
+        // SHIPMENT
+        // -----------------------------------------------------
+
+        {
+            name: "shipmentId",
+
+            label: "Shipment",
+
+            type: "select",
+
+            required: true,
+
+            disabled:
+                loadingRelations ||
+                !selectedAssignment,
+
+            options:
+                shipments.map(shipment => ({
+                    value: shipment.id,
+
+                    label:
+                        `${ shipment.trackingNumber || shipment.id }
+                         — ${ shipment.currentStatus || "Unknown" } `
+                }))
+        },
+
+
+        // -----------------------------------------------------
+        // STATUS
+        // -----------------------------------------------------
+
+        {
+            name: "status",
+
+            label: "Status",
+
+            type: "select",
+
+            required: true,
+
+            defaultValue: "attempted",
+
+            options: [
+                {
+                    value: "attempted",
+                    label: "Attempted"
+                },
+                {
+                    value: "failed",
+                    label: "Failed"
+                },
+                {
+                    value: "delivered",
+                    label: "Delivered"
+                }
+            ]
+        },
+
+
+        // -----------------------------------------------------
+        // REASON
+        // -----------------------------------------------------
+
+        {
+            name: "reason",
+
+            label: "Failure / Attempt Reason",
+
+            type: "textarea"
+        },
+
+
+        // -----------------------------------------------------
+        // NOTES
+        // -----------------------------------------------------
+
+        {
+            name: "notes",
+
+            label: "Notes",
+
+            type: "textarea"
+        },
+
+
+        // -----------------------------------------------------
+        // GPS
+        // -----------------------------------------------------
+
+        {
+            name: "latitude",
+
+            label: "Latitude",
+
+            type: "number"
+        },
+
+        {
+            name: "longitude",
+
+            label: "Longitude",
+
+            type: "number"
+        },
+
+
+        // =====================================================
+        // PROOF OF DELIVERY
+        // =====================================================
+
+        {
+            name: "receiverName",
+
+            label: "Receiver Name",
+
+            type: "text",
+
+            required: true,
+
+            showWhen: form =>
+                form.status === "delivered"
+        },
+
+        {
+            name: "receiverSignature",
+
+            label: "Receiver Signature",
+
+            type: "text",
+
+            showWhen: form =>
+                form.status === "delivered"
+        },
+
+        {
+            name: "receiverRelation",
+
+            label: "Receiver Relation",
+
+            type: "text",
+
+            showWhen: form =>
+                form.status === "delivered"
+        },
+
+        {
+            name: "deliveryPhoto",
+
+            label: "Delivery Photo",
+
+            type: "text",
+
+            showWhen: form =>
+                form.status === "delivered"
+        },
+
+        {
+            name: "gpsAccuracy",
+
+            label: "GPS Accuracy",
+
+            type: "number",
+
+            showWhen: form =>
+                form.status === "delivered"
+        },
+
+        {
+            name: "proofNotes",
+
+            label: "Proof of Delivery Notes",
+
+            type: "textarea",
+
+            showWhen: form =>
+                form.status === "delivered"
+        }
+
+    ], [
+        assignments,
+        selectedAssignment,
+        shipments,
+        loadingRelations
+    ]);
+
+
+    // =========================================================
+    // TABLE COLUMNS
+    // =========================================================
+
+    const displayColumns = [
+
+        {
+            key: "attemptNumber",
+            label: "Attempt"
+        },
+
+        {
+            key: "shipmentId",
+            label: "Shipment"
+        },
+
+        {
+            key: "deliveryAssignmentId",
+            label: "Assignment"
+        },
+
+        {
+            key: "status",
+            label: "Status"
+        },
+
+        {
+            key: "attemptTime",
+            label: "Attempt Time"
+        },
+
+        {
+            key: "reason",
+            label: "Reason"
+        }
+    ];
+
+
+    // =========================================================
+    // SORT OPTIONS
+    // =========================================================
+
+    const sortOptions = [
+
+        {
+            value: "attemptNumber",
+            label: "Attempt Number"
+        },
+
+        {
+            value: "attemptTime",
+            label: "Attempt Time"
+        },
+
+        {
+            value: "status",
+            label: "Status"
+        }
+
+    ];
+
+
+    // =========================================================
+    // SUBMIT TRANSFORMATION
+    //
+    // Frontend fields:
+    //
+    // receiverName
+    // receiverSignature
+    // receiverRelation
+    // deliveryPhoto
+    // gpsAccuracy
+    // proofNotes
+    //
+    // Backend expects:
+    //
+    // ProofOfDelivery: {
+    //     receiverName,
+    //     receiverSignature,
+    //     receiverRelation,
+    //     deliveryPhoto,
+    //     gpsAccuracy,
+    //     notes
+    // }
+    // =========================================================
+
+    const handleCreate = async formData => {
+
+        const status =
+            formData.status ||
+            "attempted";
+
+
+        const payload = {
+
+            shipmentId:
+                formData.shipmentId,
+
+            deliveryAssignmentId:
+                formData.deliveryAssignmentId,
+
+            status,
+
+            reason:
+                formData.reason || null,
+
+            notes:
+                formData.notes || null,
+
+            latitude:
+                formData.latitude === "" ||
+                formData.latitude == null
+                    ? null
+                    : Number(formData.latitude),
+
+            longitude:
+                formData.longitude === "" ||
+                formData.longitude == null
+                    ? null
+                    : Number(formData.longitude),
+
+            proofOfDelivery:
+                status === "delivered"
+                    ? {
+                        receiverName:
+                            formData.receiverName || "",
+
+                        receiverSignature:
+                            formData.receiverSignature || null,
+
+                        receiverRelation:
+                            formData.receiverRelation || null,
+
+                        deliveryPhoto:
+                            formData.deliveryPhoto || null,
+
+                        gpsAccuracy:
+                            formData.gpsAccuracy === "" ||
+                            formData.gpsAccuracy == null
+                                ? null
+                                : Number(formData.gpsAccuracy),
+
+                        notes:
+                            formData.proofNotes || null
+                    }
+                    : null
+        };
+
+
+        console.log(
+            "Delivery attempt payload:",
+            payload
+        );
+
+
+        return deliveryAttemptService.createAttempt(
+            payload
         );
     };
 
 
-    const getAssignmentLabel = (assignment) => {
+    // =========================================================
+    // EXTRA ACTIONS
+    // =========================================================
 
-        return (
-            assignment.assignmentNumber ??
-            assignment.id
-        );
-    };
+    const extraActions = attempt => (
+
+        <button
+            type="button"
+            className="crud-action-button"
+            onClick={() =>
+                navigate(
+                    `/ delivery - attempts / ${ attempt.id } `
+                )
+            }
+        >
+            Details
+        </button>
+    );
 
 
-    const isDelivered =
-        form.status === "delivered";
-
-
-    if (loading) {
-
-        return (
-            <div className="page-container">
-                <h1>Delivery Attempts</h1>
-                <p>Loading...</p>
-            </div>
-        );
-    }
-
+    // =========================================================
+    // PAGE
+    // =========================================================
 
     return (
-        <div className="page-container">
 
-            <h1>Delivery Attempts</h1>
+        <GenericEntityPage
 
+            entityName="Delivery Attempts"
 
-            {error && (
-                <div className="error-message">
-                    {error}
-                </div>
-            )}
+            permissionPrefix="delivery_attempts"
 
+            service={deliveryAttemptService}
 
-            {success && (
-                <div className="success-message">
-                    {success}
-                </div>
-            )}
+            fieldConfig={fieldConfig}
 
+            displayColumns={displayColumns}
 
-            <section className="crud-section">
+            sortOptions={sortOptions}
 
-                <h2>Record Delivery Attempt</h2>
+            extraActions={extraActions}
 
+            showCreate={true}
 
-                <form
-                    onSubmit={handleSubmit}
-                    className="crud-form"
-                >
+            showEdit={false}
 
-                    <div className="form-group">
+            showDelete={false}
 
-                        <label>
-                            Delivery Assignment
-                        </label>
+            showCreate={true}
 
-                        <select
-                            name="deliveryAssignmentId"
-                            value={form.deliveryAssignmentId}
-                            onChange={handleChange}
-                            required
-                        >
+        />
 
-                            <option value="">
-                                Select assignment
-                            </option>
-
-                            {assignments
-                                .filter(
-                                    assignment =>
-                                        assignment.status !== "Completed" &&
-                                        assignment.status !== "completed" &&
-                                        assignment.status !== "Cancelled" &&
-                                        assignment.status !== "cancelled"
-                                )
-                                .map(assignment => (
-
-                                    <option
-                                        key={assignment.id}
-                                        value={assignment.id}
-                                    >
-                                        {getAssignmentLabel(assignment)}
-                                    </option>
-
-                                ))}
-
-                        </select>
-
-                    </div>
-
-
-                    <div className="form-group">
-
-                        <label>
-                            Shipment
-                        </label>
-
-                        <select
-                            name="shipmentId"
-                            value={form.shipmentId}
-                            onChange={handleChange}
-                            required
-                        >
-
-                            <option value="">
-                                Select shipment
-                            </option>
-
-                            {shipments.map(shipment => (
-
-                                <option
-                                    key={shipment.id}
-                                    value={shipment.id}
-                                >
-                                    {getShipmentLabel(shipment)}
-                                </option>
-
-                            ))}
-
-                        </select>
-
-                    </div>
-
-
-                    <div className="form-group">
-
-                        <label>
-                            Status
-                        </label>
-
-                        <select
-                            name="status"
-                            value={form.status}
-                            onChange={handleChange}
-                            required
-                        >
-
-                            <option value="attempted">
-                                Attempted
-                            </option>
-
-                            <option value="failed">
-                                Failed
-                            </option>
-
-                            <option value="delivered">
-                                Delivered
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    {(form.status === "failed" ||
-                      form.status === "attempted") && (
-
-                        <div className="form-group">
-
-                            <label>
-                                Reason
-                            </label>
-
-                            <input
-                                type="text"
-                                name="reason"
-                                value={form.reason}
-                                onChange={handleChange}
-                                placeholder="Reason for the attempt/failure"
-                            />
-
-                        </div>
-
-                    )}
-
-
-                    <div className="form-group">
-
-                        <label>
-                            Notes
-                        </label>
-
-                        <textarea
-                            name="notes"
-                            value={form.notes}
-                            onChange={handleChange}
-                            rows={3}
-                        />
-
-                    </div>
-
-
-                    <div className="form-row">
-
-                        <div className="form-group">
-
-                            <label>
-                                Latitude
-                            </label>
-
-                            <input
-                                type="number"
-                                step="any"
-                                name="latitude"
-                                value={form.latitude}
-                                onChange={handleChange}
-                            />
-
-                        </div>
-
-
-                        <div className="form-group">
-
-                            <label>
-                                Longitude
-                            </label>
-
-                            <input
-                                type="number"
-                                step="any"
-                                name="longitude"
-                                value={form.longitude}
-                                onChange={handleChange}
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    {isDelivered && (
-
-                        <section className="crud-section">
-
-                            <h3>
-                                Proof of Delivery
-                            </h3>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Receiver Name *
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="receiverName"
-                                    value={form.receiverName}
-                                    onChange={handleChange}
-                                    required
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Receiver Relation
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="receiverRelation"
-                                    value={form.receiverRelation}
-                                    onChange={handleChange}
-                                    placeholder="Customer, family member, colleague..."
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Receiver Signature
-                                </label>
-
-                                <textarea
-                                    name="receiverSignature"
-                                    value={form.receiverSignature}
-                                    onChange={handleChange}
-                                    rows={3}
-                                    placeholder="Signature data"
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    Delivery Photo
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="deliveryPhoto"
-                                    value={form.deliveryPhoto}
-                                    onChange={handleChange}
-                                    placeholder="Photo reference/path"
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    GPS Accuracy
-                                </label>
-
-                                <input
-                                    type="number"
-                                    step="any"
-                                    name="gpsAccuracy"
-                                    value={form.gpsAccuracy}
-                                    onChange={handleChange}
-                                />
-
-                            </div>
-
-
-                            <div className="form-group">
-
-                                <label>
-                                    POD Notes
-                                </label>
-
-                                <textarea
-                                    name="proofNotes"
-                                    value={form.proofNotes}
-                                    onChange={handleChange}
-                                    rows={3}
-                                />
-
-                            </div>
-
-                        </section>
-                    )}
-
-
-                    <button
-                        type="submit"
-                        disabled={submitting}
-                    >
-                        {submitting
-                            ? "Saving..."
-                            : "Record Attempt"}
-                    </button>
-
-                </form>
-
-            </section>
-
-
-            <section className="crud-section">
-
-                <h2>
-                    Delivery Attempt History
-                </h2>
-
-
-                {attempts.length === 0 ? (
-
-                    <p>
-                        No delivery attempts found.
-                    </p>
-
-                ) : (
-
-                    <div className="table-container">
-
-                        <table>
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>
-                                        Attempt #
-                                    </th>
-
-                                    <th>
-                                        Shipment
-                                    </th>
-
-                                    <th>
-                                        Assignment
-                                    </th>
-
-                                    <th>
-                                        Status
-                                    </th>
-
-                                    <th>
-                                        Attempt Time
-                                    </th>
-
-                                    <th>
-                                        Reason
-                                    </th>
-
-                                    <th>
-                                        Delivered
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody>
-
-                                {attempts.map(attempt => (
-
-                                    <tr key={attempt.id}>
-
-                                        <td>
-                                            {attempt.attemptNumber}
-                                        </td>
-
-                                        <td>
-                                            {getShipmentLabel(
-                                                shipments.find(
-                                                    shipment =>
-                                                        shipment.id === attempt.shipmentId
-                                                ) ?? {
-                                                    id: attempt.shipmentId
-                                                }
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            {getAssignmentLabel(
-                                                assignments.find(
-                                                    assignment =>
-                                                        assignment.id === attempt.deliveryAssignmentId
-                                                ) ?? {
-                                                    id: attempt.deliveryAssignmentId
-                                                }
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            {attempt.status}
-                                        </td>
-
-                                        <td>
-                                            {attempt.attemptTime
-                                                ? new Date(
-                                                    attempt.attemptTime
-                                                ).toLocaleString()
-                                                : "-"}
-                                        </td>
-
-                                        <td>
-                                            {attempt.reason ?? "-"}
-                                        </td>
-
-                                        <td>
-                                            {attempt.isDelivered
-                                                ? "Yes"
-                                                : "No"}
-                                        </td>
-
-                                    </tr>
-
-                                ))}
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                )}
-
-            </section>
-
-        </div>
     );
 };
 

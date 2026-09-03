@@ -20,13 +20,14 @@ import { transportOrderService }
 
 const ShipmentManifestDetailsPage = () => {
 
-    const {
-        id
-    } = useParams();
+    const { id } = useParams();
 
-    const navigate =
-        useNavigate();
+    const navigate = useNavigate();
 
+
+    // =========================================================
+    // STATE
+    // =========================================================
 
     const [manifest, setManifest] =
         useState(null);
@@ -64,9 +65,7 @@ const ShipmentManifestDetailsPage = () => {
             const response =
                 await shipmentManifestService.getById(id);
 
-            setManifest(
-                response.data
-            );
+            setManifest(response.data);
 
         } catch (err) {
 
@@ -94,11 +93,8 @@ const ShipmentManifestDetailsPage = () => {
 
             const response =
                 await manifestItemService.getPaged({
-
                     page: 1,
-
                     pageSize: 100
-
                 });
 
 
@@ -112,12 +108,17 @@ const ShipmentManifestDetailsPage = () => {
                 [];
 
 
-            setItems(
+            const manifestItems =
                 allItems.filter(
                     item =>
                         item.manifestId === id
-                )
-            );
+                );
+
+
+            setItems(manifestItems);
+
+
+            return manifestItems;
 
         } catch (err) {
 
@@ -131,6 +132,8 @@ const ShipmentManifestDetailsPage = () => {
                 "Failed to load manifest items."
             );
 
+            return [];
+
         }
     };
 
@@ -139,7 +142,9 @@ const ShipmentManifestDetailsPage = () => {
     // LOAD TRANSPORT ORDERS
     // =========================================================
 
-    const loadTransportOrders = async () => {
+    const loadTransportOrders = async (
+        currentItems = items
+    ) => {
 
         try {
 
@@ -157,10 +162,40 @@ const ShipmentManifestDetailsPage = () => {
                 response.data;
 
 
-            setTransportOrders(
+            const allOrders =
                 data?.items ||
                 data?.data ||
-                []
+                [];
+
+
+            // -------------------------------------------------
+            // Get Transport Order IDs already in manifest
+            // -------------------------------------------------
+
+            const existingTransportOrderIds =
+                new Set(
+                    currentItems.map(
+                        item =>
+                            item.transportOrderId
+                    )
+                );
+
+
+            // -------------------------------------------------
+            // Only show orders not already assigned
+            // -------------------------------------------------
+
+            const availableOrders =
+                allOrders.filter(
+                    order =>
+                        !existingTransportOrderIds.has(
+                            order.id
+                        )
+                );
+
+
+            setTransportOrders(
+                availableOrders
             );
 
         } catch (err) {
@@ -170,12 +205,16 @@ const ShipmentManifestDetailsPage = () => {
                 err
             );
 
+            setError(
+                err.response?.data?.message ||
+                "Failed to load transport orders."
+            );
         }
     };
 
 
     // =========================================================
-    // LOAD DATA
+    // LOAD ALL DATA
     // =========================================================
 
     useEffect(() => {
@@ -188,13 +227,16 @@ const ShipmentManifestDetailsPage = () => {
 
             try {
 
+                const loadedItems =
+                    await loadItems();
+
                 await Promise.all([
 
                     loadManifest(),
 
-                    loadItems(),
-
-                    loadTransportOrders()
+                    loadTransportOrders(
+                        loadedItems
+                    )
 
                 ]);
 
@@ -203,7 +245,6 @@ const ShipmentManifestDetailsPage = () => {
                 setLoading(false);
 
             }
-
         };
 
 
@@ -213,12 +254,13 @@ const ShipmentManifestDetailsPage = () => {
 
 
     // =========================================================
-    // ADD TRANSPORT ORDER
+    // ADD TRANSPORT ORDER TO MANIFEST
     // =========================================================
 
     const handleAddItem = async (e) => {
 
         e.preventDefault();
+
 
         if (!selectedTransportOrder) {
 
@@ -227,7 +269,6 @@ const ShipmentManifestDetailsPage = () => {
             );
 
             return;
-
         }
 
 
@@ -255,20 +296,42 @@ const ShipmentManifestDetailsPage = () => {
             };
 
 
+            console.log(
+                "Creating ManifestItem:",
+                payload
+            );
+
+
             await manifestItemService.create(
                 payload
             );
 
+
+            // -------------------------------------------------
+            // Reset form
+            // -------------------------------------------------
 
             setSelectedTransportOrder("");
 
             setLoadingSequence("");
 
 
-            await loadItems();
+            // -------------------------------------------------
+            // Reload everything
+            // -------------------------------------------------
 
-            await loadManifest();
+            const updatedItems =
+                await loadItems();
 
+            await Promise.all([
+
+                loadManifest(),
+
+                loadTransportOrders(
+                    updatedItems
+                )
+
+            ]);
 
         } catch (err) {
 
@@ -364,9 +427,9 @@ const ShipmentManifestDetailsPage = () => {
             <div className="crud-container">
 
 
-                {/* ================================================= */}
-                {/* HEADER */}
-                {/* ================================================= */}
+                {/* =================================================
+                    HEADER
+                ================================================= */}
 
                 <div className="crud-header">
 
@@ -401,9 +464,9 @@ const ShipmentManifestDetailsPage = () => {
                 </div>
 
 
-                {/* ================================================= */}
-                {/* ERROR */}
-                {/* ================================================= */}
+                {/* =================================================
+                    ERROR
+                ================================================= */}
 
                 {error && (
 
@@ -422,9 +485,9 @@ const ShipmentManifestDetailsPage = () => {
                 )}
 
 
-                {/* ================================================= */}
-                {/* MANIFEST INFORMATION */}
-                {/* ================================================= */}
+                {/* =================================================
+                    MANIFEST INFORMATION
+                ================================================= */}
 
                 <div className="crud-table-card">
 
@@ -522,10 +585,13 @@ const ShipmentManifestDetailsPage = () => {
                         {manifest.notes && (
 
                             <p>
+
                                 <strong>
                                     Notes:
                                 </strong>{" "}
+
                                 {manifest.notes}
+
                             </p>
 
                         )}
@@ -535,9 +601,9 @@ const ShipmentManifestDetailsPage = () => {
                 </div>
 
 
-                {/* ================================================= */}
-                {/* ADD TRANSPORT ORDER */}
-                {/* ================================================= */}
+                {/* =================================================
+                    ADD TRANSPORT ORDER
+                ================================================= */}
 
                 <div
                     className="crud-table-card"
@@ -557,124 +623,145 @@ const ShipmentManifestDetailsPage = () => {
                         </h2>
 
 
-                        <form
-                            onSubmit={handleAddItem}
-                        >
+                        {transportOrders.length === 0 ? (
 
-                            <div
-                                style={{
-                                    marginBottom: "16px"
-                                }}
+                            <p>
+                                No available transport orders
+                                to add to this manifest.
+                            </p>
+
+                        ) : (
+
+                            <form
+                                onSubmit={handleAddItem}
                             >
 
-                                <label>
-                                    Transport Order
-                                </label>
+                                {/* =================================
+                                    TRANSPORT ORDER
+                                ================================= */}
 
-
-                                <select
-                                    value={
-                                        selectedTransportOrder
-                                    }
-                                    onChange={e =>
-                                        setSelectedTransportOrder(
-                                            e.target.value
-                                        )
-                                    }
-                                    required
+                                <div
                                     style={{
-                                        display: "block",
-                                        width: "100%",
-                                        padding: "10px",
-                                        marginTop: "6px"
+                                        marginBottom: "16px"
                                     }}
                                 >
 
-                                    <option value="">
-                                        Select transport order
-                                    </option>
+                                    <label>
+                                        Transport Order
+                                    </label>
 
 
-                                    {transportOrders.map(
-                                        order => (
+                                    <select
+                                        value={
+                                            selectedTransportOrder
+                                        }
+                                        onChange={e =>
+                                            setSelectedTransportOrder(
+                                                e.target.value
+                                            )
+                                        }
+                                        required
+                                        style={{
+                                            display: "block",
+                                            width: "100%",
+                                            padding: "10px",
+                                            marginTop: "6px"
+                                        }}
+                                    >
 
-                                            <option
-                                                key={order.id}
-                                                value={order.id}
-                                            >
-
-                                                {order.orderNumber}
-
-                                                {" — "}
-
-                                                {order.status}
-
-                                            </option>
-
-                                        )
-                                    )}
-
-                                </select>
-
-                            </div>
-
-
-                            <div
-                                style={{
-                                    marginBottom: "16px"
-                                }}
-                            >
-
-                                <label>
-                                    Loading Sequence
-                                </label>
+                                        <option value="">
+                                            Select transport order
+                                        </option>
 
 
-                                <input
-                                    type="number"
-                                    min="1"
-                                    value={
-                                        loadingSequence
-                                    }
-                                    onChange={e =>
-                                        setLoadingSequence(
-                                            e.target.value
-                                        )
-                                    }
+                                        {transportOrders.map(
+                                            order => (
+
+                                                <option
+                                                    key={order.id}
+                                                    value={order.id}
+                                                >
+
+                                                    {order.orderNumber}
+
+                                                    {" — "}
+
+                                                    {order.status ||
+                                                        "Unknown"}
+
+                                                </option>
+
+                                            )
+                                        )}
+
+                                    </select>
+
+                                </div>
+
+
+                                {/* =================================
+                                    LOADING SEQUENCE
+                                ================================= */}
+
+                                <div
                                     style={{
-                                        display: "block",
-                                        width: "100%",
-                                        padding: "10px",
-                                        marginTop: "6px"
+                                        marginBottom: "16px"
                                     }}
-                                />
+                                >
 
-                            </div>
+                                    <label>
+                                        Loading Sequence
+                                    </label>
 
 
-                            <button
-                                type="submit"
-                                className="crud-button crud-button-primary"
-                                disabled={addingItem}
-                            >
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={
+                                            loadingSequence
+                                        }
+                                        onChange={e =>
+                                            setLoadingSequence(
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder="Leave empty for automatic sequence"
+                                        style={{
+                                            display: "block",
+                                            width: "100%",
+                                            padding: "10px",
+                                            marginTop: "6px"
+                                        }}
+                                    />
 
-                                {addingItem
-                                    ? "Adding..."
-                                    : "Add Transport Order"
-                                }
+                                </div>
 
-                            </button>
 
-                        </form>
+                                <button
+                                    type="submit"
+                                    className="crud-button crud-button-primary"
+                                    disabled={addingItem}
+                                >
+
+                                    {addingItem
+                                        ? "Adding..."
+                                        : "Add Transport Order"
+                                    }
+
+                                </button>
+
+                            </form>
+
+                        )}
 
                     </div>
 
                 </div>
 
 
-                {/* ================================================= */}
-                {/* MANIFEST ITEMS */}
-                {/* ================================================= */}
+                {/* =================================================
+                    MANIFEST ITEMS
+                ================================================= */}
 
                 <div
                     className="crud-table-card"
@@ -751,11 +838,17 @@ const ShipmentManifestDetailsPage = () => {
 
                                     <tbody>
 
-                                        {items
+                                        {[...items]
                                             .sort(
                                                 (a, b) =>
-                                                    (a.loadingSequence ?? 999999) -
-                                                    (b.loadingSequence ?? 999999)
+                                                    (
+                                                        a.loadingSequence ??
+                                                        999999
+                                                    ) -
+                                                    (
+                                                        b.loadingSequence ??
+                                                        999999
+                                                    )
                                             )
                                             .map(item => (
 
@@ -764,27 +857,37 @@ const ShipmentManifestDetailsPage = () => {
                                                 >
 
                                                     <td>
-                                                        {item.loadingSequence ?? "-"}
+                                                        {item.loadingSequence ??
+                                                            "-"}
                                                     </td>
+
 
                                                     <td>
                                                         {item.transportOrderId}
                                                     </td>
 
-                                                    <td>
-                                                        {item.status || "N/A"}
-                                                    </td>
 
                                                     <td>
-                                                        {item.loadedAt || "-"}
+                                                        {item.status ||
+                                                            "N/A"}
                                                     </td>
 
-                                                    <td>
-                                                        {item.unloadedAt || "-"}
-                                                    </td>
 
                                                     <td>
-                                                        {item.notes || "-"}
+                                                        {item.loadedAt ||
+                                                            "-"}
+                                                    </td>
+
+
+                                                    <td>
+                                                        {item.unloadedAt ||
+                                                            "-"}
+                                                    </td>
+
+
+                                                    <td>
+                                                        {item.notes ||
+                                                            "-"}
                                                     </td>
 
                                                 </tr>
@@ -808,7 +911,6 @@ const ShipmentManifestDetailsPage = () => {
         </div>
 
     );
-
 };
 
 

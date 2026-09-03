@@ -114,13 +114,30 @@ builder.Services.AddScoped<
 // OTHER SERVICES
 // ============================================================
 
-// Delivery Assignment
 builder.Services.AddScoped<ICrudRepository<DeliveryAssignment>, CrudRepository<DeliveryAssignment>>();
-builder.Services.AddScoped<ICrudService<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>, DeliveryAssignmentService>();
+
+builder.Services.AddScoped<
+    ICrudService<
+        DeliveryAssignment,
+        DeliveryAssignmentDto,
+        CreateDeliveryAssignmentDto>,
+    DeliveryAssignmentService>();
+
+builder.Services.AddScoped<DeliveryAssignmentService>();
 
 // Delivery Attempt
-builder.Services.AddScoped<ICrudRepository<DeliveryAttempt>, CrudRepository<DeliveryAttempt>>();
-builder.Services.AddScoped<ICrudService<DeliveryAttempt, DeliveryAttemptDto, CreateDeliveryAttemptDto>, DeliveryAttemptService>();
+builder.Services.AddScoped<
+    ICrudRepository<DeliveryAttempt>,
+    CrudRepository<DeliveryAttempt>>();
+
+builder.Services.AddScoped<
+    ICrudService<
+        DeliveryAttempt,
+        DeliveryAttemptDto,
+        CreateDeliveryAttemptDto>,
+    DeliveryAttemptService>();
+
+builder.Services.AddScoped<DeliveryAttemptService>();
 
 // Proof of Delivery
 builder.Services.AddScoped<ICrudRepository<ProofOfDelivery>, CrudRepository<ProofOfDelivery>>();
