@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Project3.Authentication;
 using Project3.DTOs;
 using Project3.Models;
+using Project3.Services;
+using Project3.Services.Implementations;
 using Project3.Services.Interfaces;
 
 namespace Project3.Controllers;
@@ -11,19 +13,19 @@ namespace Project3.Controllers;
 [Authorize]
 [Route("api/[controller]")]
 public class DeliveryAssignmentsController
-    : BaseCrudController<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto>
+    : BaseCrudController<
+        DeliveryAssignment,
+        DeliveryAssignmentDto,
+        CreateDeliveryAssignmentDto>
 {
-    private readonly Pj3Context _context;
-    private readonly ICurrentUserService _currentUser;
-
     public DeliveryAssignmentsController(
-        ICrudService<DeliveryAssignment, DeliveryAssignmentDto, CreateDeliveryAssignmentDto> service,
+        DeliveryAssignmentService service,
         IAuthorizationService authorizationService,
-        Pj3Context context,
         ICurrentUserService currentUser)
-        : base(service, authorizationService,currentUser)
+        : base(
+            service,
+            authorizationService,
+            currentUser)
     {
-        _context = context;
-        _currentUser = currentUser;
     }
 }

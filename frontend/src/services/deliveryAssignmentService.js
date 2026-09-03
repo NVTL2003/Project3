@@ -1,0 +1,1 @@
+import createResourceService from "./genericResourceService"; const deliveryAssignmentService = createResourceService("/DeliveryAssignments"); export default deliveryAssignmentService;

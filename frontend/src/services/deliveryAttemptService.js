@@ -1,0 +1,1 @@
+import createResourceService from "./genericResourceService"; const deliveryAttemptService = createResourceService("/DeliveryAttempts"); export default deliveryAttemptService;

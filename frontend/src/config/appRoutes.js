@@ -19,10 +19,25 @@ import PackageScansPage from "../pages/PackageScansPage";
 import RoutesPage from "../pages/RoutesPage";
 import RouteDetailsPage from "../pages/RouteDetailsPage";
 
+import DeliveryAssignmentsPage
+    from "../pages/DeliveryAssignmentsPage";
+
+import DeliveryAttemptsPage
+    from "../pages/DeliveryAttemptsPage";
+
 export const APP_ROUTES = [
     {
         path: "/",
         element: <Dashboard />
+    },
+    {
+        path: "/delivery-assignments",
+        element: <DeliveryAssignmentsPage />
+    },
+
+    {
+        path: "/delivery-attempts",
+        element: <DeliveryAttemptsPage />
     },
     {
         path: "/profile",
@@ -94,4 +109,5 @@ export const APP_ROUTES = [
         path: "/routes/:id",
         element: <RouteDetailsPage />
     }
+
 ];

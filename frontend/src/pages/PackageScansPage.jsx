@@ -5,6 +5,7 @@ import { shipmentService } from "../services/shipmentService";
 import { facilityService } from "../services/facilityService";
 import { vehicleService } from "../services/vehicleService";
 
+
 const PackageScansPage = () => {
 
     const [shipments, setShipments] = useState([]);
@@ -20,7 +21,6 @@ const PackageScansPage = () => {
     const [form, setForm] = useState({
         shipmentId: "",
         scanType: "pickup",
-        locationType: "branch",
         facilityId: "",
         vehicleId: "",
         notes: ""
@@ -38,6 +38,7 @@ const PackageScansPage = () => {
             try {
 
                 setLoading(true);
+                setError(null);
 
                 const [
                     shipmentResponse,
@@ -86,7 +87,8 @@ const PackageScansPage = () => {
                 );
 
                 setError(
-                    "Failed to load shipments or facilities."
+                    err.response?.data?.message ||
+                    "Failed to load shipments, facilities, or vehicles."
                 );
 
             } finally {
@@ -123,7 +125,22 @@ const PackageScansPage = () => {
 
 
     // ============================================================
-    // SUBMIT SCAN
+    // SCAN TYPE HELPERS
+    // ============================================================
+
+    const requiresFacility = [
+        "pickup",
+        "load",
+        "arrive",
+        "unload"
+    ].includes(form.scanType);
+
+    const requiresVehicle =
+        form.scanType === "depart";
+
+
+    // ============================================================
+    // SUBMIT
     // ============================================================
 
     const handleSubmit = async (e) => {
@@ -134,7 +151,29 @@ const PackageScansPage = () => {
         setResult(null);
 
         if (!form.shipmentId) {
-            setError("Please select a shipment.");
+
+            setError(
+                "Please select a shipment."
+            );
+
+            return;
+        }
+
+        if (requiresFacility && !form.facilityId) {
+
+            setError(
+                "Please select a facility."
+            );
+
+            return;
+        }
+
+        if (requiresVehicle && !form.vehicleId) {
+
+            setError(
+                "Please select a vehicle."
+            );
+
             return;
         }
 
@@ -145,11 +184,7 @@ const PackageScansPage = () => {
             const payload = {
                 shipmentId: form.shipmentId,
 
-                locationType:
-                    form.locationType,
-
-                scanType:
-                    form.scanType,
+                scanType: form.scanType,
 
                 facilityId:
                     form.facilityId
@@ -162,7 +197,9 @@ const PackageScansPage = () => {
                         : null,
 
                 notes:
-                    form.notes || null
+                    form.notes.trim()
+                        ? form.notes.trim()
+                        : null
             };
 
             console.log(
@@ -179,11 +216,10 @@ const PackageScansPage = () => {
                 response.data
             );
 
-            // Reset form except scan defaults
+            // Reset form
             setForm({
                 shipmentId: "",
                 scanType: "pickup",
-                locationType: "branch",
                 facilityId: "",
                 vehicleId: "",
                 notes: ""
@@ -196,11 +232,13 @@ const PackageScansPage = () => {
                 err
             );
 
-            setError(
+            const message =
                 err.response?.data?.message ||
+                err.response?.data?.title ||
                 err.response?.data ||
-                "Failed to scan package."
-            );
+                "Failed to scan package.";
+
+            setError(message);
 
         } finally {
 
@@ -218,6 +256,7 @@ const PackageScansPage = () => {
 
         return (
             <div className="crud-page">
+
                 <div className="crud-container">
 
                     <h1 className="crud-title">
@@ -225,10 +264,11 @@ const PackageScansPage = () => {
                     </h1>
 
                     <p>
-                        Loading shipments and facilities...
+                        Loading shipments, facilities, and vehicles...
                     </p>
 
                 </div>
+
             </div>
         );
     }
@@ -239,7 +279,6 @@ const PackageScansPage = () => {
     // ============================================================
 
     return (
-
         <div className="crud-page">
 
             <div className="crud-container">
@@ -253,7 +292,7 @@ const PackageScansPage = () => {
                         </h1>
 
                         <p className="crud-subtitle">
-                            Scan a shipment and create a tracking event.
+                            Record a physical shipment movement.
                         </p>
 
                     </div>
@@ -274,7 +313,9 @@ const PackageScansPage = () => {
                             borderRadius: "6px"
                         }}
                     >
-                        {error}
+                        {typeof error === "string"
+                            ? error
+                            : "Package scan failed."}
                     </div>
 
                 )}
@@ -298,17 +339,23 @@ const PackageScansPage = () => {
                             Package scanned successfully.
                         </strong>
 
-                        <div style={{ marginTop: "8px" }}>
-                            Scan Number:
-                            {" "}
-                            {result.scanNumber}
-                        </div>
+                        {result.scanNumber && (
+                            <div style={{ marginTop: "8px" }}>
+                                Scan Number: {result.scanNumber}
+                            </div>
+                        )}
 
-                        <div>
-                            Tracking Status:
-                            {" "}
-                            {result.trackingStatus}
-                        </div>
+                        {result.trackingStatus && (
+                            <div>
+                                Tracking Status: {result.trackingStatus}
+                            </div>
+                        )}
+
+                        {result.message && (
+                            <div>
+                                {result.message}
+                            </div>
+                        )}
 
                     </div>
 
@@ -324,7 +371,9 @@ const PackageScansPage = () => {
                         }}
                     >
 
-                        {/* SHIPMENT */}
+                        {/* ====================================================
+                            SHIPMENT
+                        ==================================================== */}
 
                         <div
                             style={{
@@ -353,38 +402,40 @@ const PackageScansPage = () => {
                                     Select shipment
                                 </option>
 
-                                {shipments.map(
-                                    shipment => (
+                                {shipments.map(shipment => (
 
-                                        <option
-                                            key={shipment.id}
-                                            value={shipment.id}
-                                        >
+                                    <option
+                                        key={shipment.id}
+                                        value={shipment.id}
+                                    >
 
-                                            {shipment.trackingNumber ||
-                                                shipment.id}
+                                        {shipment.trackingNumber ||
+                                            shipment.id}
 
-                                            {" — "}
+                                        {" — "}
 
-                                            {shipment.currentStatus}
+                                        {shipment.currentStatus ||
+                                            "Unknown"}
 
-                                        </option>
+                                    </option>
 
-                                    )
-                                )}
+                                ))}
 
                             </select>
 
                         </div>
 
 
-                        {/* SCAN TYPE */}
+                        {/* ====================================================
+                            SCAN TYPE
+                        ==================================================== */}
 
                         <div
                             style={{
                                 marginBottom: "20px"
                             }}
                         >
+
                             <label>
                                 Scan Type
                             </label>
@@ -401,6 +452,7 @@ const PackageScansPage = () => {
                                     marginTop: "6px"
                                 }}
                             >
+
                                 <option value="pickup">
                                     Pickup
                                 </option>
@@ -421,153 +473,129 @@ const PackageScansPage = () => {
                                     Unload
                                 </option>
 
-                                <option value="out_for_delivery">
-                                    Out For Delivery
-                                </option>
-
-                                <option value="delivered">
-                                    Delivered
-                                </option>
-                            </select>
-                        </div>
-
-
-                        {/* LOCATION TYPE */}
-
-                        <div
-                            style={{
-                                marginBottom: "20px"
-                            }}
-                        >
-
-                            <label>
-                                Location Type
-                            </label>
-
-                            <select
-                                name="locationType"
-                                value={form.locationType}
-                                onChange={handleChange}
-                                style={{
-                                    display: "block",
-                                    width: "100%",
-                                    padding: "10px",
-                                    marginTop: "6px"
-                                }}
-                            >
-
-                                <option value="branch">
-                                    Branch
-                                </option>
-
-                                <option value="warehouse">
-                                    Warehouse
-                                </option>
-
-                                <option value="distribution_center">
-                                    Distribution Center
-                                </option>
-
                             </select>
 
                         </div>
 
 
-                        {/* FACILITY */}
+                        {/* ====================================================
+                            FACILITY
+                        ==================================================== */}
 
-                        <div
-                            style={{
-                                marginBottom: "20px"
-                            }}
-                        >
+                        {requiresFacility && (
 
-                            <label>
-                                Facility
-                            </label>
-
-                            <select
-                                name="facilityId"
-                                value={form.facilityId}
-                                onChange={handleChange}
+                            <div
                                 style={{
-                                    display: "block",
-                                    width: "100%",
-                                    padding: "10px",
-                                    marginTop: "6px"
+                                    marginBottom: "20px"
                                 }}
                             >
 
-                                <option value="">
-                                    Select facility
-                                </option>
+                                <label>
+                                    Facility
+                                </label>
 
-                                {facilities.map(
-                                    facility => (
+                                <select
+                                    name="facilityId"
+                                    value={form.facilityId}
+                                    onChange={handleChange}
+                                    required
+                                    style={{
+                                        display: "block",
+                                        width: "100%",
+                                        padding: "10px",
+                                        marginTop: "6px"
+                                    }}
+                                >
+
+                                    <option value="">
+                                        Select facility
+                                    </option>
+
+                                    {facilities.map(facility => (
 
                                         <option
                                             key={facility.id}
                                             value={facility.id}
                                         >
 
+                                            {facility.code
+                                                ? `${ facility.code } — `
+                                                : ""}
+
                                             {facility.name ||
-                                                facility.code ||
                                                 facility.id}
 
                                         </option>
 
-                                    )
-                                )}
+                                    ))}
 
-                            </select>
+                                </select>
 
-                        </div>
+                            </div>
+
+                        )}
 
 
-                        {/* VEHICLE */}
+                        {/* ====================================================
+                            VEHICLE
+                        ==================================================== */}
 
-                        <div
-                            style={{
-                                marginBottom: "20px"
-                            }}
-                        >
+                        {requiresVehicle && (
 
-                            <label>
-                                Vehicle
-                            </label>
-
-                            <select
-                                name="vehicleId"
-                                value={form.vehicleId}
-                                onChange={handleChange}
+                            <div
                                 style={{
-                                    display: "block",
-                                    width: "100%",
-                                    padding: "10px",
-                                    marginTop: "6px"
+                                    marginBottom: "20px"
                                 }}
                             >
-                                <option value="">
-                                    Select vehicle
-                                </option>
 
-                                {vehicles.map(vehicle => (
-                                    <option
-                                        key={vehicle.id}
-                                        value={vehicle.id}
-                                    >
-                                        {vehicle.vehicleNumber ||
-                                            vehicle.registrationNumber ||
-                                            vehicle.code ||
-                                            vehicle.name ||
-                                            vehicle.id}
+                                <label>
+                                    Vehicle
+                                </label>
+
+                                <select
+                                    name="vehicleId"
+                                    value={form.vehicleId}
+                                    onChange={handleChange}
+                                    required
+                                    style={{
+                                        display: "block",
+                                        width: "100%",
+                                        padding: "10px",
+                                        marginTop: "6px"
+                                    }}
+                                >
+
+                                    <option value="">
+                                        Select vehicle
                                     </option>
-                                ))}
-                            </select>
 
-                        </div>
+                                    {vehicles.map(vehicle => (
+
+                                        <option
+                                            key={vehicle.id}
+                                            value={vehicle.id}
+                                        >
+
+                                            {vehicle.vehicleNumber ||
+                                                vehicle.registrationNumber ||
+                                                vehicle.code ||
+                                                vehicle.name ||
+                                                vehicle.id}
+
+                                        </option>
+
+                                    ))}
+
+                                </select>
+
+                            </div>
+
+                        )}
 
 
-                        {/* NOTES */}
+                        {/* ====================================================
+                            NOTES
+                        ==================================================== */}
 
                         <div
                             style={{
@@ -596,6 +624,10 @@ const PackageScansPage = () => {
                         </div>
 
 
+                        {/* ====================================================
+                            SUBMIT
+                        ==================================================== */}
+
                         <button
                             type="submit"
                             className="crud-button crud-button-primary"
@@ -607,8 +639,7 @@ const PackageScansPage = () => {
 
                             {submitting
                                 ? "Scanning..."
-                                : "Scan Package"
-                            }
+                                : "Scan Package"}
 
                         </button>
 
@@ -621,5 +652,6 @@ const PackageScansPage = () => {
         </div>
     );
 };
+
 
 export default PackageScansPage;
