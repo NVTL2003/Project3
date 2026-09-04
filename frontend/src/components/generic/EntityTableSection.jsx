@@ -8,6 +8,8 @@ const EntityTableSection = ({
     displayColumns,
     canUpdate,
     canDelete,
+    canEditItem = null,
+    canDeleteItem = null,
     onEdit,
     onDelete,
     extraActions
@@ -27,17 +29,24 @@ const EntityTableSection = ({
                 <CrudList
                     data={data}
                     columns={displayColumns}
+
                     onEdit={
                         canUpdate
                             ? onEdit
                             : undefined
                     }
+
                     onDelete={
                         canDelete
                             ? onDelete
                             : undefined
                     }
+
+                    canEditItem={canEditItem}
+                    canDeleteItem={canDeleteItem}
+
                     extraActions={extraActions}
+
                     layout="vertical"
                 />
 

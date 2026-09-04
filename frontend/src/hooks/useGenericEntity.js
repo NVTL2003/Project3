@@ -6,7 +6,12 @@ import {
 
 import { useCrud } from "./useCrud";
 import useTableControls from "./useTableControls";
-import {getPermissions,hasPermission} from "../utils/permissionUtils";
+
+import {
+    getPermissions,
+    hasPermission
+} from "../utils/permissionUtils";
+
 
 const emptyResult = {
     items: [],
@@ -14,16 +19,20 @@ const emptyResult = {
     totalPages: 0
 };
 
+
 const useGenericEntity = ({
     entityName,
     permissionPrefix,
     service,
     fieldConfig,
     requirePermission,
-    permissionScope = "all"
+    permissionScope = "all",
+    onSuccess = null
 }) => {
 
-    const [showForm, setShowForm] = useState(false);
+    const [showForm, setShowForm] =
+        useState(false);
+
 
     // =========================================================
     // INITIAL FORM
@@ -42,7 +51,8 @@ const useGenericEntity = ({
 
             } else if (field.type === "hidden") {
 
-                form[field.name] = null;
+                form[field.name] =
+                    null;
 
             } else {
 
@@ -54,14 +64,18 @@ const useGenericEntity = ({
 
         return form;
 
-    }, [fieldConfig]);
+    }, [
+        fieldConfig
+    ]);
 
 
     // =========================================================
     // PERMISSIONS
     // =========================================================
 
-    const permissions = getPermissions();
+    const permissions =
+        getPermissions();
+
 
     const canRead =
         !requirePermission ||
@@ -72,6 +86,7 @@ const useGenericEntity = ({
             permissionScope
         );
 
+
     const canCreate =
         !requirePermission ||
         hasPermission(
@@ -80,6 +95,7 @@ const useGenericEntity = ({
             "create",
             permissionScope
         );
+
 
     const canUpdate =
         !requirePermission ||
@@ -90,6 +106,7 @@ const useGenericEntity = ({
             permissionScope
         );
 
+
     const canDelete =
         !requirePermission ||
         hasPermission(
@@ -99,12 +116,16 @@ const useGenericEntity = ({
             permissionScope
         );
 
+
     // =========================================================
     // FETCH DATA
     // =========================================================
 
     const fetchData = useCallback(
-        async (params, config = {}) => {
+        async (
+            params,
+            config = {}
+        ) => {
 
             try {
 
@@ -114,8 +135,10 @@ const useGenericEntity = ({
                         config
                     );
 
+
                 const data =
                     response?.data;
+
 
                 // -------------------------------------------------
                 // API returned array
@@ -124,15 +147,23 @@ const useGenericEntity = ({
                 if (Array.isArray(data)) {
 
                     return {
+
                         items: data,
-                        totalCount: data.length,
+
+                        totalCount:
+                            data.length,
+
                         totalPages:
                             Math.ceil(
                                 data.length /
-                                (params.pageSize || 1)
+                                (
+                                    params.pageSize ||
+                                    1
+                                )
                             )
                     };
                 }
+
 
                 // -------------------------------------------------
                 // Empty response
@@ -142,43 +173,59 @@ const useGenericEntity = ({
                     return emptyResult;
                 }
 
+
                 // -------------------------------------------------
                 // Paged API response
                 // -------------------------------------------------
 
-                if (data.items !== undefined) {
+                if (
+                    data.items !== undefined
+                ) {
 
                     const totalCount =
                         data.totalCount ??
                         data.items.length;
 
+
                     return {
-                        items: data.items,
+
+                        items:
+                            data.items,
+
                         totalCount,
+
                         totalPages:
                             data.totalPages ??
                             Math.ceil(
                                 totalCount /
-                                (params.pageSize || 1)
+                                (
+                                    params.pageSize ||
+                                    1
+                                )
                             )
                     };
                 }
+
 
                 return emptyResult;
 
             } catch (error) {
 
                 if (
-                    error?.name === "AbortError" ||
-                    error?.code === "ERR_CANCELED"
+                    error?.name ===
+                        "AbortError" ||
+                    error?.code ===
+                        "ERR_CANCELED"
                 ) {
                     return emptyResult;
                 }
 
+
                 console.error(
-                    `Failed to load ${entityName}:`,
+                    `Failed to load ${ entityName }: `,
                     error
                 );
+
 
                 throw error;
             }
@@ -195,23 +242,24 @@ const useGenericEntity = ({
     // TABLE CONTROLS
     // =========================================================
 
-    const table = useTableControls({
+    const table =
+        useTableControls({
 
-        fetchData,
+            fetchData,
 
-        initialPage: 1,
+            initialPage: 1,
 
-        initialPageSize: 10,
+            initialPageSize: 10,
 
-        initialSearch: "",
+            initialSearch: "",
 
-        initialSort: "",
+            initialSort: "",
 
-        initialSortOrder: "asc",
+            initialSortOrder: "asc",
 
-        initialFilters: {}
+            initialFilters: {}
 
-    });
+        });
 
 
     // =========================================================
@@ -224,79 +272,123 @@ const useGenericEntity = ({
 
         initialForm,
 
-        buildPayload: useCallback(
-            (formData) => {
+        buildPayload:
+            useCallback(
+                (formData) => {
 
-                const payload = {};
-
-                fieldConfig.forEach(field => {
-
-                    if (field.name === "id") {
-                        return;
-                    }
-
-                    if (
-                        field.readOnly &&
-                        formData.id
-                    ) {
-                        return;
-                    }
-
-                    const value =
-                        formData[field.name];
+                    const payload = {};
 
 
-                    // Checkbox
-                    if (field.type === "checkbox") {
+                    fieldConfig.forEach(
+                        field => {
 
-                        payload[field.name] =
-                            value ?? false;
-
-                        return;
-                    }
-
-
-                    // Optional empty field
-                    if (
-                        (
-                            value === "" ||
-                            value === undefined ||
-                            value === null
-                        ) &&
-                        !field.required
-                    ) {
-                        return;
-                    }
+                            if (
+                                field.name ===
+                                "id"
+                            ) {
+                                return;
+                            }
 
 
-                    // Normal value
-                    if (
-                        value !== undefined &&
-                        value !== null &&
-                        value !== ""
-                    ) {
+                            if (
+                                field.readOnly &&
+                                formData.id
+                            ) {
+                                return;
+                            }
 
-                        payload[field.name] =
-                            value;
 
-                    } else if (field.required) {
+                            const value =
+                                formData[
+                                    field.name
+                                ];
 
-                        payload[field.name] =
-                            value;
-                    }
 
-                });
+                            // -------------------------------------
+                            // Checkbox
+                            // -------------------------------------
 
-                console.log(
-                    "📤 Generic CRUD payload:",
-                    payload
-                );
+                            if (
+                                field.type ===
+                                "checkbox"
+                            ) {
 
-                return payload;
+                                payload[
+                                    field.name
+                                ] =
+                                    value ??
+                                    false;
 
-            },
-            [fieldConfig]
-        )
+                                return;
+                            }
+
+
+                            // -------------------------------------
+                            // Optional empty field
+                            // -------------------------------------
+
+                            if (
+
+                                (
+                                    value === "" ||
+                                    value === undefined ||
+                                    value === null
+                                ) &&
+
+                                !field.required
+
+                            ) {
+
+                                return;
+                            }
+
+
+                            // -------------------------------------
+                            // Normal value
+                            // -------------------------------------
+
+                            if (
+
+                                value !==
+                                    undefined &&
+
+                                value !==
+                                    null &&
+
+                                value !== ""
+
+                            ) {
+
+                                payload[
+                                    field.name
+                                ] = value;
+
+                            } else if (
+                                field.required
+                            ) {
+
+                                payload[
+                                    field.name
+                                ] = value;
+                            }
+
+                        }
+                    );
+
+
+                    console.log(
+                        "📤 Generic CRUD payload:",
+                        payload
+                    );
+
+
+                    return payload;
+
+                },
+                [
+                    fieldConfig
+                ]
+            )
 
     });
 
@@ -305,190 +397,255 @@ const useGenericEntity = ({
     // EDIT
     // =========================================================
 
-    const handleEdit = useCallback(
-        (item) => {
+    const handleEdit =
+        useCallback(
+            (item) => {
 
-            console.log("=================================");
-            console.log("EDIT ITEM:", item);
-            console.log("EDIT ITEM ID:", item.id);
+                const mapped = {};
 
-            const mapped = {};
 
-            fieldConfig.forEach(field => {
+                fieldConfig.forEach(
+                    field => {
 
-                const value =
-                    item[field.name];
+                        const value =
+                            item[
+                                field.name
+                            ];
 
-                if (field.type === "checkbox") {
 
-                    mapped[field.name] =
-                        value ?? false;
+                        if (
+                            field.type ===
+                            "checkbox"
+                        ) {
 
-                } else if (field.type === "hidden") {
+                            mapped[
+                                field.name
+                            ] =
+                                value ??
+                                false;
 
-                    mapped[field.name] =
-                        value ?? null;
+                        } else if (
+                            field.type ===
+                            "hidden"
+                        ) {
 
-                } else {
+                            mapped[
+                                field.name
+                            ] =
+                                value ??
+                                null;
 
-                    mapped[field.name] =
-                        value ?? "";
-                }
-            });
+                        } else {
 
-            mapped.id =
-                item.id ??
-                item.Id ??
-                item.facilityId ??
-                item.FacilityId ??
-                null;
+                            mapped[
+                                field.name
+                            ] =
+                                value ??
+                                "";
+                        }
 
-            console.log("MAPPED EDIT FORM:", mapped);
-            console.log("MAPPED EDIT ID:", mapped.id);
-            console.log("=================================");
+                    }
+                );
 
-            crud.setForm(mapped);
 
-            setShowForm(true);
+                mapped.id =
+                    item.id ??
+                    item.Id ??
+                    item.facilityId ??
+                    item.FacilityId ??
+                    null;
 
-        },
-        [
-            fieldConfig,
-            crud.setForm
-        ]
-    );
+
+                crud.setForm(
+                    mapped
+                );
+
+
+                setShowForm(
+                    true
+                );
+
+            },
+            [
+                fieldConfig,
+                crud.setForm
+            ]
+        );
 
 
     // =========================================================
     // ADD
     // =========================================================
 
-    const handleAddNew = useCallback(
-        () => {
+    const handleAddNew =
+        useCallback(
+            () => {
 
-            crud.resetForm();
+                crud.resetForm();
 
-            setShowForm(true);
+                setShowForm(
+                    true
+                );
 
-        },
-        [
-            crud.resetForm
-        ]
-    );
+            },
+            [
+                crud.resetForm
+            ]
+        );
 
 
     // =========================================================
     // CANCEL
     // =========================================================
 
-    const handleCancel = useCallback(
-        () => {
+    const handleCancel =
+        useCallback(
+            () => {
 
-            crud.resetForm();
+                crud.resetForm();
 
-            setShowForm(false);
+                setShowForm(
+                    false
+                );
 
-        },
-        [
-            crud.resetForm
-        ]
-    );
+            },
+            [
+                crud.resetForm
+            ]
+        );
 
 
     // =========================================================
     // SUBMIT
     // =========================================================
 
-    const handleSubmit = useCallback(
-        async (formData) => {
+    const handleSubmit =
+        useCallback(
+            async (formData) => {
 
-            const success =
-                await crud.handleSubmit(
-                    formData
+                const success =
+                    await crud.handleSubmit(
+                        formData
+                    );
+
+
+                if (!success) {
+                    return false;
+                }
+
+
+                // Close form
+                setShowForm(
+                    false
                 );
 
 
-            if (!success) {
-                return false;
-            }
+                // Reload generic table
+                await table.reloadData();
 
 
-            setShowForm(false);
+                // Notify parent page
+                // about successful CRUD operation
+                if (
+                    typeof onSuccess ===
+                    "function"
+                ) {
 
-            await table.reloadData();
+                    await onSuccess();
+                }
 
-            return true;
 
-        },
-        [
-            crud.handleSubmit,
-            table.reloadData
-        ]
-    );
+                return true;
+
+            },
+            [
+                crud.handleSubmit,
+                table.reloadData,
+                onSuccess
+            ]
+        );
 
 
     // =========================================================
     // DELETE
     // =========================================================
 
-    const handleDeleteItem = useCallback(
-        async (id) => {
+    const handleDeleteItem =
+        useCallback(
+            async (id) => {
 
-            const success =
-                await crud.handleDelete(id);
-
-
-            if (!success) {
-                return false;
-            }
+                const success =
+                    await crud.handleDelete(
+                        id
+                    );
 
 
-            await table.reloadData();
+                if (!success) {
+                    return false;
+                }
 
-            return true;
 
-        },
-        [
-            crud.handleDelete,
-            table.reloadData
-        ]
-    );
+                // Reload generic table
+                await table.reloadData();
+
+
+                // Notify parent page
+                if (
+                    typeof onSuccess ===
+                    "function"
+                ) {
+
+                    await onSuccess();
+                }
+
+
+                return true;
+
+            },
+            [
+                crud.handleDelete,
+                table.reloadData,
+                onSuccess
+            ]
+        );
 
 
     // =========================================================
     // SEARCH
     // =========================================================
 
-    const handleSearchChange = useCallback(
-        (value) => {
+    const handleSearchChange =
+        useCallback(
+            (value) => {
 
-            table.handleSearch(
-                value || ""
-            );
+                table.handleSearch(
+                    value || ""
+                );
 
-        },
-        [
-            table.handleSearch
-        ]
-    );
+            },
+            [
+                table.handleSearch
+            ]
+        );
 
 
     // =========================================================
     // FILTER
     // =========================================================
 
-    const handleFilterChange = useCallback(
-        (filters) => {
+    const handleFilterChange =
+        useCallback(
+            (filters) => {
 
-            table.handleFilter(
-                filters || {}
-            );
+                table.handleFilter(
+                    filters || {}
+                );
 
-        },
-        [
-            table.handleFilter
-        ]
-    );
+            },
+            [
+                table.handleFilter
+            ]
+        );
 
 
     // =========================================================
@@ -496,7 +653,9 @@ const useGenericEntity = ({
     // =========================================================
 
     const safeData =
-        Array.isArray(table.data)
+        Array.isArray(
+            table.data
+        )
             ? table.data
             : [];
 
@@ -509,39 +668,73 @@ const useGenericEntity = ({
 
         // Form
         showForm,
-        form: crud.form,
+
+        form:
+            crud.form,
+
 
         // Table
-        data: safeData,
-        loading: table.loading,
+        data:
+            safeData,
 
-        page: table.page,
-        pageSize: table.pageSize,
+        loading:
+            table.loading,
 
-        totalCount: table.totalCount,
-        totalPages: table.totalPages,
 
-        search: table.search,
-        sortBy: table.sortBy,
-        sortOrder: table.sortOrder,
-        filters: table.filters,
+        page:
+            table.page,
+
+        pageSize:
+            table.pageSize,
+
+
+        totalCount:
+            table.totalCount,
+
+        totalPages:
+            table.totalPages,
+
+
+        search:
+            table.search,
+
+        sortBy:
+            table.sortBy,
+
+        sortOrder:
+            table.sortOrder,
+
+        filters:
+            table.filters,
+
 
         // Permissions
         canRead,
+
         canCreate,
+
         canUpdate,
+
         canDelete,
+
 
         // Form actions
         handleAddNew,
+
         handleEdit,
+
         handleCancel,
+
         handleSubmit,
+
 
         // Table actions
         handleDeleteItem,
+
         handleSearchChange,
+
         handleFilterChange,
+
 
         handleSort:
             table.handleSort,
@@ -552,9 +745,12 @@ const useGenericEntity = ({
         handlePageSizeChange:
             table.handlePageSizeChange,
 
+
         reloadData:
             table.reloadData
+
     };
 };
+
 
 export default useGenericEntity;

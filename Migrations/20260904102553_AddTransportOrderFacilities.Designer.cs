@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project3.Models;
 
@@ -11,9 +12,11 @@ using Project3.Models;
 namespace Project3.Migrations
 {
     [DbContext(typeof(Pj3Context))]
-    partial class Pj3ContextModelSnapshot : ModelSnapshot
+    [Migration("20260904102553_AddTransportOrderFacilities")]
+    partial class AddTransportOrderFacilities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1134,7 +1137,7 @@ namespace Project3.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("status")
-                        .HasDefaultValueSql("'planned'");
+                        .HasDefaultValueSql("'Loaded'");
 
                     b.Property<Guid>("TransportOrderId")
                         .HasColumnType("char(36)")
@@ -1155,11 +1158,6 @@ namespace Project3.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     MySqlPropertyBuilderExtensions.UseMySqlComputedColumn(b.Property<DateTime?>("UpdatedAt"));
-
-                    b.Property<decimal>("Weight")
-                        .HasPrecision(15, 2)
-                        .HasColumnType("decimal(15,2)")
-                        .HasColumnName("weight");
 
                     b.HasKey("Id")
                         .HasName("PRIMARY");
@@ -2791,7 +2789,7 @@ namespace Project3.Migrations
                         .HasColumnType("char(36)")
                         .HasColumnName("created_by");
 
-                    b.Property<Guid?>("DestinationFacilityId")
+                    b.Property<Guid>("DestinationFacilityId")
                         .HasColumnType("char(36)")
                         .HasColumnName("destination_facility_id");
 
@@ -2801,7 +2799,7 @@ namespace Project3.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("order_number");
 
-                    b.Property<Guid?>("OriginFacilityId")
+                    b.Property<Guid>("OriginFacilityId")
                         .HasColumnType("char(36)")
                         .HasColumnName("origin_facility_id");
 
@@ -3909,13 +3907,15 @@ namespace Project3.Migrations
                     b.HasOne("Project3.Models.Facility", "DestinationFacility")
                         .WithMany()
                         .HasForeignKey("DestinationFacilityId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_transport_orders_destination_facility");
 
                     b.HasOne("Project3.Models.Facility", "OriginFacility")
                         .WithMany()
                         .HasForeignKey("OriginFacilityId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_transport_orders_origin_facility");
 
                     b.HasOne("Project3.Models.Shipment", "Shipment")

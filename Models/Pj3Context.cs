@@ -871,53 +871,85 @@ public partial class Pj3Context : DbContext
 
             entity.ToTable("manifest_items");
 
-            entity.HasIndex(e => e.UnloadedFacilityId, "fk_manifest_items_unloaded_facility");
+            entity.HasIndex(
+                e => e.UnloadedFacilityId,
+                "fk_manifest_items_unloaded_facility");
 
-            entity.HasIndex(e => e.ManifestId, "idx_manifest_items_manifest");
+            entity.HasIndex(
+                e => e.ManifestId,
+                "idx_manifest_items_manifest");
 
-            entity.HasIndex(e => e.Status, "idx_manifest_items_status");
+            entity.HasIndex(
+                e => e.Status,
+                "idx_manifest_items_status");
 
-            entity.HasIndex(e => e.TransportOrderId, "idx_manifest_items_transport_order");
+            entity.HasIndex(
+                e => e.TransportOrderId,
+                "idx_manifest_items_transport_order");
 
-            entity.HasIndex(e => new { e.ManifestId, e.TransportOrderId }, "unique_manifest_transport_order").IsUnique();
+            entity.HasIndex(
+                e => new { e.ManifestId, e.TransportOrderId },
+                "unique_manifest_transport_order")
+                .IsUnique();
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                .HasColumnName("id");
+
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp")
                 .HasColumnName("created_at");
+
             entity.Property(e => e.LoadedAt)
                 .HasColumnType("timestamp")
                 .HasColumnName("loaded_at");
-            entity.Property(e => e.LoadingSequence).HasColumnName("loading_sequence");
-            entity.Property(e => e.ManifestId).HasColumnName("manifest_id");
+
+            entity.Property(e => e.LoadingSequence)
+                .HasColumnName("loading_sequence");
+
+            entity.Property(e => e.ManifestId)
+                .HasColumnName("manifest_id");
+
             entity.Property(e => e.Notes)
                 .HasColumnType("text")
                 .HasColumnName("notes");
+
             entity.Property(e => e.Status)
                 .HasMaxLength(50)
-                .HasDefaultValueSql("'Loaded'")
+                .HasDefaultValueSql("'planned'")
                 .HasColumnName("status");
-            entity.Property(e => e.TransportOrderId).HasColumnName("transport_order_id");
+
+            entity.Property(e => e.TransportOrderId)
+                .HasColumnName("transport_order_id");
+
             entity.Property(e => e.UnloadedAt)
                 .HasColumnType("timestamp")
                 .HasColumnName("unloaded_at");
-            entity.Property(e => e.UnloadedFacilityId).HasColumnName("unloaded_facility_id");
+
+            entity.Property(e => e.UnloadedFacilityId)
+                .HasColumnName("unloaded_facility_id");
+
             entity.Property(e => e.UpdatedAt)
                 .ValueGeneratedOnAddOrUpdate()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp")
                 .HasColumnName("updated_at");
+            entity.Property(e => e.Weight)
+                .HasPrecision(15, 2)
+                .HasColumnName("weight");
 
-            entity.HasOne(d => d.Manifest).WithMany(p => p.ManifestItems)
+            entity.HasOne(d => d.Manifest)
+                .WithMany(p => p.ManifestItems)
                 .HasForeignKey(d => d.ManifestId)
                 .HasConstraintName("fk_manifest_items_manifest");
 
-            entity.HasOne(d => d.TransportOrder).WithMany(p => p.ManifestItems)
+            entity.HasOne(d => d.TransportOrder)
+                .WithMany(p => p.ManifestItems)
                 .HasForeignKey(d => d.TransportOrderId)
                 .HasConstraintName("fk_manifest_items_transport_order");
 
-            entity.HasOne(d => d.UnloadedFacility).WithMany(p => p.ManifestItems)
+            entity.HasOne(d => d.UnloadedFacility)
+                .WithMany(p => p.ManifestItems)
                 .HasForeignKey(d => d.UnloadedFacilityId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("fk_manifest_items_unloaded_facility");
@@ -2084,7 +2116,21 @@ public partial class Pj3Context : DbContext
             entity.HasIndex(e => e.Status, "idx_transport_orders_status");
 
             entity.HasIndex(e => e.OrderNumber, "order_number").IsUnique();
+            entity.Property(e => e.OriginFacilityId)
+                .HasColumnName("origin_facility_id");
+            entity.HasOne(e => e.OriginFacility)
+                .WithMany()
+                .HasForeignKey(e => e.OriginFacilityId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_transport_orders_origin_facility");
 
+            entity.HasOne(e => e.DestinationFacility)
+                .WithMany()
+                .HasForeignKey(e => e.DestinationFacilityId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("fk_transport_orders_destination_facility");
+            entity.Property(e => e.DestinationFacilityId)
+                .HasColumnName("destination_facility_id");
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ActualArrival)
                 .HasColumnType("timestamp")

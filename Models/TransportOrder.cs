@@ -48,4 +48,10 @@ public partial class TransportOrder
     public virtual ICollection<ManifestItem> ManifestItems { get; set; } = new List<ManifestItem>();
 
     public virtual Shipment Shipment { get; set; } = null!;
+
+    public Guid? OriginFacilityId { get; set; }
+    public Guid? DestinationFacilityId { get; set; }
+
+    public virtual Facility? OriginFacility { get; set; }
+    public virtual Facility? DestinationFacility { get; set; }
 }

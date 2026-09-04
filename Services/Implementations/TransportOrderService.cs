@@ -28,6 +28,10 @@ public class TransportOrderService
         _currentUser = currentUser;
     }
 
+    // ============================================================
+    // CREATE TRANSPORT ORDER
+    // ============================================================
+
     public override async Task<TransportOrderDto> CreateAsync(
         CreateTransportOrderDto dto)
     {
@@ -36,7 +40,8 @@ public class TransportOrderService
         // --------------------------------------------------------
 
         var shipment = await _context.Shipments
-            .FirstOrDefaultAsync(s => s.Id == dto.ShipmentId);
+            .FirstOrDefaultAsync(s =>
+                s.Id == dto.ShipmentId);
 
         if (shipment == null)
         {
@@ -45,7 +50,67 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 2. Prevent duplicate active transport orders
+        // 2. Validate origin and destination
+        // --------------------------------------------------------
+
+        if (dto.OriginFacilityId == Guid.Empty)
+        {
+            throw new InvalidOperationException(
+                "Origin facility is required.");
+        }
+
+        if (dto.DestinationFacilityId == Guid.Empty)
+        {
+            throw new InvalidOperationException(
+                "Destination facility is required.");
+        }
+
+        if (dto.OriginFacilityId == dto.DestinationFacilityId)
+        {
+            throw new InvalidOperationException(
+                "Origin and destination facilities cannot be the same.");
+        }
+
+        // --------------------------------------------------------
+        // 3. Validate origin facility
+        // --------------------------------------------------------
+
+        var originFacility = await _context.Facilities
+            .FirstOrDefaultAsync(f =>
+                f.Id == dto.OriginFacilityId);
+
+        if (originFacility == null)
+        {
+            throw new KeyNotFoundException(
+                "Origin facility not found.");
+        }
+
+        // --------------------------------------------------------
+        // 4. Validate destination facility
+        // --------------------------------------------------------
+
+        var destinationFacility = await _context.Facilities
+            .FirstOrDefaultAsync(f =>
+                f.Id == dto.DestinationFacilityId);
+
+        if (destinationFacility == null)
+        {
+            throw new KeyNotFoundException(
+                "Destination facility not found.");
+        }
+
+        // --------------------------------------------------------
+        // 5. Validate weight
+        // --------------------------------------------------------
+
+        if (dto.Weight <= 0)
+        {
+            throw new InvalidOperationException(
+                "Transport order weight must be greater than zero.");
+        }
+
+        // --------------------------------------------------------
+        // 6. Prevent duplicate active transport orders
         // --------------------------------------------------------
 
         var existingOrder = await _context.TransportOrders
@@ -61,7 +126,7 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 3. Find current employee from JWT
+        // 7. Find current employee from JWT
         // --------------------------------------------------------
 
         var userId = _currentUser.UserId;
@@ -83,17 +148,7 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 4. Validate weight
-        // --------------------------------------------------------
-
-        if (dto.Weight <= 0)
-        {
-            throw new InvalidOperationException(
-                "Transport order weight must be greater than zero.");
-        }
-
-        // --------------------------------------------------------
-        // 5. Validate planned dates
+        // 8. Validate planned dates
         // --------------------------------------------------------
 
         if (dto.PlannedDeparture.HasValue &&
@@ -105,7 +160,7 @@ public class TransportOrderService
         }
 
         // --------------------------------------------------------
-        // 6. Create transport order
+        // 9. Create transport order
         // --------------------------------------------------------
 
         var now = DateTime.UtcNow;
@@ -118,6 +173,10 @@ public class TransportOrderService
 
             ShipmentId = shipment.Id,
 
+            OriginFacilityId = dto.OriginFacilityId,
+
+            DestinationFacilityId = dto.DestinationFacilityId,
+
             Priority = dto.Priority ?? 5,
 
             Weight = dto.Weight,
@@ -128,16 +187,10 @@ public class TransportOrderService
 
             Status = "planned",
 
-            // Server determines creator
             CreatedBy = employee.Id,
 
-            // ----------------------------------------------------
-            // Driver / vehicle are NOT assigned here.
-            //
-            // Actual driver + vehicle assignment belongs to
-            // ShipmentManifest.
-            // ----------------------------------------------------
             AssignedVehicleId = null,
+
             AssignedDriverId = null,
 
             PlannedDeparture = dto.PlannedDeparture,
@@ -151,28 +204,14 @@ public class TransportOrderService
 
         _context.TransportOrders.Add(order);
 
-        // --------------------------------------------------------
-        // 7. DO NOT update Shipment.CurrentStatus
-        //
-        // Creating a TransportOrder means:
-        //
-        //     "Transportation has been planned."
-        //
-        // It does NOT mean:
-        //
-        //     "The shipment is moving."
-        //
-        // Physical movement will be handled by PackageScanService.
-        // --------------------------------------------------------
-
         await _context.SaveChangesAsync();
-
-        // --------------------------------------------------------
-        // 8. Return DTO
-        // --------------------------------------------------------
 
         return _mapper.Map<TransportOrderDto>(order);
     }
+
+    // ============================================================
+    // GENERATE ORDER NUMBER
+    // ============================================================
 
     private string GenerateOrderNumber()
     {

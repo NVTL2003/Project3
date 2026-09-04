@@ -1155,34 +1155,6 @@ public class PackageScanService
     // SHIPMENT STATUS
     // ============================================================
 
-    private string GetShipmentStatus(
-        string scanType)
-    {
-        return scanType switch
-        {
-            "pickup" =>
-                "picked_up",
-
-            "load" =>
-                "loaded",
-
-            "depart" =>
-                "in_transit",
-
-            "arrive" =>
-                "arrived_at_facility",
-
-            "unload" =>
-                "received_at_facility",
-            _ =>
-                "created"
-        };
-    }
-
-    // ============================================================
-    // TRACKING STATUS
-    // ============================================================
-
     private string GetShipmentStatus(string scanType)
     {
         return scanType switch
@@ -1210,6 +1182,21 @@ public class PackageScanService
 
             _ =>
                 "created"
+        };
+    }
+
+    private string GetTrackingStatusCode(string scanType)
+    {
+        return scanType switch
+        {
+            "pickup" => "PICKED_UP",
+            "load" => "LOADED",
+            "depart" => "IN_TRANSIT",
+            "arrive" => "ARRIVED_AT_FACILITY",
+            "unload" => "RECEIVED_AT_FACILITY",
+            "out_for_delivery" => "OUT_FOR_DELIVERY",
+            "delivered" => "DELIVERED",
+            _ => "CREATED"
         };
     }
 

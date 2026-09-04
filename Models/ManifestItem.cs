@@ -11,6 +11,8 @@ public partial class ManifestItem
 
     public Guid TransportOrderId { get; set; }
 
+    public decimal Weight { get; set; }
+
     public int? LoadingSequence { get; set; }
 
     public string? Status { get; set; }

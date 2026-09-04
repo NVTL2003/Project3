@@ -95,7 +95,6 @@ const buildShipmentRequestFieldConfig = (isMine) => [
 
     // =========================================================
     // SENDER ADDRESS
-    // BOTH GLOBAL + MINE
     // =========================================================
 
     {
@@ -121,7 +120,6 @@ const buildShipmentRequestFieldConfig = (isMine) => [
 
     // =========================================================
     // RECEIVER ADDRESS
-    // BOTH GLOBAL + MINE
     // =========================================================
 
     {
@@ -280,19 +278,11 @@ const buildShipmentRequestDisplayColumns = (
         label: "Request #"
     },
 
-    // =========================================================
-    // CUSTOMER
-    // =========================================================
-
     {
         key: "customerId",
         label: "Customer",
 
         render: (item) => {
-
-            // -------------------------------------------------
-            // Get Customer ID from Shipment Request
-            // -------------------------------------------------
 
             const requestCustomerId =
                 String(
@@ -303,10 +293,6 @@ const buildShipmentRequestDisplayColumns = (
                     .trim()
                     .toLowerCase();
 
-
-            // -------------------------------------------------
-            // Loading
-            // -------------------------------------------------
 
             if (customersLoading) {
                 return (
@@ -323,10 +309,6 @@ const buildShipmentRequestDisplayColumns = (
             }
 
 
-            // -------------------------------------------------
-            // Find Customer
-            // -------------------------------------------------
-
             const customer =
                 customers.find((c) => {
 
@@ -341,14 +323,11 @@ const buildShipmentRequestDisplayColumns = (
 
                     return (
                         customerId &&
-                        customerId === requestCustomerId
+                        customerId ===
+                            requestCustomerId
                     );
                 });
 
-
-            // -------------------------------------------------
-            // Customer not found
-            // -------------------------------------------------
 
             if (!customer) {
                 return (
@@ -364,10 +343,6 @@ const buildShipmentRequestDisplayColumns = (
                 );
             }
 
-
-            // -------------------------------------------------
-            // Customer information
-            // -------------------------------------------------
 
             const companyName =
                 customer.companyName ??
@@ -391,23 +366,14 @@ const buildShipmentRequestDisplayColumns = (
                 `${ firstName } ${ lastName } `.trim();
 
 
-            // -------------------------------------------------
-            // Display name
-            //
-            // Priority:
-            //
-            // 1. Company + Account
-            // 2. Company
-            // 3. Full Name
-            // 4. Account
-            // 5. Unknown
-            // -------------------------------------------------
-
             let displayName =
                 "Unknown Customer";
 
 
-            if (companyName && accountNumber) {
+            if (
+                companyName &&
+                accountNumber
+            ) {
 
                 displayName =
                     `${ companyName } (${ accountNumber })`;
@@ -444,19 +410,11 @@ const buildShipmentRequestDisplayColumns = (
     },
 
 
-    // =========================================================
-    // STATUS
-    // =========================================================
-
     {
         key: "status",
         label: "Status"
     },
 
-
-    // =========================================================
-    // PACKAGE
-    // =========================================================
 
     {
         key: "packageType",
@@ -464,19 +422,11 @@ const buildShipmentRequestDisplayColumns = (
     },
 
 
-    // =========================================================
-    // WEIGHT
-    // =========================================================
-
     {
         key: "weight",
         label: "Weight"
     },
 
-
-    // =========================================================
-    // CREATED
-    // =========================================================
 
     {
         key: "createdAt",
@@ -510,11 +460,6 @@ const ShipmentRequestsPage = ({
 
     // =========================================================
     // LOAD CUSTOMERS
-    //
-    // Only required for GLOBAL view.
-    //
-    // /me does not need customer lookup because
-    // the current user is already the customer.
     // =========================================================
 
     useEffect(() => {
@@ -554,21 +499,6 @@ const ShipmentRequestsPage = ({
                     response?.data;
 
 
-                console.log(
-                    "Customer API response:",
-                    response
-                );
-
-                console.log(
-                    "Customer API data:",
-                    data
-                );
-
-
-                // -------------------------------------------------
-                // API returns array
-                // -------------------------------------------------
-
                 if (Array.isArray(data)) {
 
                     setCustomers(data);
@@ -576,10 +506,6 @@ const ShipmentRequestsPage = ({
                     return;
                 }
 
-
-                // -------------------------------------------------
-                // API returns { items: [...] }
-                // -------------------------------------------------
 
                 if (Array.isArray(data?.items)) {
 
@@ -591,10 +517,6 @@ const ShipmentRequestsPage = ({
                 }
 
 
-                // -------------------------------------------------
-                // API returns { Items: [...] }
-                // -------------------------------------------------
-
                 if (Array.isArray(data?.Items)) {
 
                     setCustomers(
@@ -604,10 +526,6 @@ const ShipmentRequestsPage = ({
                     return;
                 }
 
-
-                // -------------------------------------------------
-                // Unexpected response
-                // -------------------------------------------------
 
                 console.warn(
                     "Unexpected customer API response:",
@@ -641,10 +559,6 @@ const ShipmentRequestsPage = ({
 
         loadCustomers();
 
-
-        // -------------------------------------------------
-        // Cleanup
-        // -------------------------------------------------
 
         return () => {
             cancelled = true;
@@ -754,10 +668,74 @@ const ShipmentRequestsPage = ({
 
 
     // =========================================================
+    // CUSTOMER EDIT RULE
+    // =========================================================
+    //
+    // Customer can edit ONLY while request is pending.
+    //
+    // Once approved:
+    //     Edit = disabled
+    //
+    // Global view:
+    //     Keep existing permission behaviour.
+    //
+    // =========================================================
+
+    const canEditItem = (item) => {
+
+        if (!isMine) {
+            return true;
+        }
+
+        const status =
+            String(
+                item.status ??
+                item.Status ??
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+        return status === "pending";
+    };
+
+
+    // =========================================================
+    // CUSTOMER DELETE RULE
+    // =========================================================
+    //
+    // Customer can delete ONLY while request is pending.
+    //
+    // Once approved:
+    //     Delete = disabled
+    //
+    // =========================================================
+
+    const canDeleteItem = (item) => {
+
+        if (!isMine) {
+            return true;
+        }
+
+        const status =
+            String(
+                item.status ??
+                item.Status ??
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+        return status === "pending";
+    };
+
+
+    // =========================================================
     // RENDER
     // =========================================================
 
     return (
+
         <GenericEntityPage
 
             entityName={
@@ -766,9 +744,7 @@ const ShipmentRequestsPage = ({
                     : "Shipment Requests"
             }
 
-
             permissionPrefix="shipment_requests"
-
 
             permissionScope={
                 isMine
@@ -776,18 +752,13 @@ const ShipmentRequestsPage = ({
                     : "all"
             }
 
-
             requirePermission={true}
-
 
             service={service}
 
-
             fieldConfig={fieldConfig}
 
-
             displayColumns={displayColumns}
-
 
             extraActions={
                 !isMine
@@ -812,7 +783,17 @@ const ShipmentRequestsPage = ({
                         ) : null
                     : undefined
             }
+
+            canEditItem={
+                canEditItem
+            }
+
+            canDeleteItem={
+                canDeleteItem
+            }
+
         />
+
     );
 };
 

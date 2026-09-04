@@ -12,6 +12,7 @@ import AccessDenied from "../components/generic/AccessDenied";
 
 import "../styles/crud.css";
 
+
 const GenericEntityPage = ({
     entityName,
     permissionPrefix,
@@ -35,7 +36,18 @@ const GenericEntityPage = ({
 
     showEdit = true,
 
-    showDelete = true
+    showDelete = true,
+
+    onSuccess = null,
+
+    // =========================================================
+    // PER-ITEM ACTION RULES
+    // =========================================================
+
+    canEditItem = null,
+
+    canDeleteItem = null
+
 }) => {
 
     const entity = useGenericEntity({
@@ -50,7 +62,9 @@ const GenericEntityPage = ({
 
         requirePermission,
 
-        permissionScope
+        permissionScope,
+
+        onSuccess
 
     });
 
@@ -85,11 +99,28 @@ const GenericEntityPage = ({
                 {/* ================================================= */}
 
                 <EntityHeader
-                    entityName={entityName}
-                    showForm={entity.showForm}
-                    canCreate={showCreate && entity.canCreate}
-                    onAddNew={entity.handleAddNew}
-                    onCancel={entity.handleCancel}
+
+                    entityName={
+                        entityName
+                    }
+
+                    showForm={
+                        entity.showForm
+                    }
+
+                    canCreate={
+                        showCreate &&
+                        entity.canCreate
+                    }
+
+                    onAddNew={
+                        entity.handleAddNew
+                    }
+
+                    onCancel={
+                        entity.handleCancel
+                    }
+
                 />
 
 
@@ -101,11 +132,17 @@ const GenericEntityPage = ({
 
                     <EntityFormSection
 
-                        entityName={entityName}
+                        entityName={
+                            entityName
+                        }
 
-                        form={entity.form}
+                        form={
+                            entity.form
+                        }
 
-                        fields={fieldConfig}
+                        fields={
+                            fieldConfig
+                        }
 
                         onSubmit={
                             entity.handleSubmit
@@ -167,22 +204,38 @@ const GenericEntityPage = ({
 
                 <EntityTableSection
 
-                    data={entity.data}
+                    data={
+                        entity.data
+                    }
 
-                    loading={entity.loading}
+                    loading={
+                        entity.loading
+                    }
 
-                    entityName={entityName}
+                    entityName={
+                        entityName
+                    }
 
                     displayColumns={
                         displayColumns
                     }
 
                     canUpdate={
-                        showEdit && entity.canUpdate
+                        showEdit &&
+                        entity.canUpdate
                     }
 
                     canDelete={
-                        showDelete && entity.canDelete
+                        showDelete &&
+                        entity.canDelete
+                    }
+
+                    canEditItem={
+                        canEditItem
+                    }
+
+                    canDeleteItem={
+                        canDeleteItem
                     }
 
                     onEdit={
@@ -239,7 +292,9 @@ const GenericEntityPage = ({
             </div>
 
         </div>
+
     );
 };
+
 
 export default GenericEntityPage;

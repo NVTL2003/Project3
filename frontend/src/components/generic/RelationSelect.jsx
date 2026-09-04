@@ -3,6 +3,7 @@ import React, {
     useState
 } from "react";
 
+
 function RelationSelect({
     field,
     value,
@@ -11,23 +12,23 @@ function RelationSelect({
     disabled = false
 }) {
 
-    const [options, setOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [
+        options,
+        setOptions
+    ] = useState([]);
 
 
-    // =============================================================
-    // DEPENDENCY VALUE
-    // =============================================================
+    const [
+        loading,
+        setLoading
+    ] = useState(false);
+
 
     const dependencyValue =
         field.dependsOn
             ? form?.[field.dependsOn]
             : null;
 
-
-    // =============================================================
-    // LOAD OPTIONS
-    // =============================================================
 
     useEffect(() => {
 
@@ -36,18 +37,36 @@ function RelationSelect({
 
         const loadOptions = async () => {
 
-            // -----------------------------------------------------
-            // READ ONLY
-            // -----------------------------------------------------
-
             if (field.readOnly) {
                 return;
             }
 
 
-            // -----------------------------------------------------
-            // DEPENDENT FIELD
-            // -----------------------------------------------------
+            // =====================================================
+            // LOCAL OPTIONS
+            // =====================================================
+
+            if (
+                Array.isArray(
+                    field.options
+                )
+            ) {
+
+                setOptions(
+                    field.options
+                );
+
+                setLoading(
+                    false
+                );
+
+                return;
+            }
+
+
+            // =====================================================
+            // DEPENDENCY VALIDATION
+            // =====================================================
 
             if (field.dependsOn) {
 
@@ -57,6 +76,7 @@ function RelationSelect({
 
                     return;
                 }
+
 
                 if (
                     typeof field.dependentFetch !==
@@ -74,9 +94,9 @@ function RelationSelect({
             }
 
 
-            // -----------------------------------------------------
-            // NORMAL SERVICE CHECK
-            // -----------------------------------------------------
+            // =====================================================
+            // SERVICE VALIDATION
+            // =====================================================
 
             if (
                 !field.dependsOn &&
@@ -87,13 +107,18 @@ function RelationSelect({
                     `RelationSelect: No service provided for ${ field.label }`
                 );
 
+                setOptions([]);
+
                 return;
             }
 
 
             try {
 
-                setLoading(true);
+                setLoading(
+                    true
+                );
+
 
                 let response;
 
@@ -102,12 +127,9 @@ function RelationSelect({
                 // DEPENDENT FETCH
                 // =================================================
 
-                if (field.dependsOn) {
-
-                    console.log(
-                        `🔗 Loading ${ field.label } based on ${ field.dependsOn }: `,
-                        dependencyValue
-                    );
+                if (
+                    field.dependsOn
+                ) {
 
                     response =
                         await field.dependentFetch(
@@ -119,11 +141,12 @@ function RelationSelect({
 
 
                 // =================================================
-                // FETCH MODE = MINE
+                // FETCH MINE
                 // =================================================
 
                 else if (
-                    field.fetchMode === "mine"
+                    field.fetchMode ===
+                    "mine"
                 ) {
 
                     if (
@@ -136,9 +159,6 @@ function RelationSelect({
                         );
                     }
 
-                    console.log(
-                        `🔗 Loading MY ${ field.label } `
-                    );
 
                     response =
                         await field.service.getMine();
@@ -152,28 +172,22 @@ function RelationSelect({
 
                 else {
 
-                    if (
-                        typeof field.service.getPaged !==
-                        "function"
-                    ) {
-
-                        throw new Error(
-                            `${ field.label }: service does not implement getPaged()`
-                        );
-                    }
-
-                    console.log(
-                        `🔗 Loading ALL ${ field.label } `
-                    );
-
                     response =
                         await field.service.getPaged({
+
                             page: 1,
+
                             pageSize: 100,
+
                             search: "",
+
                             sortBy:
-                                field.sortBy || "",
-                            sortOrder: "asc"
+                                field.sortBy ||
+                                "",
+
+                            sortOrder:
+                                "asc"
+
                         });
                 }
 
@@ -183,24 +197,21 @@ function RelationSelect({
                 }
 
 
-                // =================================================
-                // NORMALIZE RESPONSE
-                // =================================================
-
                 const data =
                     response?.data;
 
+
                 const items =
                     Array.isArray(data)
+
                         ? data
+
                         : data?.items || [];
 
-                console.log(
-                    `🔗 ${ field.label } options: `,
+
+                setOptions(
                     items
                 );
-
-                setOptions(items);
 
             } catch (error) {
 
@@ -208,19 +219,25 @@ function RelationSelect({
                     return;
                 }
 
+
                 console.error(
                     `Failed to load ${ field.label }: `,
                     error
                 );
+
 
                 setOptions([]);
 
             } finally {
 
                 if (mounted) {
-                    setLoading(false);
+
+                    setLoading(
+                        false
+                    );
                 }
             }
+
         };
 
 
@@ -228,7 +245,9 @@ function RelationSelect({
 
 
         return () => {
+
             mounted = false;
+
         };
 
     }, [
@@ -237,93 +256,135 @@ function RelationSelect({
     ]);
 
 
-    // =============================================================
+    // =========================================================
     // READ ONLY
-    // =============================================================
+    // =========================================================
 
     if (field.readOnly) {
 
         return (
+
             <input
+
                 className="crud-form-input"
+
                 value={
                     field.getReadOnlyLabel
-                        ? field.getReadOnlyLabel(value)
+                        ? field.getReadOnlyLabel(
+                            value
+                        )
                         : value || ""
                 }
+
                 readOnly
+
                 disabled
+
             />
+
         );
     }
 
 
-    // =============================================================
+    // =========================================================
     // SELECT
-    // =============================================================
+    // =========================================================
 
     return (
 
         <select
+
             className="crud-form-input"
-            value={value || ""}
-            onChange={e =>
-                onChange(e.target.value)
+
+            value={
+                value || ""
             }
+
+            onChange={
+                e =>
+                    onChange(
+                        e.target.value
+                    )
+            }
+
             disabled={
+
                 disabled ||
+
                 loading ||
+
                 (
                     field.dependsOn &&
                     !dependencyValue
                 )
+
             }
+
         >
 
             <option value="">
 
-                {loading
-                    ? `Loading ${ field.label }...`
-                    : field.dependsOn &&
-                      !dependencyValue
-                        ? `Select ${ field.dependsOn } first`
-                        : `Select ${ field.label } `
+                {
+                    loading
+
+                        ? `Loading ${ field.label }...`
+
+                        : (
+                            field.dependsOn &&
+                            !dependencyValue
+                        )
+
+                            ? `Select ${ field.dependsOn } first`
+
+                            : `Select ${ field.label } `
                 }
 
             </option>
 
 
-            {options.map(option => {
+            {options.map(
+                option => {
 
-                const id =
-                    option[
-                        field.valueField || "id"
-                    ];
-
-                const label =
-                    field.getOptionLabel
-                        ? field.getOptionLabel(option)
-                        : option[
-                            field.labelField ||
-                            "name"
+                    const id =
+                        option[
+                            field.valueField ||
+                            "id"
                         ];
 
 
-                return (
+                    const label =
+                        field.getOptionLabel
 
-                    <option
-                        key={id}
-                        value={id}
-                    >
-                        {label}
-                    </option>
+                            ? field.getOptionLabel(
+                                option
+                            )
 
-                );
+                            : option[
+                                field.labelField ||
+                                "name"
+                            ];
 
-            })}
+
+                    return (
+
+                        <option
+                            key={id}
+                            value={id}
+                        >
+
+                            {label}
+
+                        </option>
+
+                    );
+
+                }
+            )}
 
         </select>
+
     );
 }
+
 
 export default RelationSelect;

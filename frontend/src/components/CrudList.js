@@ -4,6 +4,13 @@ function CrudList({
     onEdit,
     onDelete,
     extraActions,
+
+    // NEW:
+    // Optional functions that determine whether
+    // a specific item can be edited/deleted.
+    canEditItem = null,
+    canDeleteItem = null,
+
     layout = "vertical"
 }) {
 
@@ -55,6 +62,39 @@ function CrudList({
                 const key =
                     itemId || index;
 
+
+                /*
+                 * Determine whether this specific item
+                 * can be edited.
+                 *
+                 * If canEditItem is not provided,
+                 * default to allowing edit.
+                 */
+                const allowEdit =
+                    onEdit &&
+                    (
+                        typeof canEditItem === "function"
+                            ? canEditItem(item)
+                            : true
+                    );
+
+
+                /*
+                 * Determine whether this specific item
+                 * can be deleted.
+                 *
+                 * If canDeleteItem is not provided,
+                 * default to allowing delete.
+                 */
+                const allowDelete =
+                    onDelete &&
+                    (
+                        typeof canDeleteItem === "function"
+                            ? canDeleteItem(item)
+                            : true
+                    );
+
+
                 return (
 
                     <div
@@ -62,7 +102,9 @@ function CrudList({
                         className="crud-list-item"
                     >
 
+                        {/* ============================== */}
                         {/* DATA */}
+                        {/* ============================== */}
 
                         <div
                             className={
@@ -110,15 +152,25 @@ function CrudList({
                         </div>
 
 
+                        {/* ============================== */}
                         {/* ACTIONS */}
+                        {/* ============================== */}
 
-                        {(onEdit || onDelete || extraActions) && (
+                        {(allowEdit ||
+                            allowDelete ||
+                            extraActions) && (
 
                             <div className="crud-list-actions">
 
-                                {extraActions && extraActions(item)}
+                                {/* EXTRA ACTIONS */}
 
-                                {onEdit && (
+                                {extraActions &&
+                                    extraActions(item)}
+
+
+                                {/* EDIT */}
+
+                                {allowEdit && (
 
                                     <button
                                         className="crud-action-button crud-action-edit"
@@ -132,7 +184,9 @@ function CrudList({
                                 )}
 
 
-                                {onDelete && (
+                                {/* DELETE */}
+
+                                {allowDelete && (
 
                                     <button
                                         className="crud-action-button crud-action-delete"

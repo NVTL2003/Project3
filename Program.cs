@@ -180,6 +180,13 @@ builder.Services.AddScoped<
         ShipmentManifestDto,
         CreateShipmentManifestDto>,
     ShipmentManifestService>();
+
+builder.Services.AddScoped<
+    ICrudService<
+        ManifestItem,
+        ManifestItemDto,
+        CreateManifestItemDto>,
+    ManifestItemService>();
 // ============================================================
 // CONTROLLERS
 // ============================================================
@@ -207,18 +214,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAutoMapper(
     AppDomain.CurrentDomain.GetAssemblies());
-
-// ============================================================
-// SHIPMENT WORKFLOW SERVICES
-// ============================================================
-
-builder.Services.AddScoped<
-    ICrudService<Shipment, ShipmentDto, CreateShipmentDto>,
-    ShipmentService>();
-
-builder.Services.AddScoped<
-    ICrudService<CustomerAddress, CustomerAddressDto, CreateCustomerAddressDto>,
-    CustomerAddressService>();
 
 // ============================================================
 // BUILD

@@ -4,6 +4,10 @@ namespace Project3.DTOs
     {
         public Guid ShipmentId { get; set; }
 
+        public Guid OriginFacilityId { get; set; }
+
+        public Guid DestinationFacilityId { get; set; }
+
         public int? Priority { get; set; }
 
         public decimal Weight { get; set; }
