@@ -1,48 +1,54 @@
 import React from "react";
+
 import GenericEntityPage from "./GenericEntityPage";
-import customerAddressService from "../services/customerAddressService";
+
+import customerAddressService
+    from "../services/customerAddressService";
 
 const customerAddressFieldConfig = [
+
     {
         name: "id",
         type: "hidden"
     },
+
     {
         name: "addressLine1",
-        label: "Address Line 1",
+        label: "Address Line",
         required: true
     },
-    {
-        name: "addressLine2",
-        label: "Address Line 2",
-        required: false
-    },
+
     {
         name: "city",
         label: "City",
         required: true
     },
+
     {
         name: "state",
         label: "State",
         required: true
     },
+
     {
         name: "pincode",
         label: "Pincode",
         required: true
     },
+
     {
         name: "country",
         label: "Country",
         required: true,
         defaultValue: "Vietnam"
     },
+
     {
         name: "phone",
         label: "Phone",
         required: false
     },
+
     {
         name: "isDefault",
         label: "Default Address",
@@ -52,53 +58,62 @@ const customerAddressFieldConfig = [
     }
 ];
 
+
 const customerAddressDisplayColumns = [
+
     {
         key: "addressLine1",
         label: "Address"
     },
+
     {
         key: "city",
         label: "City"
     },
+
     {
         key: "state",
         label: "State"
     },
+
     {
         key: "pincode",
         label: "Pincode"
     },
+
     {
         key: "country",
         label: "Country"
     },
+
     {
         key: "phone",
         label: "Phone"
     },
+
     {
         key: "isDefault",
         label: "Default"
     }
 ];
 
+
+
 const customerAddressSortOptions = [
+
     {
         value: "city",
         label: "City"
     },
+
     {
         value: "state",
         label: "State"
     },
+
     {
         value: "pincode",
         label: "Pincode"
-    },
-    {
-        value: "createdAt",
-        label: "Created Date"
     }
 ];
 
@@ -110,17 +125,55 @@ const CustomerAddressPage = ({
     const isMyAddresses =
         scope === "me";
 
-    const service = isMyAddresses
-        ? {
-            ...customerAddressService,
 
-            getPaged: (params, config = {}) =>
-                customerAddressService.getMine(config)
+    // ============================================================
+    // SELECT CRUD SCOPE
+    // ============================================================
+
+    const service = isMyAddresses
+
+        ? {
+
+            getPaged:
+                customerAddressService.me.getPaged,
+
+            getById:
+                customerAddressService.me.getById,
+
+            create:
+                customerAddressService.me.create,
+
+            update:
+                customerAddressService.me.update,
+
+            delete:
+                customerAddressService.me.delete
+
         }
-        : customerAddressService;
+
+        : {
+
+            getPaged:
+                customerAddressService.getPaged,
+
+            getById:
+                customerAddressService.getById,
+
+            create:
+                customerAddressService.create,
+
+            update:
+                customerAddressService.update,
+
+            delete:
+                customerAddressService.delete
+        };
+
 
     return (
+
         <GenericEntityPage
+
             entityName={
                 isMyAddresses
                     ? "My Addresses"
@@ -128,26 +181,37 @@ const CustomerAddressPage = ({
             }
 
             permissionPrefix={
-                isMyAddresses
-                    ? null
-                    : "customer_addresses"
+                "customer_addresses"
             }
 
-            requirePermission={
-                !isMyAddresses
+            permissionScope={
+                isMyAddresses
+                    ? "own"
+                    : "all"
             }
+
+            requirePermission={true}
 
             service={service}
 
-            fieldConfig={customerAddressFieldConfig}
+            fieldConfig={
+                customerAddressFieldConfig
+            }
 
-            displayColumns={customerAddressDisplayColumns}
+            displayColumns={
+                customerAddressDisplayColumns
+            }
 
-            sortOptions={customerAddressSortOptions}
+            sortOptions={
+                customerAddressSortOptions
+            }
 
             filterOptions={[]}
+
         />
+
     );
 };
+
 
 export default CustomerAddressPage;

@@ -31,9 +31,6 @@ public class PackageScansController
             packageScanService;
     }
 
-    protected override string ResourceName =>
-        "package_scans";
-
     // ============================================================
     // SCAN
     // ============================================================

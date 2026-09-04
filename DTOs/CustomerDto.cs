@@ -27,8 +27,6 @@ public class CustomerDto
 
 public class CreateCustomerDto
 {
-    public Guid UserId { get; set; }
-
     public string? AccountNumber { get; set; }
 
     public string? FirstName { get; set; }

@@ -271,6 +271,7 @@ public class PackageScanService
             manifest,
             manifestItem,
             scanType,
+            dto.FacilityId,
             now);
 
         // ========================================================
@@ -397,7 +398,7 @@ public class PackageScanService
 
         _context.PackageScans.Add(scan);
 
-        shipment.CurrentStatus = "picked_up";
+        shipment.CurrentStatus = "in_sorting";
         shipment.UpdatedAt = now;
 
         var trackingStatus =
@@ -805,10 +806,11 @@ public class PackageScanService
     // ============================================================
 
     private async Task UpdateManifestAsync(
-        ShipmentManifest manifest,
-        ManifestItem currentItem,
-        string scanType,
-        DateTime now)
+    ShipmentManifest manifest,
+    ManifestItem currentItem,
+    string scanType,
+    Guid? facilityId,
+    DateTime now)
     {
         switch (scanType)
         {
@@ -820,18 +822,10 @@ public class PackageScanService
 
             case "arrive":
 
-                // ------------------------------------------------
-                // Do NOT automatically set ArrivalTime here.
-                //
-                // An arrive scan may be an intermediate stop.
-                // ArrivalTime represents final manifest arrival.
-                // ------------------------------------------------
-
                 var isDestination =
                     await IsDestinationFacilityAsync(
                         manifest,
-                        await GetCurrentShipmentFacilityAsync(
-                            currentItem.TransportOrder.ShipmentId));
+                        facilityId);
 
                 if (isDestination)
                 {
@@ -1189,34 +1183,33 @@ public class PackageScanService
     // TRACKING STATUS
     // ============================================================
 
-    private string GetTrackingStatusCode(
-        string scanType)
+    private string GetShipmentStatus(string scanType)
     {
         return scanType switch
         {
             "pickup" =>
-                "PICKED_UP",
+                "in_sorting",
 
             "load" =>
-                "LOADED",
+                "loaded",
 
             "depart" =>
-                "IN_TRANSIT",
+                "in_transit",
 
             "arrive" =>
-                "ARRIVED_AT_FACILITY",
+                "in_sorting",
 
             "unload" =>
-                "RECEIVED_AT_FACILITY",
+                "in_sorting",
 
             "out_for_delivery" =>
-                "OUT_FOR_DELIVERY",
+                "out_for_delivery",
 
             "delivered" =>
-                "DELIVERED",
+                "delivered",
 
             _ =>
-                "IN_TRANSIT"
+                "created"
         };
     }
 
