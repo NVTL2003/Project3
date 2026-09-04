@@ -58,6 +58,25 @@ public class PackageScanService
         }
 
         // ========================================================
+        // Normalize legacy shipment status
+        // ========================================================
+        //
+        // Older versions stored "picked_up" in Shipment.CurrentStatus.
+        // "PICKED_UP" is a tracking event, not a shipment status.
+        //
+        // Automatically repair old records when they are accessed.
+        //
+
+        if (string.Equals(
+                shipment.CurrentStatus,
+                "picked_up",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            shipment.CurrentStatus = "in_sorting";
+            shipment.UpdatedAt = DateTime.UtcNow;
+        }
+
+        // ========================================================
         // 3. Normalize scan type
         // ========================================================
 
@@ -413,9 +432,9 @@ public class PackageScanService
     // ============================================================
 
     private async Task<PackageScanResultDto> CreatePickupScanAsync(
-        CreatePackageScanDto dto,
-        Shipment shipment,
-        Employee employee)
+    CreatePackageScanDto dto,
+    Shipment shipment,
+    Employee employee)
     {
         var now = DateTime.UtcNow;
 
@@ -457,13 +476,12 @@ public class PackageScanService
         _context.PackageScans.Add(scan);
 
         // ========================================================
-        // IMPORTANT CHANGE:
+        // PICKUP → Shipment operational status = in_sorting
         //
-        // PICKUP -> picked_up
+        // "PICKED_UP" belongs to TrackingStatus, not Shipment.
         // ========================================================
 
-        shipment.CurrentStatus = "picked_up";
-
+        shipment.CurrentStatus = "in_sorting";
         shipment.UpdatedAt = now;
 
         var trackingStatus =
@@ -580,11 +598,14 @@ public class PackageScanService
         ShipmentManifest manifest,
         Employee employee)
     {
-        if (manifest.DriverId != employee.Id)
-        {
-            throw new UnauthorizedAccessException(
-                "Only the assigned driver can depart this manifest.");
-        }
+        // Employee authorization is handled by the
+        // PackageScan permission system.
+        //
+        // Do not require the current employee to be
+        // the manifest's assigned driver here.
+        //
+        // The driver assignment still belongs to the manifest
+        // and can be used for operational information/auditing.
 
         if (!dto.VehicleId.HasValue)
         {
@@ -628,12 +649,6 @@ public class PackageScanService
         ShipmentManifest manifest,
         Employee employee)
     {
-        if (manifest.DriverId != employee.Id)
-        {
-            throw new UnauthorizedAccessException(
-                "Only the assigned driver can report arrival.");
-        }
-
         if (!string.Equals(
                 manifest.Status,
                 "in_progress",
@@ -1164,34 +1179,18 @@ public class PackageScanService
     // SHIPMENT STATUS
     // ============================================================
 
-    private string GetShipmentStatus(
-        string scanType)
+    private string GetShipmentStatus(string scanType)
     {
         return scanType switch
         {
-            "pickup" =>
-                "picked_up",
-
-            "load" =>
-                "loaded",
-
-            "depart" =>
-                "in_transit",
-
-            "arrive" =>
-                "in_sorting",
-
-            "unload" =>
-                "in_sorting",
-
-            "out_for_delivery" =>
-                "out_for_delivery",
-
-            "delivered" =>
-                "delivered",
-
-            _ =>
-                "created"
+            "pickup" => "in_sorting",
+            "load" => "loaded",
+            "depart" => "in_transit",
+            "arrive" => "in_sorting",
+            "unload" => "in_sorting",
+            "out_for_delivery" => "out_for_delivery",
+            "delivered" => "delivered",
+            _ => "created"
         };
     }
 
@@ -1211,13 +1210,6 @@ public class PackageScanService
         switch (scanType)
         {
             case "pickup":
-
-                if (currentStatus != "created" &&
-                    currentStatus != "pending")
-                {
-                    throw new InvalidOperationException(
-                        $"Shipment cannot be picked up from status '{shipment.CurrentStatus}'.");
-                }
                 if (currentStatus != "created" &&
                     currentStatus != "pickup_scheduled")
                 {
@@ -1228,8 +1220,7 @@ public class PackageScanService
 
             case "load":
 
-                if (currentStatus != "picked_up" &&
-                    currentStatus != "in_sorting")
+                if (currentStatus != "in_sorting")
                 {
                     throw new InvalidOperationException(
                         $"Shipment cannot be loaded from status '{shipment.CurrentStatus}'.");

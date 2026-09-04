@@ -721,7 +721,195 @@ const PackageScansPage = () => {
     /* =====================================================
        Valid ManifestItems for CURRENT operation
     ===================================================== */
+    /* =====================================================
+   DEBUG - Shipment / Manifest relationship
+===================================================== */
 
+    useEffect(() => {
+
+        if (!shipment) {
+            console.log(
+                "[PackageScans DEBUG] No shipment selected."
+            );
+            return;
+        }
+
+        console.log("");
+        console.log(
+            "=================================================="
+        );
+        console.log(
+            "[PackageScans DEBUG] SHIPMENT OPERATION STATE"
+        );
+        console.log(
+            "=================================================="
+        );
+
+        console.log(
+            "Selected shipment:",
+            shipment
+        );
+
+        console.log(
+            "Selected shipment JSON:",
+            JSON.stringify(
+                shipment,
+                null,
+                2
+            )
+        );
+
+        console.log(
+            "Shipment ID:",
+            getId(shipment)
+        );
+
+        console.log(
+            "Shipment tracking:",
+            getTrackingNumber(shipment)
+        );
+
+        console.log(
+            "Shipment status:",
+            getShipmentStatus(shipment)
+        );
+
+        console.log(
+            "Normalized shipment status:",
+            normalizeStatus(
+                getShipmentStatus(shipment)
+            )
+        );
+
+        console.log(
+            "--------------------------------------------------"
+        );
+
+        console.log(
+            "All manifest items:",
+            manifestItems
+        );
+
+        console.log(
+            "Manifest items belonging to shipment:",
+            availableManifestItems
+        );
+
+        console.log(
+            "--------------------------------------------------"
+        );
+
+        availableManifestItems.forEach(
+            (item, index) => {
+
+                const manifest =
+                    getManifestForItem(item);
+
+                console.log("");
+                console.log(
+                    `[PackageScans DEBUG] Manifest Item #${index + 1}`
+                );
+
+                console.log(
+                    "Manifest item:",
+                    item
+                );
+
+                console.log(
+                    "Manifest item JSON:",
+                    JSON.stringify(
+                        item,
+                        null,
+                        2
+                    )
+                );
+
+                console.log(
+                    "Item ID:",
+                    getId(item)
+                );
+
+                console.log(
+                    "Item status:",
+                    getManifestItemStatus(item)
+                );
+
+                console.log(
+                    "Normalized item status:",
+                    normalizeStatus(
+                        getManifestItemStatus(item)
+                    )
+                );
+
+                console.log(
+                    "Manifest ID:",
+                    getManifestItemManifestId(item)
+                );
+
+                console.log(
+                    "Resolved manifest:",
+                    manifest
+                );
+
+                console.log(
+                    "Manifest JSON:",
+                    JSON.stringify(
+                        manifest,
+                        null,
+                        2
+                    )
+                );
+
+                console.log(
+                    "Manifest status:",
+                    getManifestStatus(manifest)
+                );
+
+                console.log(
+                    "Normalized manifest status:",
+                    normalizeStatus(
+                        getManifestStatus(manifest)
+                    )
+                );
+
+                console.log(
+                    "LOAD CHECK - item planned:",
+                    normalizeStatus(
+                        getManifestItemStatus(item)
+                    ) === "planned"
+                );
+
+                console.log(
+                    "LOAD CHECK - manifest planned:",
+                    normalizeStatus(
+                        getManifestStatus(manifest)
+                    ) === "planned"
+                );
+
+                console.log(
+                    "LOAD CHECK - BOTH:",
+                    normalizeStatus(
+                        getManifestItemStatus(item)
+                    ) === "planned"
+                    &&
+                    normalizeStatus(
+                        getManifestStatus(manifest)
+                    ) === "planned"
+                );
+            }
+        );
+
+        console.log(
+            "=================================================="
+        );
+        console.log("");
+
+    }, [
+        shipment,
+        manifestItems,
+        availableManifestItems,
+        getManifestForItem
+    ]);
     const validManifestItems =
         useMemo(() => {
 
@@ -740,33 +928,21 @@ const PackageScansPage = () => {
 
                             const itemStatus =
                                 normalizeStatus(
-                                    getManifestItemStatus(
-                                        item
-                                    )
+                                    getManifestItemStatus(item)
                                 );
 
                             const manifest =
-                                getManifestForItem(
-                                    item
-                                );
+                                getManifestForItem(item);
 
                             const manifestStatus =
                                 normalizeStatus(
-                                    getManifestStatus(
-                                        manifest
-                                    )
+                                    getManifestStatus(manifest)
                                 );
 
                             return (
-
-                                itemStatus ===
-                                "planned"
-
+                                itemStatus === "planned"
                                 &&
-
-                                manifestStatus ===
-                                "planned"
-
+                                manifestStatus === "planned"
                             );
                         });
 
@@ -921,57 +1097,51 @@ const PackageScansPage = () => {
              */
 
             const canLoad =
-                validManifestItems.some(
+                availableManifestItems.some(
                     (item) => {
 
                         const itemStatus =
                             normalizeStatus(
-                                getManifestItemStatus(
-                                    item
-                                )
+                                getManifestItemStatus(item)
                             );
 
                         const manifest =
-                            getManifestForItem(
-                                item
-                            );
+                            getManifestForItem(item);
 
                         const manifestStatus =
                             normalizeStatus(
-                                getManifestStatus(
-                                    manifest
-                                )
+                                getManifestStatus(manifest)
                             );
 
-                        return (
+                        const result =
+                            itemStatus === "planned" &&
+                            manifestStatus === "planned";
 
-                            itemStatus ===
-                            "planned"
-
-                            &&
-
-                            manifestStatus ===
-                            "planned"
-
+                        console.log(
+                            "LOAD CHECK:",
+                            {
+                                itemStatus,
+                                manifestStatus,
+                                result
+                            }
                         );
+
+                        return result;
                     }
                 );
 
 
+            /*
+             * -------------------------------------------------
+             * ADD LOAD
+             * -------------------------------------------------
+             */
+
             if (
-
-                shipmentStatus ===
-                "in_sorting"
-
-                &&
-
+                shipmentStatus === "in_sorting" &&
                 canLoad
-
             ) {
-
-                available.push(
-                    "load"
-                );
+                available.push("load");
             }
 
 
@@ -982,57 +1152,45 @@ const PackageScansPage = () => {
              */
 
             const canDepart =
-                validManifestItems.some(
+                availableManifestItems.some(
                     (item) => {
 
                         const itemStatus =
                             normalizeStatus(
-                                getManifestItemStatus(
-                                    item
-                                )
+                                getManifestItemStatus(item)
                             );
 
                         const manifest =
-                            getManifestForItem(
-                                item
-                            );
+                            getManifestForItem(item);
 
                         const manifestStatus =
                             normalizeStatus(
-                                getManifestStatus(
-                                    manifest
-                                )
+                                getManifestStatus(manifest)
                             );
 
-                        return (
+                        const result =
+                            itemStatus === "loaded" &&
+                            manifestStatus === "planned";
 
-                            itemStatus ===
-                            "loaded"
-
-                            &&
-
-                            manifestStatus ===
-                            "planned"
-
+                        console.log(
+                            "DEPART CHECK:",
+                            {
+                                itemStatus,
+                                manifestStatus,
+                                result
+                            }
                         );
+
+                        return result;
                     }
                 );
 
 
             if (
-
-                shipmentStatus ===
-                "loaded"
-
-                &&
-
+                shipmentStatus === "loaded" &&
                 canDepart
-
             ) {
-
-                available.push(
-                    "depart"
-                );
+                available.push("depart");
             }
 
 
@@ -1043,57 +1201,45 @@ const PackageScansPage = () => {
              */
 
             const canArrive =
-                validManifestItems.some(
+                availableManifestItems.some(
                     (item) => {
 
                         const itemStatus =
                             normalizeStatus(
-                                getManifestItemStatus(
-                                    item
-                                )
+                                getManifestItemStatus(item)
                             );
 
                         const manifest =
-                            getManifestForItem(
-                                item
-                            );
+                            getManifestForItem(item);
 
                         const manifestStatus =
                             normalizeStatus(
-                                getManifestStatus(
-                                    manifest
-                                )
+                                getManifestStatus(manifest)
                             );
 
-                        return (
+                        const result =
+                            itemStatus === "loaded" &&
+                            manifestStatus === "in_progress";
 
-                            itemStatus ===
-                            "loaded"
-
-                            &&
-
-                            manifestStatus ===
-                            "in_progress"
-
+                        console.log(
+                            "ARRIVE CHECK:",
+                            {
+                                itemStatus,
+                                manifestStatus,
+                                result
+                            }
                         );
+
+                        return result;
                     }
                 );
 
 
             if (
-
-                shipmentStatus ===
-                "in_transit"
-
-                &&
-
+                shipmentStatus === "in_transit" &&
                 canArrive
-
             ) {
-
-                available.push(
-                    "arrive"
-                );
+                available.push("arrive");
             }
 
 
@@ -1104,57 +1250,45 @@ const PackageScansPage = () => {
              */
 
             const canUnload =
-                validManifestItems.some(
+                availableManifestItems.some(
                     (item) => {
 
                         const itemStatus =
                             normalizeStatus(
-                                getManifestItemStatus(
-                                    item
-                                )
+                                getManifestItemStatus(item)
                             );
 
                         const manifest =
-                            getManifestForItem(
-                                item
-                            );
+                            getManifestForItem(item);
 
                         const manifestStatus =
                             normalizeStatus(
-                                getManifestStatus(
-                                    manifest
-                                )
+                                getManifestStatus(manifest)
                             );
 
-                        return (
+                        const result =
+                            itemStatus === "loaded" &&
+                            manifestStatus === "in_progress";
 
-                            itemStatus ===
-                            "loaded"
-
-                            &&
-
-                            manifestStatus ===
-                            "in_progress"
-
+                        console.log(
+                            "UNLOAD CHECK:",
+                            {
+                                itemStatus,
+                                manifestStatus,
+                                result
+                            }
                         );
+
+                        return result;
                     }
                 );
 
 
             if (
-
-                shipmentStatus ===
-                "in_sorting"
-
-                &&
-
+                shipmentStatus === "in_sorting" &&
                 canUnload
-
             ) {
-
-                available.push(
-                    "unload"
-                );
+                available.push("unload");
             }
 
 

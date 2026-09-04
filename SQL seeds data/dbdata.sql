@@ -890,3 +890,405 @@ SELECT 'Total Role-Permission Assignments:' as '', COUNT(*) as '' FROM role_perm
 SELECT 'Total User-Role Assignments:' as '', COUNT(*) as '' FROM user_roles;
 SELECT 'Total Employees:' as '', COUNT(*) as '' FROM employees;
 SELECT 'Total Customers:' as '', COUNT(*) as '' FROM customers;
+
+USE PJ3;
+
+START TRANSACTION;
+
+-- ============================================================
+-- 1. FACILITIES
+-- ============================================================
+
+INSERT INTO facilities (
+    id,
+    name,
+    code,
+    address,
+    city,
+    province,
+    postal_code,
+    phone,
+    email,
+    facility_type,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'Hanoi Distribution Hub',
+    'FAC-HN-001',
+    '123 Nguyen Van Linh',
+    'Hanoi',
+    'Hanoi',
+    '100000',
+    '024-11111111',
+    'hanoi.hub@demo.com',
+    'distribution_center',
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM facilities
+    WHERE code = 'FAC-HN-001'
+);
+
+
+INSERT INTO facilities (
+    id,
+    name,
+    code,
+    address,
+    city,
+    province,
+    postal_code,
+    phone,
+    email,
+    facility_type,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'Bac Ninh Distribution Center',
+    'FAC-BN-001',
+    '456 Le Thai To',
+    'Bac Ninh',
+    'Bac Ninh',
+    '160000',
+    '0222-2222222',
+    'bacninh.dc@demo.com',
+    'distribution_center',
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM facilities
+    WHERE code = 'FAC-BN-001'
+);
+
+
+INSERT INTO facilities (
+    id,
+    name,
+    code,
+    address,
+    city,
+    province,
+    postal_code,
+    phone,
+    email,
+    facility_type,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'Gia Lam Sorting Facility',
+    'FAC-GL-001',
+    '789 Nguyen Van Cu',
+    'Hanoi',
+    'Hanoi',
+    '100000',
+    '024-33333333',
+    'gialam.sorting@demo.com',
+    'sorting_center',
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM facilities
+    WHERE code = 'FAC-GL-001'
+);
+
+
+-- ============================================================
+-- 2. GET FACILITY IDS
+-- ============================================================
+
+SET @HN = (
+    SELECT id
+    FROM facilities
+    WHERE code = 'FAC-HN-001'
+    LIMIT 1
+);
+
+SET @BN = (
+    SELECT id
+    FROM facilities
+    WHERE code = 'FAC-BN-001'
+    LIMIT 1
+);
+
+SET @GL = (
+    SELECT id
+    FROM facilities
+    WHERE code = 'FAC-GL-001'
+    LIMIT 1
+);
+
+
+-- ============================================================
+-- 3. ROUTE: HANOI -> BAC NINH
+-- ============================================================
+
+INSERT INTO routes (
+    id,
+    route_code,
+    name,
+    origin_facility_id,
+    destination_facility_id,
+    distance,
+    estimated_duration,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'HN-BN-001',
+    'Hanoi - Bac Ninh Express Route',
+    @HN,
+    @BN,
+    35.00,
+    60,
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM routes
+    WHERE route_code = 'HN-BN-001'
+);
+
+
+-- ============================================================
+-- 4. GET ROUTE ID
+-- ============================================================
+
+SET @HN_BN_ROUTE = (
+    SELECT id
+    FROM routes
+    WHERE route_code = 'HN-BN-001'
+    LIMIT 1
+);
+
+
+-- ============================================================
+-- 5. ROUTE STOPS
+-- ============================================================
+
+-- Stop 1: Bac Ninh
+INSERT INTO route_stops (
+    id,
+    route_id,
+    stop_sequence,
+    facility_id,
+    stop_name,
+    pincode,
+    latitude,
+    longitude,
+    estimated_arrival,
+    estimated_departure,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    @HN_BN_ROUTE,
+    1,
+    @BN,
+    'Bac Ninh Distribution Center',
+    '160000',
+    21.1861,
+    106.0763,
+    NULL,
+    NULL,
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM route_stops
+    WHERE route_id = @HN_BN_ROUTE
+      AND stop_sequence = 1
+);
+
+
+-- ============================================================
+-- 6. OPTIONAL: HANOI -> BAC NINH -> BAC GIANG
+--    Add another destination facility
+-- ============================================================
+
+INSERT INTO facilities (
+    id,
+    name,
+    code,
+    address,
+    city,
+    province,
+    postal_code,
+    phone,
+    email,
+    facility_type,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'Bac Giang Distribution Center',
+    'FAC-BG-001',
+    '100 Hoang Van Thu',
+    'Bac Giang',
+    'Bac Giang',
+    '260000',
+    '0204-4444444',
+    'bacgiang.dc@demo.com',
+    'distribution_center',
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM facilities
+    WHERE code = 'FAC-BG-001'
+);
+
+
+SET @BG = (
+    SELECT id
+    FROM facilities
+    WHERE code = 'FAC-BG-001'
+    LIMIT 1
+);
+
+
+-- ============================================================
+-- 7. SECOND ROUTE
+-- ============================================================
+
+INSERT INTO routes (
+    id,
+    route_code,
+    name,
+    origin_facility_id,
+    destination_facility_id,
+    distance,
+    estimated_duration,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    'HN-BN-BG-001',
+    'Hanoi - Bac Ninh - Bac Giang Route',
+    @HN,
+    @BG,
+    70.00,
+    120,
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM routes
+    WHERE route_code = 'HN-BN-BG-001'
+);
+
+
+SET @HN_BN_BG_ROUTE = (
+    SELECT id
+    FROM routes
+    WHERE route_code = 'HN-BN-BG-001'
+    LIMIT 1
+);
+
+
+-- ============================================================
+-- 8. ROUTE STOPS FOR SECOND ROUTE
+-- ============================================================
+
+-- Stop 1: Bac Ninh
+INSERT INTO route_stops (
+    id,
+    route_id,
+    stop_sequence,
+    facility_id,
+    stop_name,
+    pincode,
+    latitude,
+    longitude,
+    estimated_arrival,
+    estimated_departure,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    @HN_BN_BG_ROUTE,
+    1,
+    @BN,
+    'Bac Ninh Distribution Center',
+    '160000',
+    21.1861,
+    106.0763,
+    NULL,
+    NULL,
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM route_stops
+    WHERE route_id = @HN_BN_BG_ROUTE
+      AND stop_sequence = 1
+);
+
+
+-- Stop 2: Bac Giang
+INSERT INTO route_stops (
+    id,
+    route_id,
+    stop_sequence,
+    facility_id,
+    stop_name,
+    pincode,
+    latitude,
+    longitude,
+    estimated_arrival,
+    estimated_departure,
+    is_active,
+    created_at,
+    updated_at
+)
+SELECT
+    UUID(),
+    @HN_BN_BG_ROUTE,
+    2,
+    @BG,
+    'Bac Giang Distribution Center',
+    '260000',
+    21.2819,
+    106.1970,
+    NULL,
+    NULL,
+    1,
+    UTC_TIMESTAMP(),
+    UTC_TIMESTAMP()
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM route_stops
+    WHERE route_id = @HN_BN_BG_ROUTE
+      AND stop_sequence = 2;
+
+
+COMMIT;
