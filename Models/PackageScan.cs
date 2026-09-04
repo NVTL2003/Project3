@@ -17,6 +17,8 @@ public partial class PackageScan
 
     public Guid? VehicleId { get; set; }
 
+    public Guid? ManifestItemId { get; set; }
+
     public string LocationType { get; set; } = null!;
 
     public string ScanType { get; set; } = null!;
@@ -42,4 +44,6 @@ public partial class PackageScan
     public virtual ICollection<TrackingEvent> TrackingEvents { get; set; } = new List<TrackingEvent>();
 
     public virtual Vehicle? Vehicle { get; set; }
+
+    public virtual ManifestItem? ManifestItem { get; set; }
 }

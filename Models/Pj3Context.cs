@@ -1036,6 +1036,11 @@ public partial class Pj3Context : DbContext
                 .HasColumnName("created_at");
             entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
             entity.Property(e => e.FacilityId).HasColumnName("facility_id");
+            entity.Property(e => e.ManifestItemId)
+                .HasColumnType("char(36)")
+                .HasCharSet("utf8mb4")
+                .UseCollation("utf8mb4_0900_ai_ci")
+                .HasColumnName("manifest_item_id");
             entity.Property(e => e.IpAddress)
                 .HasMaxLength(45)
                 .HasColumnName("ip_address");
@@ -1063,7 +1068,11 @@ public partial class Pj3Context : DbContext
                 .HasColumnName("scan_type");
             entity.Property(e => e.ShipmentId).HasColumnName("shipment_id");
             entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
-
+            entity.HasOne(d => d.ManifestItem)
+            .WithMany()
+            .HasForeignKey(d => d.ManifestItemId)
+            .OnDelete(DeleteBehavior.SetNull)
+            .HasConstraintName("fk_package_scans_manifest_item");
             entity.HasOne(d => d.Employee).WithMany(p => p.PackageScans)
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

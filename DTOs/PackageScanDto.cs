@@ -4,6 +4,8 @@ namespace Project3.DTOs
     {
         public Guid ShipmentId { get; set; }
 
+        public Guid? ManifestItemId { get; set; }
+
         public Guid? FacilityId { get; set; }
 
         public Guid? VehicleId { get; set; }

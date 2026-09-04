@@ -87,9 +87,18 @@ public class PackageScanService
         }
 
         // ========================================================
-        // 4. Pickup
+        // 4. Validate shipment status transition
+        // ========================================================
+
+        ValidateShipmentStatusTransition(
+            shipment,
+            scanType);
+
+        // ========================================================
+        // 5. PICKUP
         //
-        // Pickup can happen before a transport manifest exists.
+        // Pickup happens before line-haul.
+        // No ManifestItem is required.
         // ========================================================
 
         if (scanType == "pickup")
@@ -101,9 +110,40 @@ public class PackageScanService
         }
 
         // ========================================================
-        // 5. Delivered
+        // 6. OUT FOR DELIVERY
         //
-        // Delivered does NOT require an active line-haul manifest.
+        // IMPORTANT:
+        //
+        // This is final-mile.
+        //
+        // It must NOT require the completed line-haul
+        // ManifestItem/Manifest.
+        //
+        // For now we create a standalone scan.
+        //
+        // Later this should be triggered by
+        // DeliveryAssignment / DeliveryAssignmentItem.
+        // ========================================================
+
+        if (scanType == "out_for_delivery")
+        {
+            ValidateOutForDeliveryScan(
+                dto,
+                shipment,
+                employee);
+
+            return await CreateStandaloneScanAsync(
+                dto,
+                shipment,
+                employee,
+                scanType,
+                null);
+        }
+
+        // ========================================================
+        // 7. DELIVERED
+        //
+        // Delivered also does not require a line-haul manifest.
         // ========================================================
 
         if (scanType == "delivered")
@@ -122,38 +162,67 @@ public class PackageScanService
         }
 
         // ========================================================
-        // 6. Find active manifest item
+        // 8. LINE-HAUL OPERATIONS
+        //
+        // load
+        // depart
+        // arrive
+        // unload
+        //
+        // These require the exact ManifestItem.
         // ========================================================
 
-        var manifestItems = await _context.ManifestItems
+        if (!dto.ManifestItemId.HasValue)
+        {
+            throw new InvalidOperationException(
+                "ManifestItemId is required for this line-haul scan.");
+        }
+
+        var manifestItem = await _context.ManifestItems
             .Include(mi => mi.Manifest)
                 .ThenInclude(m => m.Route)
                     .ThenInclude(r => r.RouteStops)
             .Include(mi => mi.TransportOrder)
-            .Where(mi =>
-                mi.TransportOrder.ShipmentId == shipment.Id &&
-                mi.Manifest.Status != "completed" &&
-                mi.Manifest.Status != "cancelled")
-            .ToListAsync();
+            .FirstOrDefaultAsync(mi =>
+                mi.Id == dto.ManifestItemId.Value);
 
-        if (manifestItems.Count == 0)
+        if (manifestItem == null)
         {
-            throw new InvalidOperationException(
-                "Shipment is not assigned to an active transport manifest.");
+            throw new KeyNotFoundException(
+                "Manifest item not found.");
         }
 
-        if (manifestItems.Count > 1)
+        // ========================================================
+        // 9. Verify ManifestItem -> TransportOrder -> Shipment
+        // ========================================================
+
+        if (manifestItem.TransportOrder.ShipmentId != shipment.Id)
         {
             throw new InvalidOperationException(
-                "Shipment is assigned to multiple active manifests.");
+                "Manifest item does not belong to this shipment.");
         }
-
-        var manifestItem = manifestItems[0];
 
         var manifest = manifestItem.Manifest;
 
         // ========================================================
-        // 7. Validate operation
+        // 10. Manifest must be active
+        // ========================================================
+
+        if (string.Equals(
+                manifest.Status,
+                "completed",
+                StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(
+                manifest.Status,
+                "cancelled",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                "The manifest is no longer active.");
+        }
+
+        // ========================================================
+        // 11. Validate operation
         // ========================================================
 
         switch (scanType)
@@ -200,20 +269,10 @@ public class PackageScanService
                     employee);
 
                 break;
-
-            case "out_for_delivery":
-
-                ValidateOutForDeliveryScan(
-                    dto,
-                    manifestItem,
-                    manifest,
-                    employee);
-
-                break;
         }
 
         // ========================================================
-        // 8. Create PackageScan
+        // 12. Create PackageScan
         // ========================================================
 
         var now = DateTime.UtcNow;
@@ -225,6 +284,8 @@ public class PackageScanService
             ScanNumber = GenerateScanNumber(),
 
             ShipmentId = shipment.Id,
+
+            ManifestItemId = manifestItem.Id,
 
             // NEVER trust EmployeeId from client.
             EmployeeId = employee.Id,
@@ -254,7 +315,7 @@ public class PackageScanService
         _context.PackageScans.Add(scan);
 
         // ========================================================
-        // 9. Update ManifestItem
+        // 13. Update ManifestItem
         // ========================================================
 
         UpdateManifestItem(
@@ -264,7 +325,7 @@ public class PackageScanService
             now);
 
         // ========================================================
-        // 10. Update Manifest
+        // 14. Update Manifest
         // ========================================================
 
         await UpdateManifestAsync(
@@ -275,22 +336,16 @@ public class PackageScanService
             now);
 
         // ========================================================
-        // 11. Update Shipment status
+        // 15. Update Shipment status
         // ========================================================
 
-        var shipmentStatus =
+        shipment.CurrentStatus =
             GetShipmentStatus(scanType);
 
-        shipment.CurrentStatus = shipmentStatus;
         shipment.UpdatedAt = now;
 
-        if (scanType == "delivered")
-        {
-            shipment.ActualDelivery = now;
-        }
-
         // ========================================================
-        // 12. Tracking status
+        // 16. Tracking status
         // ========================================================
 
         var trackingStatusCode =
@@ -302,7 +357,7 @@ public class PackageScanService
                 now);
 
         // ========================================================
-        // 13. Tracking event
+        // 17. Tracking event
         // ========================================================
 
         var trackingEvent = new TrackingEvent
@@ -330,13 +385,13 @@ public class PackageScanService
         _context.TrackingEvents.Add(trackingEvent);
 
         // ========================================================
-        // 14. Save everything
+        // 18. Save everything
         // ========================================================
 
         await _context.SaveChangesAsync();
 
         // ========================================================
-        // 15. Return
+        // 19. Return
         // ========================================================
 
         return new PackageScanResultDto
@@ -372,6 +427,9 @@ public class PackageScanService
 
             ShipmentId = shipment.Id,
 
+            // Pickup happens before ManifestItem exists.
+            ManifestItemId = null,
+
             EmployeeId = employee.Id,
 
             FacilityId = dto.FacilityId,
@@ -398,7 +456,14 @@ public class PackageScanService
 
         _context.PackageScans.Add(scan);
 
-        shipment.CurrentStatus = "in_sorting";
+        // ========================================================
+        // IMPORTANT CHANGE:
+        //
+        // PICKUP -> picked_up
+        // ========================================================
+
+        shipment.CurrentStatus = "picked_up";
+
         shipment.UpdatedAt = now;
 
         var trackingStatus =
@@ -484,26 +549,16 @@ public class PackageScanService
                 "Shipment must be loaded at the manifest departure facility.");
         }
 
-        // --------------------------------------------------------
-        // Determine shipment's current physical facility.
-        // --------------------------------------------------------
-
         var currentFacilityId =
             await GetCurrentShipmentFacilityAsync(
                 shipment.Id);
 
-        // If we know where the shipment currently is,
-        // it must be at the manifest departure facility.
         if (currentFacilityId.HasValue &&
             currentFacilityId.Value != manifest.DepartureFacilityId)
         {
             throw new InvalidOperationException(
                 "Shipment is not currently at the manifest departure facility.");
         }
-
-        // --------------------------------------------------------
-        // Manifest must be planned before loading.
-        // --------------------------------------------------------
 
         if (!string.Equals(
                 manifest.Status,
@@ -594,17 +649,9 @@ public class PackageScanService
                 "FacilityId is required for arrival.");
         }
 
-        // ========================================================
-        // Find current shipment location
-        // ========================================================
-
         var currentFacilityId =
             await GetCurrentShipmentFacilityAsync(
                 shipment.Id);
-
-        // ========================================================
-        // Determine expected next facility
-        // ========================================================
 
         var expectedFacilityId =
             await GetNextRouteFacilityAsync(
@@ -663,18 +710,6 @@ public class PackageScanService
                 "Shipment is not currently loaded on this manifest.");
         }
 
-        // ========================================================
-        // The shipment must currently be at the unload facility.
-        //
-        // Example:
-        //
-        // arrive Bac Ninh
-        // unload Bac Ninh      ← valid
-        //
-        // arrive Bac Ninh
-        // unload Hai Duong     ← invalid
-        // ========================================================
-
         var currentFacilityId =
             await GetCurrentShipmentFacilityAsync(
                 shipment.Id);
@@ -690,10 +725,6 @@ public class PackageScanService
             throw new InvalidOperationException(
                 "Shipment must be unloaded at its current facility.");
         }
-
-        // ========================================================
-        // Verify that this facility is actually on the route.
-        // ========================================================
 
         var validRouteFacility =
             await IsFacilityOnManifestRouteAsync(
@@ -713,34 +744,30 @@ public class PackageScanService
 
     private void ValidateOutForDeliveryScan(
         CreatePackageScanDto dto,
-        ManifestItem item,
-        ShipmentManifest manifest,
+        Shipment shipment,
         Employee employee)
     {
-        if (!dto.VehicleId.HasValue)
-        {
-            throw new InvalidOperationException(
-                "VehicleId is required for out-for-delivery.");
-        }
-
-        if (dto.VehicleId.Value != manifest.VehicleId)
-        {
-            throw new InvalidOperationException(
-                "Vehicle does not match the manifest vehicle.");
-        }
+        // At this stage we only require the shipment
+        // to have reached the final-mile stage.
+        //
+        // DeliveryAssignment validation will eventually
+        // become responsible for driver/vehicle assignment.
 
         if (!string.Equals(
-                item.Status,
-                "loaded",
-                StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(
-                item.Status,
-                "unloaded",
+                shipment.CurrentStatus,
+                "in_sorting",
                 StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException(
-                "Shipment must have been processed by the manifest before going out for delivery.");
+                "Shipment must be in sorting before going out for delivery.");
         }
+
+        // Vehicle can be supplied for final-mile,
+        // but it is not tied to the completed line-haul manifest.
+        //
+        // Later:
+        // DeliveryAssignment.VehicleId
+        // will be validated here.
     }
 
     // ============================================================
@@ -806,11 +833,11 @@ public class PackageScanService
     // ============================================================
 
     private async Task UpdateManifestAsync(
-    ShipmentManifest manifest,
-    ManifestItem currentItem,
-    string scanType,
-    Guid? facilityId,
-    DateTime now)
+        ShipmentManifest manifest,
+        ManifestItem currentItem,
+        string scanType,
+        Guid? facilityId,
+        DateTime now)
     {
         switch (scanType)
         {
@@ -861,25 +888,6 @@ public class PackageScanService
     private async Task<Guid?> GetCurrentShipmentFacilityAsync(
         Guid shipmentId)
     {
-        /*
-         * We intentionally derive the shipment's current location
-         * from PackageScan history.
-         *
-         * We look for the newest scan that has a FacilityId.
-         *
-         * Example:
-         *
-         * load Hanoi
-         * depart Hanoi
-         * arrive Bac Ninh
-         *
-         * Latest facility scan = Bac Ninh
-         *
-         * Therefore:
-         *
-         * CurrentFacility = Bac Ninh
-         */
-
         var latestFacilityScan =
             await _context.PackageScans
                 .Where(ps =>
@@ -918,10 +926,6 @@ public class PackageScanService
                 .OrderBy(rs => rs.StopSequence)
                 .ToList();
 
-        // ========================================================
-        // No current facility means we are at the manifest origin.
-        // ========================================================
-
         if (!currentFacilityId.HasValue)
         {
             return stops.Count > 0
@@ -929,20 +933,12 @@ public class PackageScanService
                 : route.DestinationFacilityId;
         }
 
-        // ========================================================
-        // Current facility = origin
-        // ========================================================
-
         if (currentFacilityId.Value == route.OriginFacilityId)
         {
             return stops.Count > 0
                 ? stops[0].FacilityId
                 : route.DestinationFacilityId;
         }
-
-        // ========================================================
-        // Current facility = intermediate stop
-        // ========================================================
 
         var currentStop =
             stops.FirstOrDefault(rs =>
@@ -960,14 +956,8 @@ public class PackageScanService
                 return nextStop.FacilityId;
             }
 
-            // No more intermediate stops.
-            // Therefore destination is next.
             return route.DestinationFacilityId;
         }
-
-        // ========================================================
-        // Current facility = destination
-        // ========================================================
 
         if (currentFacilityId.Value ==
             route.DestinationFacilityId)
@@ -1040,9 +1030,6 @@ public class PackageScanService
 
     // ============================================================
     // STANDALONE SCAN
-    //
-    // Used for delivered because there may no longer be
-    // an active manifest.
     // ============================================================
 
     private async Task<PackageScanResultDto>
@@ -1062,6 +1049,9 @@ public class PackageScanService
             ScanNumber = GenerateScanNumber(),
 
             ShipmentId = shipment.Id,
+
+            // No line-haul ManifestItem.
+            ManifestItemId = null,
 
             EmployeeId = employee.Id,
 
@@ -1089,16 +1079,23 @@ public class PackageScanService
 
         _context.PackageScans.Add(scan);
 
-        var shipmentStatus =
+        // ========================================================
+        // Update Shipment
+        // ========================================================
+
+        shipment.CurrentStatus =
             GetShipmentStatus(scanType);
 
-        shipment.CurrentStatus = shipmentStatus;
         shipment.UpdatedAt = now;
 
         if (scanType == "delivered")
         {
             shipment.ActualDelivery = now;
         }
+
+        // ========================================================
+        // Tracking status
+        // ========================================================
 
         var trackingStatusCode =
             GetTrackingStatusCode(scanType);
@@ -1107,6 +1104,10 @@ public class PackageScanService
             await GetOrCreateTrackingStatusAsync(
                 trackingStatusCode,
                 now);
+
+        // ========================================================
+        // Tracking event
+        // ========================================================
 
         var trackingEvent = new TrackingEvent
         {
@@ -1145,9 +1146,17 @@ public class PackageScanService
             TrackingStatus = trackingStatus.Code,
 
             Message =
-                scanType == "delivered"
-                    ? "Package delivered successfully."
-                    : "Package scanned successfully."
+                scanType switch
+                {
+                    "out_for_delivery" =>
+                        "Package is now out for delivery.",
+
+                    "delivered" =>
+                        "Package delivered successfully.",
+
+                    _ =>
+                        "Package scanned successfully."
+                }
         };
     }
 
@@ -1155,12 +1164,13 @@ public class PackageScanService
     // SHIPMENT STATUS
     // ============================================================
 
-    private string GetShipmentStatus(string scanType)
+    private string GetShipmentStatus(
+        string scanType)
     {
         return scanType switch
         {
             "pickup" =>
-                "in_sorting",
+                "picked_up",
 
             "load" =>
                 "loaded",
@@ -1185,18 +1195,134 @@ public class PackageScanService
         };
     }
 
-    private string GetTrackingStatusCode(string scanType)
+    // ============================================================
+    // VALIDATE STATUS TRANSITION
+    // ============================================================
+
+    private void ValidateShipmentStatusTransition(
+        Shipment shipment,
+        string scanType)
+    {
+        var currentStatus =
+            shipment.CurrentStatus?
+                .Trim()
+                .ToLowerInvariant();
+
+        switch (scanType)
+        {
+            case "pickup":
+
+                if (currentStatus != "created" &&
+                    currentStatus != "pending")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot be picked up from status '{shipment.CurrentStatus}'.");
+                }
+                if (currentStatus != "created" &&
+                    currentStatus != "pickup_scheduled")
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot pickup shipment when current status is '{currentStatus}'.");
+                }
+                break;
+
+            case "load":
+
+                if (currentStatus != "picked_up" &&
+                    currentStatus != "in_sorting")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot be loaded from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+
+            case "depart":
+
+                if (currentStatus != "loaded")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot depart from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+
+            case "arrive":
+
+                if (currentStatus != "in_transit")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot arrive from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+
+            case "unload":
+
+                if (currentStatus != "in_sorting")
+                {
+                    // Depending on your exact scan ordering,
+                    // ARRIVE already puts it into in_sorting.
+                    throw new InvalidOperationException(
+                        $"Shipment cannot be unloaded from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+
+            case "out_for_delivery":
+
+                if (currentStatus != "in_sorting")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot go out for delivery from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+
+            case "delivered":
+
+                if (currentStatus != "out_for_delivery")
+                {
+                    throw new InvalidOperationException(
+                        $"Shipment cannot be delivered from status '{shipment.CurrentStatus}'.");
+                }
+
+                break;
+        }
+    }
+
+    // ============================================================
+    // TRACKING STATUS
+    // ============================================================
+
+    private string GetTrackingStatusCode(
+        string scanType)
     {
         return scanType switch
         {
-            "pickup" => "PICKED_UP",
-            "load" => "LOADED",
-            "depart" => "IN_TRANSIT",
-            "arrive" => "ARRIVED_AT_FACILITY",
-            "unload" => "RECEIVED_AT_FACILITY",
-            "out_for_delivery" => "OUT_FOR_DELIVERY",
-            "delivered" => "DELIVERED",
-            _ => "CREATED"
+            "pickup" =>
+                "PICKED_UP",
+
+            "load" =>
+                "LOADED",
+
+            "depart" =>
+                "IN_TRANSIT",
+
+            "arrive" =>
+                "ARRIVED_AT_FACILITY",
+
+            "unload" =>
+                "RECEIVED_AT_FACILITY",
+
+            "out_for_delivery" =>
+                "OUT_FOR_DELIVERY",
+
+            "delivered" =>
+                "DELIVERED",
+
+            _ =>
+                "CREATED"
         };
     }
 

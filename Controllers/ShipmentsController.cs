@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project3.DTOs;
 using Project3.Models;
 using Project3.Services.Interfaces;
+using QRCoder;
 
 namespace Project3.Controllers
 {
@@ -46,6 +47,34 @@ namespace Project3.Controllers
         {
             return Task.FromResult<IActionResult>(
                 Forbid());
+        }
+
+        // ============================================================
+        // QR CODE
+        // ============================================================
+
+        [HttpGet("{id:guid}/qr")]
+        public async Task<IActionResult> GetQrCode(Guid id)
+        {
+            var shipment = await _service.GetByIdAsync(id);
+
+            if (shipment == null)
+                return NotFound();
+
+            using var qrGenerator = new QRCodeGenerator();
+
+            using var qrData = qrGenerator.CreateQrCode(
+                shipment.TrackingNumber,
+                QRCodeGenerator.ECCLevel.Q);
+
+            var qrCode = new PngByteQRCode(qrData);
+
+            byte[] qrBytes = qrCode.GetGraphic(20);
+
+            return File(
+                qrBytes,
+                "image/png",
+                $"{shipment.TrackingNumber}.png");
         }
     }
 }

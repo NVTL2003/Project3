@@ -66,31 +66,31 @@ const MENU_GROUPS = [
                 permission: "facilities",
                 path: "/facilities"
             },
-            {
-                label: "Pincodes",
-                permission: "pincodes",
-                path: "/pincodes"
-            },
-            {
-                label: "Storage Areas",
-                permission: "storage_areas",
-                path: "/storage-areas"
-            },
-            {
-                label: "Services",
-                permission: "services",
-                path: "/services"
-            },
-            {
-                label: "Pricing Rules",
-                permission: "pricing_rules",
-                path: "/pricing-rules"
-            },
-            {
-                label: "Insurance Plans",
-                permission: "insurance_plans",
-                path: "/insurance-plans"
-            }
+            // {
+            //     label: "Pincodes",
+            //     permission: "pincodes",
+            //     path: "/pincodes"
+            // },
+            // {
+            //     label: "Storage Areas",
+            //     permission: "storage_areas",
+            //     path: "/storage-areas"
+            // },
+            // {
+            //     label: "Services",
+            //     permission: "services",
+            //     path: "/services"
+            // },
+            // {
+            //     label: "Pricing Rules",
+            //     permission: "pricing_rules",
+            //     path: "/pricing-rules"
+            // },
+            // {
+            //     label: "Insurance Plans",
+            //     permission: "insurance_plans",
+            //     path: "/insurance-plans"
+            // }
         ]
     },
 
@@ -225,29 +225,29 @@ const MENU_GROUPS = [
         key: "transportation",
         label: "Transportation",
         entities: [
-            {
-                label: "Vehicles",
-                permission: "vehicles",
-                path: "/vehicles"
-            },
+            // {
+            //     label: "Vehicles",
+            //     permission: "vehicles",
+            //     path: "/vehicles"
+            // },
 
-            {
-                label: "Vehicle Maintenance",
-                permission: "vehicle_maintenance",
-                path: "/vehicle-maintenance"
-            },
+            // {
+            //     label: "Vehicle Maintenance",
+            //     permission: "vehicle_maintenance",
+            //     path: "/vehicle-maintenance"
+            // },
 
-            {
-                label: "Vehicle Fuel Logs",
-                permission: "vehicle_fuel_logs",
-                path: "/vehicle-fuel-logs"
-            },
+            // {
+            //     label: "Vehicle Fuel Logs",
+            //     permission: "vehicle_fuel_logs",
+            //     path: "/vehicle-fuel-logs"
+            // },
 
-            {
-                label: "Vehicle GPS",
-                permission: "vehicle_gps",
-                path: "/vehicle-gps"
-            },
+            // {
+            //     label: "Vehicle GPS",
+            //     permission: "vehicle_gps",
+            //     path: "/vehicle-gps"
+            // },
 
             {
                 label: "Routes",
@@ -270,35 +270,35 @@ const MENU_GROUPS = [
         key: "delivery",
         label: "Delivery & Tracking",
         entities: [
-            {
-                label: "Delivery Assignments",
-                permission: "delivery_assignments",
-                path: "/delivery-assignments"
-            },
+            // {
+            //     label: "Delivery Assignments",
+            //     permission: "delivery_assignments",
+            //     path: "/delivery-assignments"
+            // },
 
-            {
-                label: "Delivery Attempts",
-                permission: "delivery_attempts",
-                path: "/delivery-attempts"
-            },
+            // {
+            //     label: "Delivery Attempts",
+            //     permission: "delivery_attempts",
+            //     path: "/delivery-attempts"
+            // },
 
-            {
-                label: "Proof of Delivery",
-                permission: "proof_of_delivery",
-                path: "/proof-of-delivery"
-            },
+            // {
+            //     label: "Proof of Delivery",
+            //     permission: "proof_of_delivery",
+            //     path: "/proof-of-delivery"
+            // },
 
-            {
-                label: "Tracking Events",
-                permission: "tracking_events",
-                path: "/tracking-events"
-            },
+            // {
+            //     label: "Tracking Events",
+            //     permission: "tracking_events",
+            //     path: "/tracking-events"
+            // },
 
-            {
-                label: "Tracking Status",
-                permission: "tracking_status",
-                path: "/tracking-status"
-            },
+            // {
+            //     label: "Tracking Status",
+            //     permission: "tracking_status",
+            //     path: "/tracking-status"
+            // },
 
             {
                 label: "Package Scans",
@@ -311,89 +311,89 @@ const MENU_GROUPS = [
     // =========================================================
     // FINANCE
     // =========================================================
-    {
-        key: "finance",
-        label: "Finance",
-        entities: [
-            {
-                label: "Invoices",
-                permission: "invoices",
-                children: [
-                    {
-                        label: "My Invoices",
-                        scope: "own",
-                        path: "/my/invoices"
-                    },
-                    {
-                        label: "All Invoices",
-                        scope: "all",
-                        path: "/invoices"
-                    }
-                ]
-            },
+    // {
+    //     key: "finance",
+    //     label: "Finance",
+    //     entities: [
+    //         {
+    //             label: "Invoices",
+    //             permission: "invoices",
+    //             children: [
+    //                 {
+    //                     label: "My Invoices",
+    //                     scope: "own",
+    //                     path: "/my/invoices"
+    //                 },
+    //                 {
+    //                     label: "All Invoices",
+    //                     scope: "all",
+    //                     path: "/invoices"
+    //                 }
+    //             ]
+    //         },
 
-            {
-                label: "Payments",
-                permission: "payments",
-                children: [
-                    {
-                        label: "My Payments",
-                        scope: "own",
-                        path: "/my/payments"
-                    },
-                    {
-                        label: "All Payments",
-                        scope: "all",
-                        path: "/payments"
-                    }
-                ]
-            },
+    //         {
+    //             label: "Payments",
+    //             permission: "payments",
+    //             children: [
+    //                 {
+    //                     label: "My Payments",
+    //                     scope: "own",
+    //                     path: "/my/payments"
+    //                 },
+    //                 {
+    //                     label: "All Payments",
+    //                     scope: "all",
+    //                     path: "/payments"
+    //                 }
+    //             ]
+    //         },
 
-            {
-                label: "Expenses",
-                permission: "expenses",
-                path: "/expenses"
-            }
-        ]
-    },
+    //         {
+    //             label: "Expenses",
+    //             permission: "expenses",
+    //             path: "/expenses"
+    //         }
+    //     ]
+    // },
 
     // =========================================================
     // SYSTEM / LOGS
     // =========================================================
-    {
-        key: "logs",
-        label: "System & Logs",
-        entities: [
-            {
-                label: "Audit Logs",
-                permission: "audit_logs",
-                path: "/audit-logs"
-            },
+    // {
+    //     key: "logs",
+    //     label: "System & Logs",
+    //     entities: [
+    //         {
+    //             label: "Audit Logs",
+    //             permission: "audit_logs",
+    //             path: "/audit-logs"
+    //         },
 
-            {
-                label: "Login History",
-                permission: "login_history",
-                path: "/login-history"
-            },
+    //         {
+    //             label: "Login History",
+    //             permission: "login_history",
+    //             path: "/login-history"
+    //         },
 
-            {
-                label: "Notifications",
-                permission: "notifications",
-                children: [
-                    {
-                        label: "My Notifications",
-                        scope: "own",
-                        path: "/my/notifications"
-                    },
-                    {
-                        label: "All Notifications",
-                        scope: "all",
-                        path: "/notifications"
-                    }
-                ]
-            }
-        ]
-    }
+    //         {
+    //             label: "Notifications",
+    //             permission: "notifications",
+    //             children: [
+    //                 {
+    //                     label: "My Notifications",
+    //                     scope: "own",
+    //                     path: "/my/notifications"
+    //                 },
+    //                 {
+    //                     label: "All Notifications",
+    //                     scope: "all",
+    //                     path: "/notifications"
+    //                 }
+    //             ]
+    //         }
+    //     ]
+    // }
 ];
 
 export { MENU_GROUPS };

@@ -26,6 +26,7 @@
 	  <Compile Remove="PasswordGenerator\**" />
 	  <EmbeddedResource Remove="PasswordGenerator\**" />
 	  <None Remove="PasswordGenerator\**" />
+	  <PackageReference Include="QRCoder" Version="1.8.0" />
   
 	  
   </ItemGroup>
